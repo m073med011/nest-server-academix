@@ -20,8 +20,8 @@ async function getApp() {
       });
 
       // Apply global filters and interceptors
-      app.useGlobalFilters(new AllExceptionsFilter.AllExceptionsFilter());
-      app.useGlobalInterceptors(new TransformInterceptor.TransformInterceptor());
+      app.useGlobalFilters(new AllExceptionsFilter());
+      app.useGlobalInterceptors(new TransformInterceptor());
 
       // Apply global validation pipe
       app.useGlobalPipes(
