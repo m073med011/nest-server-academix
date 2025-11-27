@@ -13,7 +13,8 @@ export const winstonConfig = {
         }),
       ),
     }),
-    ...(process.env.NODE_ENV !== 'production'
+    // Only enable file logging if NOT in production AND NOT on Vercel
+    ...(process.env.NODE_ENV !== 'production' && !process.env.VERCEL
       ? [
           new winston.transports.File({
             filename: 'logs/error.log',
