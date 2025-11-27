@@ -8,33 +8,46 @@ let app;
 
 async function getApp() {
   if (!app) {
-    app = await NestFactory.create(AppModule, {
-      logger: ['error', 'warn', 'log'],
-    });
+    try {
+      console.log('Starting NestJS app initialization...');
+      console.log('Environment Check:');
+      console.log('MONGODB_URI:', process.env.MONGODB_URI ? 'Set' : 'Missing');
+      console.log('JWT_SECRET:', process.env.JWT_SECRET ? 'Set' : 'Missing');
+      console.log('JWT_REFRESH_SECRET:', process.env.JWT_REFRESH_SECRET ? 'Set' : 'Missing');
 
-    // Apply global filters and interceptors
-    app.useGlobalFilters(new AllExceptionsFilter.AllExceptionsFilter());
-    app.useGlobalInterceptors(new TransformInterceptor.TransformInterceptor());
+      app = await NestFactory.create(AppModule, {
+        logger: ['error', 'warn', 'log', 'debug', 'verbose'],
+      });
 
-    // Apply global validation pipe
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        transform: true,
-        forbidNonWhitelisted: true,
-      }),
-    );
+      // Apply global filters and interceptors
+      app.useGlobalFilters(new AllExceptionsFilter.AllExceptionsFilter());
+      app.useGlobalInterceptors(new TransformInterceptor.TransformInterceptor());
 
-    // Enable versioning
-    app.enableVersioning({
-      type: VersioningType.URI,
-      defaultVersion: '1',
-    });
+      // Apply global validation pipe
+      app.useGlobalPipes(
+        new ValidationPipe({
+          whitelist: true,
+          transform: true,
+          forbidNonWhitelisted: true,
+        }),
+      );
 
-    // Enable CORS for all origins
-    app.enableCors();
+      // Enable versioning
+      app.enableVersioning({
+        type: VersioningType.URI,
+        defaultVersion: '1',
+      });
 
-    await app.init();
+      // Enable CORS for all origins
+      app.enableCors();
+
+      await app.init();
+      console.log('NestJS app initialized successfully');
+    } catch (error) {
+      console.error('CRITICAL ERROR: NestJS app failed to initialize');
+      console.error(error);
+      throw error;
+    }
   }
   return app;
 }
@@ -45,10 +58,11 @@ module.exports = async (req, res) => {
     const instance = nestApp.getHttpAdapter().getInstance();
     return instance(req, res);
   } catch (error) {
-    console.error('Serverless function error:', error);
+    console.error('Serverless function invocation failed:', error);
     res.status(500).json({
       error: 'Internal Server Error',
-      message: error.message
+      message: error.message,
+      details: 'Check Vercel Runtime Logs for "CRITICAL ERROR"'
     });
   }
 };
