@@ -40,6 +40,11 @@ export default registerAs('app', () => ({
     expirationMinutes: parseInt(process.env.OTP_EXPIRATION_MINUTES || '10', 10),
     maxAttempts: parseInt(process.env.OTP_MAX_ATTEMPTS || '5', 10),
   },
+  security: {
+    cookieSecure: process.env.NODE_ENV === 'production',
+    cookieSameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+    cookieDomain: process.env.COOKIE_DOMAIN,
+  },
   cors: {
     origin: process.env.CORS_ORIGIN,
   },

@@ -50,6 +50,9 @@ let UsersRepository = class UsersRepository {
             .select('-password')
             .exec();
     }
+    async findByEmailWithPassword(email) {
+        return this.userModel.findOne({ email }).select('+password').exec();
+    }
     async findByIdWithPopulatedCourses(id) {
         return this.userModel.findById(id).populate('purchasedCourses').exec();
     }

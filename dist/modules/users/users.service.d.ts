@@ -8,6 +8,7 @@ export declare class UsersService {
     constructor(usersRepository: UsersRepository, membershipRepository: OrganizationMembershipRepository);
     create(user: any): Promise<UserDocument>;
     findByEmail(email: string): Promise<UserDocument | null>;
+    findByEmailWithPassword(email: string): Promise<UserDocument | null>;
     findById(id: string): Promise<UserDocument | null>;
     update(id: string, updateData: any): Promise<UserDocument>;
     updatePassword(id: string, newPassword: string): Promise<void>;

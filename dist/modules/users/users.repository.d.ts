@@ -10,5 +10,6 @@ export declare class UsersRepository {
     update(filter: FilterQuery<UserDocument>, update: UpdateQuery<UserDocument>): Promise<UserDocument | null>;
     delete(filter: FilterQuery<UserDocument>): Promise<boolean>;
     searchByEmail(email: string): Promise<UserDocument[]>;
+    findByEmailWithPassword(email: string): Promise<UserDocument | null>;
     findByIdWithPopulatedCourses(id: string): Promise<UserDocument | null>;
 }

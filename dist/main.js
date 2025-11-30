@@ -20,6 +20,11 @@ async function bootstrap() {
         transform: true,
         forbidNonWhitelisted: true,
     }));
+    app.enableCors({
+        origin: true,
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+        credentials: true,
+    });
     app.enableVersioning({
         type: common_1.VersioningType.URI,
         defaultVersion: '1',

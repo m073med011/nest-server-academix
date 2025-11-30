@@ -38,6 +38,11 @@ declare const _default: (() => {
         expirationMinutes: number;
         maxAttempts: number;
     };
+    security: {
+        cookieSecure: boolean;
+        cookieSameSite: string;
+        cookieDomain: string | undefined;
+    };
     cors: {
         origin: string | undefined;
     };
@@ -80,6 +85,11 @@ declare const _default: (() => {
     otp: {
         expirationMinutes: number;
         maxAttempts: number;
+    };
+    security: {
+        cookieSecure: boolean;
+        cookieSameSite: string;
+        cookieDomain: string | undefined;
     };
     cors: {
         origin: string | undefined;

@@ -15,6 +15,38 @@ export declare class AuthService {
     private setAuthCookies;
     login(loginDto: LoginDto, res: Response): Promise<{
         success: boolean;
+        requiresEmailVerification: boolean;
+        user: {
+            id: any;
+            name: any;
+            email: any;
+            role: any;
+            imageProfileUrl?: undefined;
+            emailVerified?: undefined;
+            twoFactorEnabled?: undefined;
+        };
+        message: string;
+        requires2FA?: undefined;
+        token?: undefined;
+        refreshToken?: undefined;
+    } | {
+        success: boolean;
+        requires2FA: boolean;
+        user: {
+            id: any;
+            name: any;
+            email: any;
+            role: any;
+            imageProfileUrl?: undefined;
+            emailVerified?: undefined;
+            twoFactorEnabled?: undefined;
+        };
+        message: string;
+        requiresEmailVerification?: undefined;
+        token?: undefined;
+        refreshToken?: undefined;
+    } | {
+        success: boolean;
         token: string;
         refreshToken: string;
         user: {
@@ -26,8 +58,27 @@ export declare class AuthService {
             emailVerified: any;
             twoFactorEnabled: any;
         };
+        requiresEmailVerification?: undefined;
+        message?: undefined;
+        requires2FA?: undefined;
     }>;
     register(registerDto: RegisterDto, res: Response): Promise<{
+        success: boolean;
+        requires2FA: boolean;
+        user: {
+            id: import("mongoose").Types.ObjectId;
+            name: string;
+            email: string;
+            role: UserRole;
+            imageProfileUrl?: undefined;
+            emailVerified?: undefined;
+            twoFactorEnabled?: undefined;
+        };
+        message: string;
+        token?: undefined;
+        refreshToken?: undefined;
+        requiresEmailVerification?: undefined;
+    } | {
         success: boolean;
         token: string;
         refreshToken: string;
@@ -39,8 +90,9 @@ export declare class AuthService {
             role: UserRole;
             imageProfileUrl: string | undefined;
             emailVerified: boolean;
-            twoFactorEnabled: boolean;
+            twoFactorEnabled: false;
         };
+        requires2FA?: undefined;
         requiresEmailVerification?: undefined;
     } | {
         success: boolean;
@@ -55,12 +107,14 @@ export declare class AuthService {
             twoFactorEnabled?: undefined;
         };
         message: string;
+        requires2FA?: undefined;
         token?: undefined;
         refreshToken?: undefined;
     }>;
     verifyEmail(verifyEmailDto: VerifyEmailDto, res: Response): Promise<{
         success: boolean;
-        token: string;
+        accessToken: string;
+        refreshToken: string;
         user: {
             id: import("mongoose").Types.ObjectId;
             name: string;

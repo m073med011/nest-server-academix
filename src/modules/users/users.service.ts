@@ -27,6 +27,10 @@ export class UsersService {
     return this.usersRepository.findOne({ email });
   }
 
+  async findByEmailWithPassword(email: string): Promise<UserDocument | null> {
+    return this.usersRepository.findByEmailWithPassword(email);
+  }
+
   async findById(id: string): Promise<UserDocument | null> {
     return this.usersRepository.findById(id);
   }

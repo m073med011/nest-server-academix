@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.0",
   "paths": {
-    "/v1": {
+    "/": {
       "get": {
-        "operationId": "AppController_getHello_v1",
+        "operationId": "AppController_getHello",
         "parameters": [],
         "responses": {
           "200": {
@@ -1757,29 +1757,122 @@
     },
     "/v1/otp/generate": {
       "post": {
+        "description": "Generates a secure 6-digit OTP and sends it to the specified email address via Brevo",
         "operationId": "OtpController_generate_v1",
         "parameters": [],
-        "responses": {
-          "201": {
-            "description": ""
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateOtpDto"
+              }
+            }
           }
         },
+        "responses": {
+          "200": {
+            "description": "OTP sent successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "success": true,
+                    "message": "OTP sent to user@example.com"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request data"
+          }
+        },
+        "summary": "Generate and send OTP via email",
         "tags": [
-          "Otp"
+          "OTP"
         ]
       }
     },
     "/v1/otp/verify": {
       "post": {
+        "description": "Verifies the provided OTP code against the stored OTP for the email and purpose",
         "operationId": "OtpController_verify_v1",
         "parameters": [],
-        "responses": {
-          "201": {
-            "description": ""
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyOtpDto"
+              }
+            }
           }
         },
+        "responses": {
+          "200": {
+            "description": "OTP verified successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "success": true,
+                    "message": "OTP verified successfully",
+                    "verified": true
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid OTP or maximum attempts exceeded"
+          },
+          "404": {
+            "description": "OTP not found or expired"
+          }
+        },
+        "summary": "Verify OTP code",
         "tags": [
-          "Otp"
+          "OTP"
+        ]
+      }
+    },
+    "/v1/otp/resend": {
+      "post": {
+        "description": "Generates a new OTP and sends it to the email address. Previous OTP will be invalidated",
+        "operationId": "OtpController_resend_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResendOtpDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OTP resent successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "success": true,
+                    "message": "OTP sent to user@example.com"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request data"
+          }
+        },
+        "summary": "Resend OTP code",
+        "tags": [
+          "OTP"
         ]
       }
     },
@@ -3184,6 +3277,86 @@
         },
         "required": [
           "role"
+        ]
+      },
+      "GenerateOtpDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@example.com",
+            "description": "Email address to send OTP to"
+          },
+          "purpose": {
+            "type": "string",
+            "example": "email_verification",
+            "enum": [
+              "password_reset",
+              "email_verification",
+              "login_verification"
+            ],
+            "description": "Purpose of the OTP"
+          }
+        },
+        "required": [
+          "email",
+          "purpose"
+        ]
+      },
+      "VerifyOtpDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@example.com",
+            "description": "Email address associated with OTP"
+          },
+          "code": {
+            "type": "string",
+            "example": "123456",
+            "description": "6-digit OTP code",
+            "minLength": 6,
+            "maxLength": 6
+          },
+          "purpose": {
+            "type": "string",
+            "example": "email_verification",
+            "enum": [
+              "password_reset",
+              "email_verification",
+              "login_verification"
+            ],
+            "description": "Purpose of the OTP"
+          }
+        },
+        "required": [
+          "email",
+          "code",
+          "purpose"
+        ]
+      },
+      "ResendOtpDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@example.com",
+            "description": "Email address to resend OTP to"
+          },
+          "purpose": {
+            "type": "string",
+            "example": "email_verification",
+            "enum": [
+              "password_reset",
+              "email_verification",
+              "login_verification"
+            ],
+            "description": "Purpose of the OTP"
+          }
+        },
+        "required": [
+          "email",
+          "purpose"
         ]
       }
     }

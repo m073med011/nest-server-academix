@@ -15,7 +15,7 @@ export class BrevoService {
 
   constructor(private readonly configService: ConfigService) {
     this.apiInstance = new TransactionalEmailsApi();
-    const apiKey = this.configService.get<string>('brevo.apiKey');
+    const apiKey = this.configService.get<string>('app.brevo.apiKey');
     if (apiKey) {
       this.apiInstance.setApiKey(0, apiKey);
     } else {
@@ -28,9 +28,9 @@ export class BrevoService {
     code: string,
     purpose: OtpPurpose,
   ): Promise<void> {
-    const apiKey = this.configService.get<string>('brevo.apiKey');
-    const senderEmail = this.configService.get<string>('brevo.senderEmail');
-    const senderName = this.configService.get<string>('brevo.senderName');
+    const apiKey = this.configService.get<string>('app.brevo.apiKey');
+    const senderEmail = this.configService.get<string>('app.brevo.senderEmail');
+    const senderName = this.configService.get<string>('app.brevo.senderName');
 
     if (!apiKey || !senderEmail) {
       this.logger.error('Brevo configuration missing');
@@ -108,38 +108,170 @@ export class BrevoService {
   private getEmailVerificationTemplate(code: string): string {
     return `
       <!DOCTYPE html>
-      <html>
+      <html lang="en">
       <head>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>Email Verification - Academix</title>
         <style>
-          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: #3b82f6; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
-          .content { background: #f8fafc; padding: 30px; border-radius: 0 0 8px 8px; }
-          .otp-code { font-size: 32px; font-weight: bold; color: #3b82f6; text-align: center; margin: 20px 0; padding: 20px; background: white; border-radius: 8px; letter-spacing: 4px; }
-          .footer { text-align: center; margin-top: 20px; color: #666; font-size: 14px; }
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #1f2937;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+          }
+          .email-wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+          }
+          .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 48px 40px;
+            text-align: center;
+          }
+          .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.5px;
+          }
+          .header p {
+            margin-top: 8px;
+            font-size: 16px;
+            opacity: 0.95;
+            font-weight: 400;
+          }
+          .content {
+            padding: 48px 40px;
+            background: #ffffff;
+          }
+          .content h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 16px;
+            letter-spacing: -0.3px;
+          }
+          .content p {
+            font-size: 16px;
+            color: #4b5563;
+            margin-bottom: 24px;
+            line-height: 1.7;
+          }
+          .otp-container {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            border-radius: 12px;
+            padding: 32px;
+            margin: 32px 0;
+            text-align: center;
+            border: 2px dashed #d1d5db;
+          }
+          .otp-label {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #6b7280;
+            margin-bottom: 12px;
+          }
+          .otp-code {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 8px;
+            font-family: 'Courier New', monospace;
+            user-select: all;
+          }
+          .warning-box {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin: 24px 0;
+          }
+          .warning-box p {
+            margin: 0;
+            color: #92400e;
+            font-size: 14px;
+            font-weight: 500;
+          }
+          .info-box {
+            background: #f0f9ff;
+            border-left: 4px solid #3b82f6;
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin: 24px 0;
+          }
+          .info-box p {
+            margin: 0;
+            color: #1e40af;
+            font-size: 14px;
+          }
+          .footer {
+            background: #f9fafb;
+            text-align: center;
+            padding: 32px 40px;
+            border-top: 1px solid #e5e7eb;
+          }
+          .footer p {
+            color: #6b7280;
+            font-size: 13px;
+            margin: 0;
+            line-height: 1.6;
+          }
+          .footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+          }
+          @media only screen and (max-width: 600px) {
+            body { padding: 20px 10px; }
+            .header, .content, .footer { padding: 32px 24px; }
+            .header h1 { font-size: 24px; }
+            .content h2 { font-size: 20px; }
+            .otp-code { font-size: 32px; letter-spacing: 6px; }
+          }
         </style>
       </head>
       <body>
-        <div class="container">
+        <div class="email-wrapper">
           <div class="header">
-            <h1>Welcome to Academix!</h1>
+            <h1>🎓 Welcome to Academix!</h1>
+            <p>Verify your email to get started</p>
           </div>
           <div class="content">
-            <h2>Verify Your Email Address</h2>
-            <p>Thank you for signing up with Academix. To complete your registration, please verify your email address using the code below:</p>
-            
-            <div class="otp-code">${code}</div>
-            
-            <p><strong>This code will expire in 10 minutes.</strong></p>
-            
-            <p>If you didn't create an account with Academix, please ignore this email.</p>
-            
-            <p>Best regards,<br>The Academix Team</p>
+            <h2>Email Verification</h2>
+            <p>Thank you for joining Academix! We're excited to have you on board. To complete your registration and unlock all features, please verify your email address using the code below:</p>
+
+            <div class="otp-container">
+              <div class="otp-label">Your Verification Code</div>
+              <div class="otp-code">${code}</div>
+            </div>
+
+            <div class="warning-box">
+              <p>⏱️ This code will expire in 10 minutes for security reasons.</p>
+            </div>
+
+            <div class="info-box">
+              <p>🔒 If you didn't create an account with Academix, you can safely ignore this email. Your security is our priority.</p>
+            </div>
+
+            <p style="margin-top: 32px; color: #111827; font-weight: 500;">Best regards,<br>The Academix Team</p>
           </div>
           <div class="footer">
-            <p>This is an automated message. Please do not reply to this email.</p>
+            <p>This is an automated message, please do not reply to this email.</p>
+            <p style="margin-top: 8px;">Need help? <a href="mailto:support@academix.com">Contact Support</a></p>
           </div>
         </div>
       </body>
@@ -150,38 +282,171 @@ export class BrevoService {
   private getTwoFactorAuthTemplate(code: string): string {
     return `
       <!DOCTYPE html>
-      <html>
+      <html lang="en">
       <head>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>Two-Factor Authentication - Academix</title>
         <style>
-          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: #10b981; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
-          .content { background: #f8fafc; padding: 30px; border-radius: 0 0 8px 8px; }
-          .otp-code { font-size: 32px; font-weight: bold; color: #10b981; text-align: center; margin: 20px 0; padding: 20px; background: white; border-radius: 8px; letter-spacing: 4px; }
-          .footer { text-align: center; margin-top: 20px; color: #666; font-size: 14px; }
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #1f2937;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            padding: 40px 20px;
+          }
+          .email-wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+          }
+          .header {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 48px 40px;
+            text-align: center;
+          }
+          .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.5px;
+          }
+          .header p {
+            margin-top: 8px;
+            font-size: 16px;
+            opacity: 0.95;
+            font-weight: 400;
+          }
+          .content {
+            padding: 48px 40px;
+            background: #ffffff;
+          }
+          .content h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 16px;
+            letter-spacing: -0.3px;
+          }
+          .content p {
+            font-size: 16px;
+            color: #4b5563;
+            margin-bottom: 24px;
+            line-height: 1.7;
+          }
+          .otp-container {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border-radius: 12px;
+            padding: 32px;
+            margin: 32px 0;
+            text-align: center;
+            border: 2px dashed #6ee7b7;
+          }
+          .otp-label {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #065f46;
+            margin-bottom: 12px;
+          }
+          .otp-code {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 8px;
+            font-family: 'Courier New', monospace;
+            user-select: all;
+          }
+          .alert-box {
+            background: #fee2e2;
+            border-left: 4px solid #ef4444;
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin: 24px 0;
+          }
+          .alert-box p {
+            margin: 0;
+            color: #991b1b;
+            font-size: 14px;
+            font-weight: 500;
+          }
+          .warning-box {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin: 24px 0;
+          }
+          .warning-box p {
+            margin: 0;
+            color: #92400e;
+            font-size: 14px;
+            font-weight: 500;
+          }
+          .footer {
+            background: #f9fafb;
+            text-align: center;
+            padding: 32px 40px;
+            border-top: 1px solid #e5e7eb;
+          }
+          .footer p {
+            color: #6b7280;
+            font-size: 13px;
+            margin: 0;
+            line-height: 1.6;
+          }
+          .footer a {
+            color: #10b981;
+            text-decoration: none;
+            font-weight: 500;
+          }
+          @media only screen and (max-width: 600px) {
+            body { padding: 20px 10px; }
+            .header, .content, .footer { padding: 32px 24px; }
+            .header h1 { font-size: 24px; }
+            .content h2 { font-size: 20px; }
+            .otp-code { font-size: 32px; letter-spacing: 6px; }
+          }
         </style>
       </head>
       <body>
-        <div class="container">
+        <div class="email-wrapper">
           <div class="header">
-            <h1>Two-Factor Authentication</h1>
+            <h1>🔐 Two-Factor Authentication</h1>
+            <p>Secure your account access</p>
           </div>
           <div class="content">
-            <h2>Your Security Code</h2>
-            <p>Someone is trying to sign in to your Academix account. For your security, please use the code below to complete the sign-in process:</p>
-            
-            <div class="otp-code">${code}</div>
-            
-            <p><strong>This code will expire in 10 minutes.</strong></p>
-            
-            <p>If you didn't try to sign in, please secure your account immediately by changing your password.</p>
-            
-            <p>Best regards,<br>The Academix Security Team</p>
+            <h2>Security Verification Required</h2>
+            <p>Someone is attempting to sign in to your Academix account. For your protection, please use the verification code below to complete the sign-in process:</p>
+
+            <div class="otp-container">
+              <div class="otp-label">Your Security Code</div>
+              <div class="otp-code">${code}</div>
+            </div>
+
+            <div class="warning-box">
+              <p>⏱️ This code will expire in 10 minutes for security reasons.</p>
+            </div>
+
+            <div class="alert-box">
+              <p>⚠️ If you didn't attempt to sign in, please secure your account immediately by changing your password and enabling additional security measures.</p>
+            </div>
+
+            <p style="margin-top: 32px; color: #111827; font-weight: 500;">Stay secure,<br>The Academix Security Team</p>
           </div>
           <div class="footer">
-            <p>This is an automated message. Please do not reply to this email.</p>
+            <p>This is an automated security message, please do not reply to this email.</p>
+            <p style="margin-top: 8px;">Security concerns? <a href="mailto:security@academix.com">Contact Security Team</a></p>
           </div>
         </div>
       </body>
@@ -192,38 +457,170 @@ export class BrevoService {
   private getPasswordResetTemplate(code: string): string {
     return `
       <!DOCTYPE html>
-      <html>
+      <html lang="en">
       <head>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>Password Reset - Academix</title>
         <style>
-          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: #ef4444; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
-          .content { background: #f8fafc; padding: 30px; border-radius: 0 0 8px 8px; }
-          .otp-code { font-size: 32px; font-weight: bold; color: #ef4444; text-align: center; margin: 20px 0; padding: 20px; background: white; border-radius: 8px; letter-spacing: 4px; }
-          .footer { text-align: center; margin-top: 20px; color: #666; font-size: 14px; }
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #1f2937;
+            background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+            padding: 40px 20px;
+          }
+          .email-wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+          }
+          .header {
+            background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+            color: white;
+            padding: 48px 40px;
+            text-align: center;
+          }
+          .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.5px;
+          }
+          .header p {
+            margin-top: 8px;
+            font-size: 16px;
+            opacity: 0.95;
+            font-weight: 400;
+          }
+          .content {
+            padding: 48px 40px;
+            background: #ffffff;
+          }
+          .content h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 16px;
+            letter-spacing: -0.3px;
+          }
+          .content p {
+            font-size: 16px;
+            color: #4b5563;
+            margin-bottom: 24px;
+            line-height: 1.7;
+          }
+          .otp-container {
+            background: linear-gradient(135deg, #fecdd3 0%, #fda4af 100%);
+            border-radius: 12px;
+            padding: 32px;
+            margin: 32px 0;
+            text-align: center;
+            border: 2px dashed #fb7185;
+          }
+          .otp-label {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #881337;
+            margin-bottom: 12px;
+          }
+          .otp-code {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 8px;
+            font-family: 'Courier New', monospace;
+            user-select: all;
+          }
+          .warning-box {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin: 24px 0;
+          }
+          .warning-box p {
+            margin: 0;
+            color: #92400e;
+            font-size: 14px;
+            font-weight: 500;
+          }
+          .info-box {
+            background: #f0f9ff;
+            border-left: 4px solid #3b82f6;
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin: 24px 0;
+          }
+          .info-box p {
+            margin: 0;
+            color: #1e40af;
+            font-size: 14px;
+          }
+          .footer {
+            background: #f9fafb;
+            text-align: center;
+            padding: 32px 40px;
+            border-top: 1px solid #e5e7eb;
+          }
+          .footer p {
+            color: #6b7280;
+            font-size: 13px;
+            margin: 0;
+            line-height: 1.6;
+          }
+          .footer a {
+            color: #f43f5e;
+            text-decoration: none;
+            font-weight: 500;
+          }
+          @media only screen and (max-width: 600px) {
+            body { padding: 20px 10px; }
+            .header, .content, .footer { padding: 32px 24px; }
+            .header h1 { font-size: 24px; }
+            .content h2 { font-size: 20px; }
+            .otp-code { font-size: 32px; letter-spacing: 6px; }
+          }
         </style>
       </head>
       <body>
-        <div class="container">
+        <div class="email-wrapper">
           <div class="header">
-            <h1>Password Reset Request</h1>
+            <h1>🔑 Password Reset Request</h1>
+            <p>Reset your account password</p>
           </div>
           <div class="content">
             <h2>Reset Your Password</h2>
-            <p>We received a request to reset your Academix account password. Use the code below to verify your identity and reset your password:</p>
-            
-            <div class="otp-code">${code}</div>
-            
-            <p><strong>This code will expire in 10 minutes.</strong></p>
-            
-            <p>If you didn't request a password reset, please ignore this email. Your password will remain unchanged.</p>
-            
-            <p>Best regards,<br>The Academix Team</p>
+            <p>We received a request to reset your Academix account password. To proceed with resetting your password, please use the verification code below:</p>
+
+            <div class="otp-container">
+              <div class="otp-label">Your Reset Code</div>
+              <div class="otp-code">${code}</div>
+            </div>
+
+            <div class="warning-box">
+              <p>⏱️ This code will expire in 10 minutes for security reasons.</p>
+            </div>
+
+            <div class="info-box">
+              <p>💡 If you didn't request a password reset, you can safely ignore this email. Your password will remain unchanged and your account stays secure.</p>
+            </div>
+
+            <p style="margin-top: 32px; color: #111827; font-weight: 500;">Best regards,<br>The Academix Team</p>
           </div>
           <div class="footer">
-            <p>This is an automated message. Please do not reply to this email.</p>
+            <p>This is an automated message, please do not reply to this email.</p>
+            <p style="margin-top: 8px;">Need help? <a href="mailto:support@academix.com">Contact Support</a></p>
           </div>
         </div>
       </body>
@@ -234,38 +631,170 @@ export class BrevoService {
   private getDefaultTemplate(code: string): string {
     return `
       <!DOCTYPE html>
-      <html>
+      <html lang="en">
       <head>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>Verification Code - Academix</title>
         <style>
-          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: #6b7280; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
-          .content { background: #f8fafc; padding: 30px; border-radius: 0 0 8px 8px; }
-          .otp-code { font-size: 32px; font-weight: bold; color: #6b7280; text-align: center; margin: 20px 0; padding: 20px; background: white; border-radius: 8px; letter-spacing: 4px; }
-          .footer { text-align: center; margin-top: 20px; color: #666; font-size: 14px; }
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #1f2937;
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            padding: 40px 20px;
+          }
+          .email-wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+          }
+          .header {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+            padding: 48px 40px;
+            text-align: center;
+          }
+          .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.5px;
+          }
+          .header p {
+            margin-top: 8px;
+            font-size: 16px;
+            opacity: 0.95;
+            font-weight: 400;
+          }
+          .content {
+            padding: 48px 40px;
+            background: #ffffff;
+          }
+          .content h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 16px;
+            letter-spacing: -0.3px;
+          }
+          .content p {
+            font-size: 16px;
+            color: #4b5563;
+            margin-bottom: 24px;
+            line-height: 1.7;
+          }
+          .otp-container {
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+            border-radius: 12px;
+            padding: 32px;
+            margin: 32px 0;
+            text-align: center;
+            border: 2px dashed #a5b4fc;
+          }
+          .otp-label {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #3730a3;
+            margin-bottom: 12px;
+          }
+          .otp-code {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 8px;
+            font-family: 'Courier New', monospace;
+            user-select: all;
+          }
+          .warning-box {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin: 24px 0;
+          }
+          .warning-box p {
+            margin: 0;
+            color: #92400e;
+            font-size: 14px;
+            font-weight: 500;
+          }
+          .info-box {
+            background: #f0f9ff;
+            border-left: 4px solid #3b82f6;
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin: 24px 0;
+          }
+          .info-box p {
+            margin: 0;
+            color: #1e40af;
+            font-size: 14px;
+          }
+          .footer {
+            background: #f9fafb;
+            text-align: center;
+            padding: 32px 40px;
+            border-top: 1px solid #e5e7eb;
+          }
+          .footer p {
+            color: #6b7280;
+            font-size: 13px;
+            margin: 0;
+            line-height: 1.6;
+          }
+          .footer a {
+            color: #6366f1;
+            text-decoration: none;
+            font-weight: 500;
+          }
+          @media only screen and (max-width: 600px) {
+            body { padding: 20px 10px; }
+            .header, .content, .footer { padding: 32px 24px; }
+            .header h1 { font-size: 24px; }
+            .content h2 { font-size: 20px; }
+            .otp-code { font-size: 32px; letter-spacing: 6px; }
+          }
         </style>
       </head>
       <body>
-        <div class="container">
+        <div class="email-wrapper">
           <div class="header">
-            <h1>Academix Verification</h1>
+            <h1>✉️ Academix Verification</h1>
+            <p>Secure verification code</p>
           </div>
           <div class="content">
             <h2>Your Verification Code</h2>
-            <p>Please use the code below to complete your request:</p>
-            
-            <div class="otp-code">${code}</div>
-            
-            <p><strong>This code will expire in 10 minutes.</strong></p>
-            
-            <p>If you didn't request this code, please ignore this email.</p>
-            
-            <p>Best regards,<br>The Academix Team</p>
+            <p>We've received a request that requires verification. Please use the code below to complete your request:</p>
+
+            <div class="otp-container">
+              <div class="otp-label">Verification Code</div>
+              <div class="otp-code">${code}</div>
+            </div>
+
+            <div class="warning-box">
+              <p>⏱️ This code will expire in 10 minutes for security reasons.</p>
+            </div>
+
+            <div class="info-box">
+              <p>🔒 If you didn't request this code, you can safely ignore this email.</p>
+            </div>
+
+            <p style="margin-top: 32px; color: #111827; font-weight: 500;">Best regards,<br>The Academix Team</p>
           </div>
           <div class="footer">
-            <p>This is an automated message. Please do not reply to this email.</p>
+            <p>This is an automated message, please do not reply to this email.</p>
+            <p style="margin-top: 8px;">Need help? <a href="mailto:support@academix.com">Contact Support</a></p>
           </div>
         </div>
       </body>

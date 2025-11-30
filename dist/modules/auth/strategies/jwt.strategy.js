@@ -14,25 +14,32 @@ const passport_jwt_1 = require("passport-jwt");
 const passport_1 = require("@nestjs/passport");
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
+const users_service_1 = require("../../users/users.service");
 let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(passport_jwt_1.Strategy) {
-    constructor(configService) {
+    usersService;
+    constructor(configService, usersService) {
         super({
             jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
             secretOrKey: configService.get('app.jwt.secret'),
         });
+        this.usersService = usersService;
     }
     async validate(payload) {
-        return {
-            userId: payload.sub,
-            username: payload.username,
-            role: payload.role,
-        };
+        console.log("JwtStrategy: Validating payload", payload);
+        const user = await this.usersService.findById(payload.sub);
+        if (!user) {
+            console.log("JwtStrategy: User not found for sub", payload.sub);
+            return null;
+        }
+        console.log("JwtStrategy: User found", user._id);
+        return user;
     }
 };
 exports.JwtStrategy = JwtStrategy;
 exports.JwtStrategy = JwtStrategy = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [config_1.ConfigService])
+    __metadata("design:paramtypes", [config_1.ConfigService,
+        users_service_1.UsersService])
 ], JwtStrategy);
 //# sourceMappingURL=jwt.strategy.js.map

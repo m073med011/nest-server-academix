@@ -26,6 +26,9 @@ let UsersService = class UsersService {
     async findByEmail(email) {
         return this.usersRepository.findOne({ email });
     }
+    async findByEmailWithPassword(email) {
+        return this.usersRepository.findByEmailWithPassword(email);
+    }
     async findById(id) {
         return this.usersRepository.findById(id);
     }

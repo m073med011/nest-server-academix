@@ -47,6 +47,10 @@ export class UsersRepository {
       .exec();
   }
 
+  async findByEmailWithPassword(email: string): Promise<UserDocument | null> {
+    return this.userModel.findOne({ email }).select('+password').exec();
+  }
+
   async findByIdWithPopulatedCourses(id: string): Promise<UserDocument | null> {
     return this.userModel.findById(id).populate('purchasedCourses').exec();
   }

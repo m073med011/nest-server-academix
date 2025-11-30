@@ -9,16 +9,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.OtpModule = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
+const config_1 = require("@nestjs/config");
 const otp_controller_1 = require("./otp.controller");
 const otp_service_1 = require("./otp.service");
 const otp_repository_1 = require("./otp.repository");
 const otp_schema_1 = require("./schemas/otp.schema");
+const email_module_1 = require("../email/email.module");
 let OtpModule = class OtpModule {
 };
 exports.OtpModule = OtpModule;
 exports.OtpModule = OtpModule = __decorate([
     (0, common_1.Module)({
-        imports: [mongoose_1.MongooseModule.forFeature([{ name: otp_schema_1.Otp.name, schema: otp_schema_1.OtpSchema }])],
+        imports: [
+            mongoose_1.MongooseModule.forFeature([{ name: otp_schema_1.Otp.name, schema: otp_schema_1.OtpSchema }]),
+            config_1.ConfigModule,
+            email_module_1.EmailModule,
+        ],
         controllers: [otp_controller_1.OtpController],
         providers: [otp_service_1.OtpService, otp_repository_1.OtpRepository],
         exports: [otp_service_1.OtpService],

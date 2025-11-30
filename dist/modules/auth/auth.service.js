@@ -29,7 +29,7 @@ let AuthService = class AuthService {
         this.otpService = otpService;
     }
     async validateUser(email, pass) {
-        const user = await this.usersService.findByEmail(email);
+        const user = await this.usersService.findByEmailWithPassword(email);
         if (user && (await user.matchPassword(pass))) {
             const { password, ...result } = user.toObject();
             return result;
@@ -41,19 +41,19 @@ let AuthService = class AuthService {
         const refreshToken = this.jwtService.sign({ sub: userId }, { expiresIn: '7d' });
         res.cookie('refresh_token', refreshToken, {
             httpOnly: true,
-            secure: this.configService.get('security.cookieSecure'),
-            sameSite: this.configService.get('security.cookieSameSite'),
+            secure: this.configService.get('app.security.cookieSecure'),
+            sameSite: this.configService.get('app.security.cookieSameSite'),
             path: '/',
-            domain: this.configService.get('security.cookieDomain'),
+            domain: this.configService.get('app.security.cookieDomain'),
             maxAge: 7 * 24 * 60 * 60 * 1000,
         });
         const csrfToken = crypto.randomBytes(32).toString('hex');
         res.cookie('XSRF-TOKEN', csrfToken, {
             httpOnly: false,
-            secure: this.configService.get('security.cookieSecure'),
-            sameSite: this.configService.get('security.cookieSameSite'),
+            secure: this.configService.get('app.security.cookieSecure'),
+            sameSite: this.configService.get('app.security.cookieSameSite'),
             path: '/',
-            domain: this.configService.get('security.cookieDomain'),
+            domain: this.configService.get('app.security.cookieDomain'),
         });
         return { accessToken, refreshToken, csrfToken };
     }
@@ -61,6 +61,34 @@ let AuthService = class AuthService {
         const user = await this.validateUser(loginDto.email, loginDto.password);
         if (!user) {
             throw new common_1.UnauthorizedException('Invalid credentials');
+        }
+        if (!user.emailVerified) {
+            await this.otpService.generateOtp(user.email, 'email_verification');
+            return {
+                success: true,
+                requiresEmailVerification: true,
+                user: {
+                    id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    role: user.role,
+                },
+                message: 'Please verify your email.',
+            };
+        }
+        if (user.twoFactorEnabled) {
+            await this.otpService.generateOtp(user.email, 'two_factor');
+            return {
+                success: true,
+                requires2FA: true,
+                user: {
+                    id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    role: user.role,
+                },
+                message: '2FA verification required.',
+            };
         }
         const { accessToken, refreshToken } = this.setAuthCookies(res, user._id.toString());
         return {
@@ -81,27 +109,45 @@ let AuthService = class AuthService {
     async register(registerDto, res) {
         const existingUser = await this.usersService.findByEmail(registerDto.email);
         if (existingUser) {
+            if (registerDto.isOAuthUser) {
+                if (existingUser.twoFactorEnabled) {
+                    await this.otpService.generateOtp(existingUser.email, 'two_factor');
+                    return {
+                        success: true,
+                        requires2FA: true,
+                        user: {
+                            id: existingUser._id,
+                            name: existingUser.name,
+                            email: existingUser.email,
+                            role: existingUser.role,
+                        },
+                        message: '2FA verification required.',
+                    };
+                }
+                const { accessToken, refreshToken } = this.setAuthCookies(res, existingUser._id.toString());
+                return {
+                    success: true,
+                    token: accessToken,
+                    refreshToken,
+                    message: 'Logged in successfully',
+                    user: {
+                        id: existingUser._id,
+                        name: existingUser.name,
+                        email: existingUser.email,
+                        role: existingUser.role,
+                        imageProfileUrl: existingUser.imageProfileUrl,
+                        emailVerified: existingUser.emailVerified,
+                        twoFactorEnabled: existingUser.twoFactorEnabled,
+                    },
+                };
+            }
             throw new common_1.BadRequestException('User already exists');
         }
-        const user = await this.usersService.create(registerDto);
-        if (registerDto.isOAuthUser) {
-            const { accessToken, refreshToken } = this.setAuthCookies(res, user._id.toString());
-            return {
-                success: true,
-                token: accessToken,
-                refreshToken,
-                message: 'Account created successfully',
-                user: {
-                    id: user._id,
-                    name: user.name,
-                    email: user.email,
-                    role: user.role,
-                    imageProfileUrl: user.imageProfileUrl,
-                    emailVerified: user.emailVerified,
-                    twoFactorEnabled: user.twoFactorEnabled,
-                },
-            };
+        if (registerDto.isOAuthUser && !registerDto.role) {
+            registerDto.role = user_schema_1.UserRole.GUEST;
         }
+        const user = await this.usersService.create(registerDto);
+        await this.otpService.generateOtp(user.email, 'email_verification');
         return {
             success: true,
             requiresEmailVerification: true,
@@ -115,6 +161,9 @@ let AuthService = class AuthService {
         };
     }
     async verifyEmail(verifyEmailDto, res) {
+        const isValid = await this.otpService.verifyOtp(verifyEmailDto.email, verifyEmailDto.otp, 'email_verification');
+        if (!isValid.verified)
+            throw new common_1.BadRequestException('Invalid OTP');
         const user = await this.usersService.findByEmail(verifyEmailDto.email);
         if (!user)
             throw new common_1.NotFoundException('User not found');
@@ -124,7 +173,8 @@ let AuthService = class AuthService {
         const { accessToken, refreshToken } = this.setAuthCookies(res, user._id.toString());
         return {
             success: true,
-            token: accessToken,
+            accessToken,
+            refreshToken,
             user: {
                 id: user._id,
                 name: user.name,
@@ -139,9 +189,13 @@ let AuthService = class AuthService {
         if (!user) {
             return { success: true, message: 'If email exists, OTP sent' };
         }
+        await this.otpService.generateOtp(user.email, 'password_reset');
         return { success: true, message: 'If email exists, OTP sent' };
     }
     async resetPassword(resetPasswordDto) {
+        const isValid = await this.otpService.verifyOtp(resetPasswordDto.email, resetPasswordDto.otp, 'password_reset');
+        if (!isValid.verified)
+            throw new common_1.BadRequestException('Invalid OTP');
         const user = await this.usersService.findByEmail(resetPasswordDto.email);
         if (!user)
             throw new common_1.NotFoundException('User not found');
@@ -242,7 +296,7 @@ let AuthService = class AuthService {
                 imageProfileUrl: picture,
                 provider,
                 isOAuthUser: true,
-                role: user_schema_1.UserRole.STUDENT,
+                role: user_schema_1.UserRole.GUEST,
                 emailVerified: true,
                 password: '',
             });
