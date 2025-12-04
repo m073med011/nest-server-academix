@@ -13,6 +13,7 @@ const cart_controller_1 = require("./cart.controller");
 const cart_service_1 = require("./cart.service");
 const cart_repository_1 = require("./cart.repository");
 const cart_schema_1 = require("./schemas/cart.schema");
+const courses_module_1 = require("../courses/courses.module");
 let CartModule = class CartModule {
 };
 exports.CartModule = CartModule;
@@ -20,6 +21,7 @@ exports.CartModule = CartModule = __decorate([
     (0, common_1.Module)({
         imports: [
             mongoose_1.MongooseModule.forFeature([{ name: cart_schema_1.Cart.name, schema: cart_schema_1.CartSchema }]),
+            (0, common_1.forwardRef)(() => courses_module_1.CoursesModule),
         ],
         controllers: [cart_controller_1.CartController],
         providers: [cart_service_1.CartService, cart_repository_1.CartRepository],

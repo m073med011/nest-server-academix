@@ -26,6 +26,10 @@ export declare class CoursesService {
         message: string;
         data: import("./schemas/course.schema").Course;
     }>;
+    unenroll(courseId: string, userId: string): Promise<{
+        message: string;
+        data: import("./schemas/course.schema").Course;
+    }>;
     getUserPurchasedCourses(userId: string): Promise<{
         success: boolean;
         data: any[];

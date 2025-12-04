@@ -1243,6 +1243,35 @@
         ]
       }
     },
+    "/v1/courses/{id}/unenroll": {
+      "delete": {
+        "operationId": "CoursesController_unenroll_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Unenrolled successfully."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Unenroll from course (for testing)",
+        "tags": [
+          "courses"
+        ]
+      }
+    },
     "/v1/courses/{id}/editors": {
       "post": {
         "operationId": "CoursesController_addEditor_v1",
@@ -1319,6 +1348,96 @@
         ]
       }
     },
+    "/v1/payments/checkout": {
+      "post": {
+        "operationId": "PaymentsController_initiateCheckout_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckoutDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckoutResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Initiate checkout process",
+        "tags": [
+          "payments"
+        ]
+      }
+    },
+    "/v1/payments/verify/{paymentId}": {
+      "post": {
+        "operationId": "PaymentsController_manuallyVerifyPayment_v1",
+        "parameters": [
+          {
+            "name": "paymentId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Payment verified and completed"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Manually verify and complete payment (fallback for webhook)",
+        "tags": [
+          "payments"
+        ]
+      }
+    },
+    "/v1/payments/webhook": {
+      "post": {
+        "operationId": "PaymentsController_handleWebhook_v1",
+        "parameters": [
+          {
+            "name": "hmac",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Webhook processed successfully"
+          }
+        },
+        "summary": "Handle Paymob webhook",
+        "tags": [
+          "payments"
+        ]
+      }
+    },
     "/v1/payments": {
       "post": {
         "operationId": "PaymentsController_create_v1",
@@ -1329,7 +1448,7 @@
           }
         },
         "tags": [
-          "Payments"
+          "payments"
         ]
       },
       "get": {
@@ -1340,8 +1459,14 @@
             "description": ""
           }
         },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get user payment history",
         "tags": [
-          "Payments"
+          "payments"
         ]
       }
     },
@@ -1363,8 +1488,14 @@
             "description": ""
           }
         },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get payment details",
         "tags": [
-          "Payments"
+          "payments"
         ]
       },
       "patch": {
@@ -1385,7 +1516,7 @@
           }
         },
         "tags": [
-          "Payments"
+          "payments"
         ]
       },
       "delete": {
@@ -1406,7 +1537,361 @@
           }
         },
         "tags": [
-          "Payments"
+          "payments"
+        ]
+      }
+    },
+    "/v1/cart": {
+      "get": {
+        "operationId": "CartController_getCart_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Cart"
+        ]
+      },
+      "delete": {
+        "operationId": "CartController_clearCart_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Cart"
+        ]
+      }
+    },
+    "/v1/cart/items": {
+      "post": {
+        "operationId": "CartController_addItem_v1",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Cart"
+        ]
+      },
+      "delete": {
+        "operationId": "CartController_removeMultipleItems_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Cart"
+        ]
+      }
+    },
+    "/v1/cart/items/{courseId}": {
+      "delete": {
+        "operationId": "CartController_removeItem_v1",
+        "parameters": [
+          {
+            "name": "courseId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Cart"
+        ]
+      }
+    },
+    "/v1/discounts": {
+      "post": {
+        "operationId": "DiscountController_create_v1",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create discount code",
+        "tags": [
+          "discounts"
+        ]
+      },
+      "get": {
+        "operationId": "DiscountController_findAll_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get all discount codes",
+        "tags": [
+          "discounts"
+        ]
+      }
+    },
+    "/v1/discounts/{id}": {
+      "get": {
+        "operationId": "DiscountController_findOne_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get discount by ID",
+        "tags": [
+          "discounts"
+        ]
+      },
+      "patch": {
+        "operationId": "DiscountController_update_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update discount code",
+        "tags": [
+          "discounts"
+        ]
+      },
+      "delete": {
+        "operationId": "DiscountController_remove_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Delete discount code",
+        "tags": [
+          "discounts"
+        ]
+      }
+    },
+    "/v1/discounts/code/{code}": {
+      "get": {
+        "operationId": "DiscountController_findByCode_v1",
+        "parameters": [
+          {
+            "name": "code",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get discount by code",
+        "tags": [
+          "discounts"
+        ]
+      }
+    },
+    "/v1/discounts/validate": {
+      "post": {
+        "operationId": "DiscountController_validateDiscount_v1",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Validate discount code and calculate discount (public endpoint)",
+        "tags": [
+          "discounts"
+        ]
+      }
+    },
+    "/v1/invoices": {
+      "post": {
+        "operationId": "InvoiceController_create_v1",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Invoice"
+        ]
+      },
+      "get": {
+        "operationId": "InvoiceController_findAll_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Invoice"
+        ]
+      }
+    },
+    "/v1/invoices/{id}": {
+      "get": {
+        "operationId": "InvoiceController_findOne_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Invoice"
+        ]
+      },
+      "patch": {
+        "operationId": "InvoiceController_update_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Invoice"
+        ]
+      },
+      "delete": {
+        "operationId": "InvoiceController_remove_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Invoice"
+        ]
+      }
+    },
+    "/v1/invoices/number/{invoiceNumber}": {
+      "get": {
+        "operationId": "InvoiceController_findByInvoiceNumber_v1",
+        "parameters": [
+          {
+            "name": "invoiceNumber",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Invoice"
         ]
       }
     },
@@ -1990,81 +2475,6 @@
         ]
       }
     },
-    "/v1/cart": {
-      "get": {
-        "operationId": "CartController_getCart_v1",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Cart"
-        ]
-      },
-      "delete": {
-        "operationId": "CartController_clearCart_v1",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Cart"
-        ]
-      }
-    },
-    "/v1/cart/items": {
-      "post": {
-        "operationId": "CartController_addItem_v1",
-        "parameters": [],
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Cart"
-        ]
-      },
-      "delete": {
-        "operationId": "CartController_removeMultipleItems_v1",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Cart"
-        ]
-      }
-    },
-    "/v1/cart/items/{courseId}": {
-      "delete": {
-        "operationId": "CartController_removeItem_v1",
-        "parameters": [
-          {
-            "name": "courseId",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Cart"
-        ]
-      }
-    },
     "/v1/chat": {
       "post": {
         "operationId": "ChatController_create_v1",
@@ -2153,234 +2563,6 @@
         },
         "tags": [
           "Chat"
-        ]
-      }
-    },
-    "/v1/discounts": {
-      "post": {
-        "operationId": "DiscountController_create_v1",
-        "parameters": [],
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Discount"
-        ]
-      },
-      "get": {
-        "operationId": "DiscountController_findAll_v1",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Discount"
-        ]
-      }
-    },
-    "/v1/discounts/{id}": {
-      "get": {
-        "operationId": "DiscountController_findOne_v1",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Discount"
-        ]
-      },
-      "patch": {
-        "operationId": "DiscountController_update_v1",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Discount"
-        ]
-      },
-      "delete": {
-        "operationId": "DiscountController_remove_v1",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Discount"
-        ]
-      }
-    },
-    "/v1/discounts/code/{code}": {
-      "get": {
-        "operationId": "DiscountController_findByCode_v1",
-        "parameters": [
-          {
-            "name": "code",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Discount"
-        ]
-      }
-    },
-    "/v1/invoices": {
-      "post": {
-        "operationId": "InvoiceController_create_v1",
-        "parameters": [],
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Invoice"
-        ]
-      },
-      "get": {
-        "operationId": "InvoiceController_findAll_v1",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Invoice"
-        ]
-      }
-    },
-    "/v1/invoices/{id}": {
-      "get": {
-        "operationId": "InvoiceController_findOne_v1",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Invoice"
-        ]
-      },
-      "patch": {
-        "operationId": "InvoiceController_update_v1",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Invoice"
-        ]
-      },
-      "delete": {
-        "operationId": "InvoiceController_remove_v1",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Invoice"
-        ]
-      }
-    },
-    "/v1/invoices/number/{invoiceNumber}": {
-      "get": {
-        "operationId": "InvoiceController_findByInvoiceNumber_v1",
-        "parameters": [
-          {
-            "name": "invoiceNumber",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Invoice"
         ]
       }
     },
@@ -2783,8 +2965,8 @@
     }
   },
   "info": {
-    "title": "Shadboard API",
-    "description": "The Shadboard API description",
+    "title": "Academix API",
+    "description": "The Academix API description",
     "version": "1.0",
     "contact": {}
   },
@@ -3064,6 +3246,9 @@
           "price": {
             "type": "number"
           },
+          "duration": {
+            "type": "number"
+          },
           "tags": {
             "type": "array",
             "items": {
@@ -3085,7 +3270,8 @@
           "description",
           "level",
           "category",
-          "price"
+          "price",
+          "duration"
         ]
       },
       "UpdateCourseDto": {
@@ -3137,6 +3323,111 @@
         },
         "required": [
           "editorId"
+        ]
+      },
+      "BillingDataDto": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "apartment": {
+            "type": "string"
+          },
+          "floor": {
+            "type": "string"
+          },
+          "street": {
+            "type": "string"
+          },
+          "building": {
+            "type": "string"
+          },
+          "shippingMethod": {
+            "type": "string"
+          },
+          "postalCode": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "firstName",
+          "lastName",
+          "email",
+          "phoneNumber"
+        ]
+      },
+      "CheckoutDto": {
+        "type": "object",
+        "properties": {
+          "cartId": {
+            "type": "string",
+            "description": "Cart ID for cart checkout"
+          },
+          "courseId": {
+            "type": "string",
+            "description": "Course ID for single course purchase"
+          },
+          "paymentMethod": {
+            "type": "string",
+            "enum": [
+              "card",
+              "wallet",
+              "cash"
+            ],
+            "description": "Payment method: card, wallet, or cash"
+          },
+          "billingData": {
+            "$ref": "#/components/schemas/BillingDataDto"
+          },
+          "discountCode": {
+            "type": "string",
+            "description": "Discount code to apply"
+          }
+        },
+        "required": [
+          "paymentMethod",
+          "billingData"
+        ]
+      },
+      "CheckoutResponseDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "payment": {
+            "type": "object"
+          },
+          "paymentUrl": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "success",
+          "payment",
+          "message"
         ]
       },
       "RegisterDto": {

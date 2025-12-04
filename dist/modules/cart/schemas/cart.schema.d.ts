@@ -2,7 +2,7 @@ import { Document, Schema as MongooseSchema } from 'mongoose';
 export type CartDocument = Cart & Document;
 export declare class CartItem {
     courseId: string;
-    addedAt: Date;
+    addedDate: Date;
 }
 export declare const CartItemSchema: MongooseSchema<CartItem, import("mongoose").Model<CartItem, any, any, any, Document<unknown, any, CartItem, any, {}> & CartItem & {
     _id: import("mongoose").Types.ObjectId;

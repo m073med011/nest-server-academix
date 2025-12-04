@@ -108,6 +108,15 @@ export class CoursesController {
     return this.coursesService.enroll(id, req.user._id);
   }
 
+  @Delete(':id/unenroll')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Unenroll from course (for testing)' })
+  @ApiResponse({ status: 200, description: 'Unenrolled successfully.' })
+  async unenroll(@Param('id') id: string, @Request() req) {
+    return this.coursesService.unenroll(id, req.user._id);
+  }
+
   @Post(':id/editors')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth()

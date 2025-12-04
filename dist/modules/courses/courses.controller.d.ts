@@ -30,6 +30,10 @@ export declare class CoursesController {
         message: string;
         data: import("./schemas/course.schema").Course;
     }>;
+    unenroll(id: string, req: any): Promise<{
+        message: string;
+        data: import("./schemas/course.schema").Course;
+    }>;
     addEditor(id: string, addEditorDto: AddEditorDto): Promise<{
         message: string;
         data: import("./schemas/course.schema").Course;

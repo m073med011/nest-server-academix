@@ -11,4 +11,7 @@ export declare class PaymentsRepository {
     countSuccessfulPurchasesByUser(userId: string): Promise<number>;
     calculateTotalRevenueForInstructor(instructorId: string): Promise<number>;
     findPurchasedCoursesByUser(userId: string): Promise<any[]>;
+    findByMerchantOrderId(merchantOrderId: string): Promise<Payment | null>;
+    findPendingPaymentsByUserAndCourses(userId: string, courseIds: string[]): Promise<Payment[]>;
+    cancelPendingPayments(paymentIds: string[]): Promise<void>;
 }

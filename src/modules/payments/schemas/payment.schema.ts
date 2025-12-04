@@ -14,6 +14,7 @@ export enum PaymentStatus {
   SUCCESS = 'success',
   FAILED = 'failed',
   REFUNDED = 'refunded',
+  CANCELLED = 'cancelled',
 }
 
 export type PaymentDocument = Payment & Document;
@@ -32,32 +33,32 @@ export class BillingData {
   @Prop({ required: true })
   phoneNumber: string;
 
-  @Prop()
-  apartment: string;
+  @Prop({ required: false })
+  apartment?: string;
 
-  @Prop()
-  floor: string;
+  @Prop({ required: false })
+  floor?: string;
 
-  @Prop()
-  street: string;
+  @Prop({ required: false })
+  street?: string;
 
-  @Prop()
-  building: string;
+  @Prop({ required: false })
+  building?: string;
 
-  @Prop()
-  shippingMethod: string;
+  @Prop({ required: false })
+  shippingMethod?: string;
 
-  @Prop()
-  postalCode: string;
+  @Prop({ required: false })
+  postalCode?: string;
 
-  @Prop()
-  city: string;
+  @Prop({ required: false })
+  city?: string;
 
-  @Prop()
-  country: string;
+  @Prop({ required: false })
+  country?: string;
 
-  @Prop()
-  state: string;
+  @Prop({ required: false })
+  state?: string;
 }
 
 @Schema({ timestamps: true })

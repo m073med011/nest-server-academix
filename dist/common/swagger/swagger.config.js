@@ -4,8 +4,8 @@ exports.setupSwagger = setupSwagger;
 const swagger_1 = require("@nestjs/swagger");
 function setupSwagger(app) {
     const config = new swagger_1.DocumentBuilder()
-        .setTitle('Shadboard API')
-        .setDescription('The Shadboard API description')
+        .setTitle('Academix API')
+        .setDescription('The Academix API description')
         .setVersion('1.0')
         .addBearerAuth()
         .build();

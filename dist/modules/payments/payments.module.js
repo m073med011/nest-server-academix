@@ -11,8 +11,13 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const payments_controller_1 = require("./payments.controller");
 const payments_service_1 = require("./payments.service");
+const paymob_service_1 = require("./paymob.service");
 const payments_repository_1 = require("./payments.repository");
 const payment_schema_1 = require("./schemas/payment.schema");
+const cart_module_1 = require("../cart/cart.module");
+const courses_module_1 = require("../courses/courses.module");
+const discount_module_1 = require("../discount/discount.module");
+const invoice_module_1 = require("../invoice/invoice.module");
 let PaymentsModule = class PaymentsModule {
 };
 exports.PaymentsModule = PaymentsModule;
@@ -20,9 +25,13 @@ exports.PaymentsModule = PaymentsModule = __decorate([
     (0, common_1.Module)({
         imports: [
             mongoose_1.MongooseModule.forFeature([{ name: payment_schema_1.Payment.name, schema: payment_schema_1.PaymentSchema }]),
+            (0, common_1.forwardRef)(() => cart_module_1.CartModule),
+            (0, common_1.forwardRef)(() => courses_module_1.CoursesModule),
+            (0, common_1.forwardRef)(() => discount_module_1.DiscountModule),
+            (0, common_1.forwardRef)(() => invoice_module_1.InvoiceModule),
         ],
         controllers: [payments_controller_1.PaymentsController],
-        providers: [payments_service_1.PaymentsService, payments_repository_1.PaymentsRepository],
+        providers: [payments_service_1.PaymentsService, payments_repository_1.PaymentsRepository, paymob_service_1.PaymobService],
         exports: [payments_service_1.PaymentsService],
     })
 ], PaymentsModule);

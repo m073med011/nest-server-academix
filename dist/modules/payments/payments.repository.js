@@ -81,6 +81,23 @@ let PaymentsRepository = class PaymentsRepository {
         const courses = payments.flatMap((payment) => payment.courseIds);
         return courses;
     }
+    async findByMerchantOrderId(merchantOrderId) {
+        return this.paymentModel.findOne({ paymobOrderId: merchantOrderId }).exec();
+    }
+    async findPendingPaymentsByUserAndCourses(userId, courseIds) {
+        return this.paymentModel
+            .find({
+            userId,
+            status: 'pending',
+            courseIds: { $in: courseIds },
+        })
+            .exec();
+    }
+    async cancelPendingPayments(paymentIds) {
+        await this.paymentModel
+            .updateMany({ _id: { $in: paymentIds } }, { $set: { status: 'cancelled' } })
+            .exec();
+    }
 };
 exports.PaymentsRepository = PaymentsRepository;
 exports.PaymentsRepository = PaymentsRepository = __decorate([

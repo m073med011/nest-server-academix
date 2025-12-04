@@ -76,6 +76,16 @@ export class CoursesRepository {
       .exec();
   }
 
+  async removeStudent(courseId: string, userId: string): Promise<Course | null> {
+    return this.courseModel
+      .findByIdAndUpdate(
+        courseId,
+        { $pull: { students: userId } },
+        { new: true },
+      )
+      .exec();
+  }
+
   async addEditor(courseId: string, editorId: string): Promise<Course | null> {
     return this.courseModel
       .findByIdAndUpdate(

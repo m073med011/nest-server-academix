@@ -47,6 +47,9 @@ let CoursesController = class CoursesController {
     async enroll(id, req) {
         return this.coursesService.enroll(id, req.user._id);
     }
+    async unenroll(id, req) {
+        return this.coursesService.unenroll(id, req.user._id);
+    }
     async addEditor(id, addEditorDto) {
         return this.coursesService.addEditor(id, addEditorDto.editorId);
     }
@@ -145,6 +148,18 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], CoursesController.prototype, "enroll", null);
+__decorate([
+    (0, common_1.Delete)(':id/unenroll'),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Unenroll from course (for testing)' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Unenrolled successfully.' }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], CoursesController.prototype, "unenroll", null);
 __decorate([
     (0, common_1.Post)(':id/editors'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),

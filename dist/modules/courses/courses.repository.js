@@ -71,6 +71,11 @@ let CoursesRepository = class CoursesRepository {
             .findByIdAndUpdate(courseId, { $addToSet: { students: userId } }, { new: true })
             .exec();
     }
+    async removeStudent(courseId, userId) {
+        return this.courseModel
+            .findByIdAndUpdate(courseId, { $pull: { students: userId } }, { new: true })
+            .exec();
+    }
     async addEditor(courseId, editorId) {
         return this.courseModel
             .findByIdAndUpdate(courseId, { $addToSet: { editors: editorId } }, { new: true })

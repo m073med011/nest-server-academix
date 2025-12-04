@@ -7,11 +7,11 @@ export type CartDocument = Cart & Document;
 
 @Schema({ _id: false })
 export class CartItem {
-  @Prop({ type: String, ref: 'Course', required: true })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Course', required: true })
   courseId: string;
 
   @Prop({ default: Date.now })
-  addedAt: Date;
+  addedDate: Date;
 }
 
 export const CartItemSchema = SchemaFactory.createForClass(CartItem);

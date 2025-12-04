@@ -6,6 +6,16 @@ export declare class DiscountController {
     findAll(): Promise<import("./schemas/discount.schema").DiscountDocument[]>;
     findOne(id: string): Promise<import("./schemas/discount.schema").DiscountDocument | null>;
     findByCode(code: string): Promise<import("./schemas/discount.schema").DiscountDocument | null>;
+    validateDiscount(validateDto: {
+        code: string;
+        courseIds: string[];
+    }): Promise<{
+        valid: boolean;
+        discount?: any;
+        discountAmount: number;
+        finalAmount: number;
+        message?: string;
+    }>;
     update(id: string, updateDiscountDto: any): Promise<import("./schemas/discount.schema").DiscountDocument | null>;
     remove(id: string): Promise<import("./schemas/discount.schema").DiscountDocument | null>;
 }

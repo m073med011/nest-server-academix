@@ -12,6 +12,7 @@ export declare class CoursesRepository {
     countByInstructor(instructorId: string): Promise<number>;
     countDistinctStudentsForInstructor(instructorId: string): Promise<number>;
     addStudent(courseId: string, userId: string): Promise<Course | null>;
+    removeStudent(courseId: string, userId: string): Promise<Course | null>;
     addEditor(courseId: string, editorId: string): Promise<Course | null>;
     removeEditor(courseId: string, editorId: string): Promise<Course | null>;
     findByInstructor(instructorId: string): Promise<Course[]>;

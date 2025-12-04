@@ -10,7 +10,8 @@ export declare enum PaymentStatus {
     PENDING = "pending",
     SUCCESS = "success",
     FAILED = "failed",
-    REFUNDED = "refunded"
+    REFUNDED = "refunded",
+    CANCELLED = "cancelled"
 }
 export type PaymentDocument = Payment & Document;
 export declare class BillingData {
@@ -18,15 +19,15 @@ export declare class BillingData {
     lastName: string;
     email: string;
     phoneNumber: string;
-    apartment: string;
-    floor: string;
-    street: string;
-    building: string;
-    shippingMethod: string;
-    postalCode: string;
-    city: string;
-    country: string;
-    state: string;
+    apartment?: string;
+    floor?: string;
+    street?: string;
+    building?: string;
+    shippingMethod?: string;
+    postalCode?: string;
+    city?: string;
+    country?: string;
+    state?: string;
 }
 export declare class Payment {
     userId: User;

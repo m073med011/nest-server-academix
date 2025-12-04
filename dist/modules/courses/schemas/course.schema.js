@@ -28,7 +28,7 @@ let Course = class Course {
     duration;
     level;
     category;
-    thumbnail;
+    thumbnailUrl;
     isPublished;
     students;
     rating;
@@ -73,7 +73,7 @@ __decorate([
 __decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
-], Course.prototype, "thumbnail", void 0);
+], Course.prototype, "thumbnailUrl", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ default: false }),
     __metadata("design:type", Boolean)

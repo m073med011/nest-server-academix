@@ -27,33 +27,56 @@ let CartRepository = class CartRepository {
         return newCart.save();
     }
     async findByUserId(userId) {
-        return this.cartModel.findOne({ userId }).exec();
+        return this.cartModel
+            .findOne({ userId })
+            .populate({
+            path: 'items.courseId',
+            model: 'Course',
+            select: 'title description price level thumbnail thumbnailUrl duration rating instructor students'
+        })
+            .exec();
     }
     async addItem(userId, courseId) {
-        let cart = await this.findByUserId(userId);
+        let cart = await this.cartModel.findOne({ userId }).exec();
         if (!cart) {
             cart = await this.create(userId);
         }
-        const exists = cart.items.some((item) => item.courseId === courseId);
+        if (!cart) {
+            throw new Error('Failed to create or find cart');
+        }
+        const exists = cart.items.some((item) => item.courseId.toString() === courseId);
         if (!exists) {
-            cart.items.push({ courseId, addedAt: new Date() });
+            cart.items.push({ courseId, addedDate: new Date() });
             await cart.save();
         }
-        return cart;
+        const populatedCart = await this.cartModel
+            .findOne({ userId })
+            .populate({
+            path: 'items.courseId',
+            model: 'Course',
+            select: 'title description price level thumbnail thumbnailUrl duration rating instructor students'
+        })
+            .exec();
+        if (!populatedCart) {
+            throw new Error('Cart not found after creation');
+        }
+        return populatedCart;
     }
     async removeItem(userId, courseId) {
-        const cart = await this.findByUserId(userId);
+        const cart = await this.cartModel.findOne({ userId }).exec();
         if (cart) {
-            cart.items = cart.items.filter((item) => item.courseId !== courseId);
+            cart.items = cart.items.filter((item) => item.courseId.toString() !== courseId);
             await cart.save();
+            return this.findByUserId(userId);
         }
         return cart;
     }
     async removeMultipleItems(userId, courseIds) {
-        const cart = await this.findByUserId(userId);
+        const cart = await this.cartModel.findOne({ userId }).exec();
         if (cart) {
-            cart.items = cart.items.filter((item) => !courseIds.includes(item.courseId));
+            cart.items = cart.items.filter((item) => !courseIds.includes(item.courseId.toString()));
             await cart.save();
+            return this.findByUserId(userId);
         }
         return cart;
     }

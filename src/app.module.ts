@@ -22,7 +22,7 @@ import { MaterialModule } from './modules/material/material.module';
 import { OtpModule } from './modules/otp/otp.module';
 import { DatabaseModule } from './modules/database/database.module';
 import { HealthModule } from './modules/health/health.module';
-import { EmailModule } from './modules/email/email.module';
+// import { EmailModule } from './modules/email/email.module';
 
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
@@ -36,7 +36,7 @@ import { APP_GUARD } from '@nestjs/core';
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
+      useFactory: (configService: ConfigService) => ({
         uri: configService.get<string>('app.database.uri'),
       }),
       inject: [ConfigService],
@@ -45,7 +45,7 @@ import { APP_GUARD } from '@nestjs/core';
     ThrottlerModule.forRoot([
       {
         ttl: 60000,
-        limit: 10,
+        limit: 20,
       },
     ]),
     UsersModule,

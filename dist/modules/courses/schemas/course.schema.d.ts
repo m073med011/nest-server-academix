@@ -15,7 +15,7 @@ export declare class Course {
     duration: number;
     level: CourseLevel;
     category: string;
-    thumbnail: string;
+    thumbnailUrl: string;
     isPublished: boolean;
     students: User[];
     rating: number;

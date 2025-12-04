@@ -26,6 +26,7 @@ var PaymentStatus;
     PaymentStatus["SUCCESS"] = "success";
     PaymentStatus["FAILED"] = "failed";
     PaymentStatus["REFUNDED"] = "refunded";
+    PaymentStatus["CANCELLED"] = "cancelled";
 })(PaymentStatus || (exports.PaymentStatus = PaymentStatus = {}));
 let BillingData = class BillingData {
     firstName;
@@ -60,39 +61,39 @@ __decorate([
     __metadata("design:type", String)
 ], BillingData.prototype, "phoneNumber", void 0);
 __decorate([
-    (0, mongoose_1.Prop)(),
+    (0, mongoose_1.Prop)({ required: false }),
     __metadata("design:type", String)
 ], BillingData.prototype, "apartment", void 0);
 __decorate([
-    (0, mongoose_1.Prop)(),
+    (0, mongoose_1.Prop)({ required: false }),
     __metadata("design:type", String)
 ], BillingData.prototype, "floor", void 0);
 __decorate([
-    (0, mongoose_1.Prop)(),
+    (0, mongoose_1.Prop)({ required: false }),
     __metadata("design:type", String)
 ], BillingData.prototype, "street", void 0);
 __decorate([
-    (0, mongoose_1.Prop)(),
+    (0, mongoose_1.Prop)({ required: false }),
     __metadata("design:type", String)
 ], BillingData.prototype, "building", void 0);
 __decorate([
-    (0, mongoose_1.Prop)(),
+    (0, mongoose_1.Prop)({ required: false }),
     __metadata("design:type", String)
 ], BillingData.prototype, "shippingMethod", void 0);
 __decorate([
-    (0, mongoose_1.Prop)(),
+    (0, mongoose_1.Prop)({ required: false }),
     __metadata("design:type", String)
 ], BillingData.prototype, "postalCode", void 0);
 __decorate([
-    (0, mongoose_1.Prop)(),
+    (0, mongoose_1.Prop)({ required: false }),
     __metadata("design:type", String)
 ], BillingData.prototype, "city", void 0);
 __decorate([
-    (0, mongoose_1.Prop)(),
+    (0, mongoose_1.Prop)({ required: false }),
     __metadata("design:type", String)
 ], BillingData.prototype, "country", void 0);
 __decorate([
-    (0, mongoose_1.Prop)(),
+    (0, mongoose_1.Prop)({ required: false }),
     __metadata("design:type", String)
 ], BillingData.prototype, "state", void 0);
 exports.BillingData = BillingData = __decorate([

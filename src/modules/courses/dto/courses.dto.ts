@@ -50,6 +50,12 @@ export class CreateCourseDto {
   @Min(0)
   price: number;
 
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  @Min(0)
+  duration: number;
+
   @ApiProperty({ required: false })
   @IsOptional()
   @IsArray()

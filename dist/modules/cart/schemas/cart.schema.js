@@ -11,19 +11,20 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CartSchema = exports.Cart = exports.CartItemSchema = exports.CartItem = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
+const mongoose_2 = require("mongoose");
 let CartItem = class CartItem {
     courseId;
-    addedAt;
+    addedDate;
 };
 exports.CartItem = CartItem;
 __decorate([
-    (0, mongoose_1.Prop)({ type: String, ref: 'Course', required: true }),
+    (0, mongoose_1.Prop)({ type: mongoose_2.Schema.Types.ObjectId, ref: 'Course', required: true }),
     __metadata("design:type", String)
 ], CartItem.prototype, "courseId", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ default: Date.now }),
     __metadata("design:type", Date)
-], CartItem.prototype, "addedAt", void 0);
+], CartItem.prototype, "addedDate", void 0);
 exports.CartItem = CartItem = __decorate([
     (0, mongoose_1.Schema)({ _id: false })
 ], CartItem);

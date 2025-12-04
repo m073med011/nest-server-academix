@@ -3,8 +3,8 @@ import { INestApplication } from '@nestjs/common';
 
 export function setupSwagger(app: INestApplication): void {
   const config = new DocumentBuilder()
-    .setTitle('Shadboard API')
-    .setDescription('The Shadboard API description')
+    .setTitle('Academix API')
+    .setDescription('The Academix API description')
     .setVersion('1.0')
     .addBearerAuth()
     .build();

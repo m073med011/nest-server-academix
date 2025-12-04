@@ -37,7 +37,7 @@ export class Course {
   category: string;
 
   @Prop()
-  thumbnail: string;
+  thumbnailUrl: string;
 
   @Prop({ default: false })
   isPublished: boolean;

@@ -10,6 +10,7 @@ export declare class CreateCourseDto {
     level: CourseLevel;
     category: string;
     price: number;
+    duration: number;
     tags?: string[];
     isPublished?: boolean;
     organizationId?: string;

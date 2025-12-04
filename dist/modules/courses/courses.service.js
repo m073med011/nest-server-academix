@@ -86,6 +86,13 @@ let CoursesService = class CoursesService {
         }
         return { message: 'Successfully enrolled in course', data: course };
     }
+    async unenroll(courseId, userId) {
+        const course = await this.coursesRepository.removeStudent(courseId, userId);
+        if (!course) {
+            throw new common_1.NotFoundException('Course not found');
+        }
+        return { message: 'Successfully unenrolled from course', data: course };
+    }
     async getUserPurchasedCourses(userId) {
         const courses = await this.paymentsService.getUserPurchasedCourses(userId);
         return {

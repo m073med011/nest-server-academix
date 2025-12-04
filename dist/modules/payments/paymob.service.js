@@ -21,12 +21,19 @@ let PaymobService = PaymobService_1 = class PaymobService {
     logger = new common_1.Logger(PaymobService_1.name);
     constructor(configService) {
         this.configService = configService;
-        this.apiKey = this.configService.get('paymob.apiKey') || '';
+        this.apiKey = this.configService.get('app.paymob.apiKey') || '';
         this.cardIntegrationId =
-            this.configService.get('paymob.cardIntegrationId') || '5017355';
+            this.configService.get('app.paymob.cardIntegrationId') || '5017355';
         this.baseUrl = 'https://accept.paymobsolutions.com/api';
+        this.logger.log(`Paymob API Key configured: ${!!this.apiKey}`);
+        this.logger.log(`Card Integration ID: ${this.cardIntegrationId}`);
     }
     async authenticate() {
+        if (!this.apiKey) {
+            this.logger.error('Paymob API Key is not configured');
+            throw new Error('Paymob API Key is missing. Please check your environment configuration.');
+        }
+        this.logger.log('Attempting Paymob authentication...');
         const response = await fetch(`${this.baseUrl}/auth/tokens`, {
             method: 'POST',
             headers: {
@@ -37,12 +44,17 @@ let PaymobService = PaymobService_1 = class PaymobService {
             }),
         });
         if (!response.ok) {
+            const errorText = await response.text();
+            this.logger.error(`Paymob authentication failed: ${response.status} ${response.statusText}`);
+            this.logger.error(`Error details: ${errorText}`);
             throw new Error(`Paymob authentication failed: ${response.statusText}`);
         }
         const data = (await response.json());
+        this.logger.log('Paymob authentication successful');
         return data.token;
     }
     async createOrder(authToken, amountCents, merchantOrderId) {
+        this.logger.log(`Creating order: ${merchantOrderId}, amount: ${amountCents}`);
         const response = await fetch(`${this.baseUrl}/ecommerce/orders`, {
             method: 'POST',
             headers: {
@@ -58,9 +70,14 @@ let PaymobService = PaymobService_1 = class PaymobService {
             }),
         });
         if (!response.ok) {
+            const errorText = await response.text();
+            this.logger.error(`Paymob order creation failed: ${response.status} ${response.statusText}`);
+            this.logger.error(`Error details: ${errorText}`);
             throw new Error(`Paymob order creation failed: ${response.statusText}`);
         }
-        return (await response.json());
+        const data = (await response.json());
+        this.logger.log(`Order created successfully: ${data.id}`);
+        return data;
     }
     async createPaymentKey(authToken, orderId, amountCents, billingData, paymentMethod, paymentId) {
         const integrationId = this.cardIntegrationId;
@@ -99,9 +116,13 @@ let PaymobService = PaymobService_1 = class PaymobService {
             }),
         });
         if (!response.ok) {
+            const errorText = await response.text();
+            this.logger.error(`Paymob payment key creation failed: ${response.status} ${response.statusText}`);
+            this.logger.error(`Error details: ${errorText}`);
             throw new Error(`Paymob payment key creation failed: ${response.statusText}`);
         }
         const data = (await response.json());
+        this.logger.log('Payment key created successfully');
         return data.token;
     }
     async processPayment(request, paymentId) {
@@ -111,8 +132,9 @@ let PaymobService = PaymobService_1 = class PaymobService {
             const amountCents = Math.round(request.amount * 100);
             const order = await this.createOrder(authToken, amountCents, request.merchantOrderId);
             const paymentToken = await this.createPaymentKey(authToken, order.id, amountCents, request.billingData, request.paymentMethod, paymentId);
-            const cardIframeId = this.configService.get('paymob.cardIframeId') || '872089';
+            const cardIframeId = this.configService.get('app.paymob.cardIframeId') || '872089';
             const iframeUrl = `https://accept.paymobsolutions.com/api/acceptance/iframes/${cardIframeId}?payment_token=${paymentToken}`;
+            this.logger.log(`Using iframe ID: ${cardIframeId}`);
             this.logger.log(`Generated iframe URL: ${iframeUrl}`);
             return {
                 paymentToken,

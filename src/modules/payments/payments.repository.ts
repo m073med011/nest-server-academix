@@ -81,4 +81,30 @@ export class PaymentsRepository {
     const courses = payments.flatMap((payment) => payment.courseIds);
     return courses;
   }
+
+  async findByMerchantOrderId(merchantOrderId: string): Promise<Payment | null> {
+    return this.paymentModel.findOne({ paymobOrderId: merchantOrderId }).exec();
+  }
+
+  async findPendingPaymentsByUserAndCourses(
+    userId: string,
+    courseIds: string[],
+  ): Promise<Payment[]> {
+    return this.paymentModel
+      .find({
+        userId,
+        status: 'pending',
+        courseIds: { $in: courseIds },
+      })
+      .exec();
+  }
+
+  async cancelPendingPayments(paymentIds: string[]): Promise<void> {
+    await this.paymentModel
+      .updateMany(
+        { _id: { $in: paymentIds } },
+        { $set: { status: 'cancelled' } },
+      )
+      .exec();
+  }
 }

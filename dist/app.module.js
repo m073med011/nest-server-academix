@@ -46,7 +46,7 @@ exports.AppModule = AppModule = __decorate([
             }),
             mongoose_1.MongooseModule.forRootAsync({
                 imports: [config_1.ConfigModule],
-                useFactory: async (configService) => ({
+                useFactory: (configService) => ({
                     uri: configService.get('app.database.uri'),
                 }),
                 inject: [config_1.ConfigService],
@@ -55,7 +55,7 @@ exports.AppModule = AppModule = __decorate([
             throttler_1.ThrottlerModule.forRoot([
                 {
                     ttl: 60000,
-                    limit: 10,
+                    limit: 20,
                 },
             ]),
             users_module_1.UsersModule,
