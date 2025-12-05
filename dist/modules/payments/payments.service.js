@@ -84,6 +84,7 @@ let PaymentsService = PaymentsService_1 = class PaymentsService {
                     message: 'Payment order created successfully. Cash on delivery.',
                 };
             }
+            this.logger.log(`Processing payment with Paymob for amount: ${finalAmount} EGP`);
             const paymobResponse = await this.paymobService.processPayment({
                 amount: finalAmount,
                 currency: 'EGP',
@@ -91,16 +92,19 @@ let PaymentsService = PaymentsService_1 = class PaymentsService {
                 billingData: checkoutDto.billingData,
                 paymentMethod: checkoutDto.paymentMethod,
             }, payment._id.toString());
+            this.logger.log(`Paymob response received: ${JSON.stringify({ orderId: paymobResponse.orderId, iframeUrl: paymobResponse.iframeUrl })}`);
             await this.paymentsRepository.update(payment._id.toString(), {
                 paymobOrderId: paymobResponse.orderId.toString(),
                 paymobPaymentId: paymobResponse.paymentToken,
             });
-            return {
+            const response = {
                 success: true,
                 payment,
                 paymentUrl: paymobResponse.iframeUrl,
                 message: 'Payment initiated successfully',
             };
+            this.logger.log(`Returning payment response with paymentUrl: ${response.paymentUrl}`);
+            return response;
         }
         catch (error) {
             this.logger.error('Checkout initiation failed:', error);

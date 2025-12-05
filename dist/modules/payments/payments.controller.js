@@ -176,7 +176,9 @@ let PaymentsController = PaymentsController_1 = class PaymentsController {
         }
     }
     async handleWebhook(webhookData, signature) {
-        this.logger.log('Received Paymob webhook');
+        this.logger.log('=== PAYMOB WEBHOOK RECEIVED ===');
+        this.logger.log(`Webhook data: ${JSON.stringify(webhookData)}`);
+        this.logger.log(`HMAC signature: ${signature}`);
         const isValid = this.paymobService.verifyWebhookSignature(webhookData, signature);
         if (!isValid) {
             this.logger.warn('Invalid webhook signature');

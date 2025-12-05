@@ -278,7 +278,9 @@ export class PaymentsController {
   @ApiOperation({ summary: 'Handle Paymob webhook' })
   @ApiResponse({ status: 200, description: 'Webhook processed successfully' })
   async handleWebhook(@Body() webhookData: any, @Headers('hmac') signature: string) {
-    this.logger.log('Received Paymob webhook');
+    this.logger.log('=== PAYMOB WEBHOOK RECEIVED ===');
+    this.logger.log(`Webhook data: ${JSON.stringify(webhookData)}`);
+    this.logger.log(`HMAC signature: ${signature}`);
 
     // Verify webhook signature
     const isValid = this.paymobService.verifyWebhookSignature(

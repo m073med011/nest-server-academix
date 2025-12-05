@@ -18,12 +18,11 @@ export declare class PaymentsService {
     initiateCheckout(userId: string, checkoutDto: CheckoutDto, courseIds: string[], totalAmount: number, isCartPayment: boolean, discountCodeId?: string, discountAmount?: number): Promise<{
         success: boolean;
         payment: any;
+        paymentUrl: string;
         message: string;
-        paymentUrl?: undefined;
     } | {
         success: boolean;
         payment: any;
-        paymentUrl: string;
         message: string;
     }>;
     processWebhook(webhookData: any): Promise<void>;

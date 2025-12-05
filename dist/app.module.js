@@ -54,8 +54,8 @@ exports.AppModule = AppModule = __decorate([
             nest_winston_1.WinstonModule.forRoot(winston_config_1.winstonConfig),
             throttler_1.ThrottlerModule.forRoot([
                 {
-                    ttl: 60000,
-                    limit: 20,
+                    ttl: 600000,
+                    limit: 2000,
                 },
             ]),
             users_module_1.UsersModule,

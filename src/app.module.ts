@@ -44,8 +44,8 @@ import { APP_GUARD } from '@nestjs/core';
     WinstonModule.forRoot(winstonConfig),
     ThrottlerModule.forRoot([
       {
-        ttl: 60000,
-        limit: 20,
+        ttl: 600000,
+        limit: 2000,
       },
     ]),
     UsersModule,

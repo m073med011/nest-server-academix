@@ -17,12 +17,11 @@ export declare class PaymentsController {
     initiateCheckout(req: any, checkoutDto: CheckoutDto): Promise<{
         success: boolean;
         payment: any;
+        paymentUrl: string;
         message: string;
-        paymentUrl?: undefined;
     } | {
         success: boolean;
         payment: any;
-        paymentUrl: string;
         message: string;
     }>;
     manuallyVerifyPayment(paymentId: string, req: any): Promise<{
