@@ -14,6 +14,7 @@ const courses_service_1 = require("./courses.service");
 const courses_repository_1 = require("./courses.repository");
 const course_schema_1 = require("./schemas/course.schema");
 const payments_module_1 = require("../payments/payments.module");
+const users_module_1 = require("../users/users.module");
 let CoursesModule = class CoursesModule {
 };
 exports.CoursesModule = CoursesModule;
@@ -22,6 +23,7 @@ exports.CoursesModule = CoursesModule = __decorate([
         imports: [
             mongoose_1.MongooseModule.forFeature([{ name: course_schema_1.Course.name, schema: course_schema_1.CourseSchema }]),
             payments_module_1.PaymentsModule,
+            (0, common_1.forwardRef)(() => users_module_1.UsersModule),
         ],
         controllers: [courses_controller_1.CoursesController],
         providers: [courses_service_1.CoursesService, courses_repository_1.CoursesRepository],

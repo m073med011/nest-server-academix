@@ -1058,12 +1058,21 @@
               "enum": [
                 "beginner",
                 "intermediate",
-                "advanced"
+                "advanced",
+                "expert"
               ]
             }
           },
           {
             "name": "search",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
             "required": false,
             "in": "query",
             "schema": {
@@ -3220,6 +3229,39 @@
           "termId"
         ]
       },
+      "ModuleItemDto": {
+        "type": "object",
+        "properties": {
+          "materialId": {
+            "type": "string"
+          },
+          "order": {
+            "type": "number",
+            "default": 0
+          }
+        },
+        "required": [
+          "materialId"
+        ]
+      },
+      "ModuleDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ModuleItemDto"
+            }
+          }
+        },
+        "required": [
+          "title",
+          "items"
+        ]
+      },
       "CreateCourseDto": {
         "type": "object",
         "properties": {
@@ -3229,7 +3271,7 @@
           "description": {
             "type": "string"
           },
-          "thumbnailUrl": {
+          "category": {
             "type": "string"
           },
           "level": {
@@ -3237,16 +3279,45 @@
             "enum": [
               "beginner",
               "intermediate",
-              "advanced"
+              "advanced",
+              "expert"
             ]
           },
-          "category": {
+          "thumbnailUrl": {
             "type": "string"
           },
           "price": {
             "type": "number"
           },
           "duration": {
+            "type": "number"
+          },
+          "modules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ModuleDto"
+            }
+          },
+          "enrollmentType": {
+            "type": "string",
+            "enum": [
+              "free",
+              "subscription",
+              "one-time-purchase",
+              "org-subscription"
+            ]
+          },
+          "courseType": {
+            "type": "string",
+            "enum": [
+              "freelancing",
+              "organization"
+            ]
+          },
+          "hasAccessRestrictions": {
+            "type": "boolean"
+          },
+          "enrollmentCap": {
             "type": "number"
           },
           "tags": {
@@ -3263,13 +3334,28 @@
           },
           "isOrgPrivate": {
             "type": "boolean"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "promoVideoUrl": {
+            "type": "string"
+          },
+          "brandColor": {
+            "type": "string"
+          },
+          "enrollmentStartDate": {
+            "type": "string"
+          },
+          "enrollmentEndDate": {
+            "type": "string"
           }
         },
         "required": [
           "title",
           "description",
-          "level",
           "category",
+          "level",
           "price",
           "duration"
         ]
@@ -3291,13 +3377,42 @@
             "enum": [
               "beginner",
               "intermediate",
-              "advanced"
+              "advanced",
+              "expert"
             ]
           },
           "category": {
             "type": "string"
           },
           "price": {
+            "type": "number"
+          },
+          "modules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ModuleDto"
+            }
+          },
+          "enrollmentType": {
+            "type": "string",
+            "enum": [
+              "free",
+              "subscription",
+              "one-time-purchase",
+              "org-subscription"
+            ]
+          },
+          "courseType": {
+            "type": "string",
+            "enum": [
+              "freelancing",
+              "organization"
+            ]
+          },
+          "hasAccessRestrictions": {
+            "type": "boolean"
+          },
+          "enrollmentCap": {
             "type": "number"
           },
           "tags": {
@@ -3311,6 +3426,21 @@
           },
           "isOrgPrivate": {
             "type": "boolean"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "promoVideoUrl": {
+            "type": "string"
+          },
+          "brandColor": {
+            "type": "string"
+          },
+          "enrollmentStartDate": {
+            "type": "string"
+          },
+          "enrollmentEndDate": {
+            "type": "string"
           }
         }
       },

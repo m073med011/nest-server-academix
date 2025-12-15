@@ -29,13 +29,23 @@ import {
 } from './dto/courses.dto';
 import { Response } from 'express';
 
+import { Roles } from '../../common/decorators/roles.decorator';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { UserRole } from '../users/schemas/user.schema';
+
 @ApiTags('courses')
 @Controller('courses')
 export class CoursesController {
   constructor(private readonly coursesService: CoursesService) {}
 
   @Post()
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(
+    UserRole.INSTRUCTOR,
+    UserRole.ADMIN,
+    UserRole.FREELANCER,
+    UserRole.ORGANIZER,
+  )
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new course' })
   @ApiResponse({ status: 201, description: 'Course created.' })

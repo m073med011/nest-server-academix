@@ -32,13 +32,27 @@ let CoursesRepository = class CoursesRepository {
             .skip(options.skip)
             .limit(options.limit)
             .sort(options.sort)
+            .populate({
+            path: 'instructor',
+            select: 'name email role imageProfileUrl',
+        })
             .exec();
     }
     async count(filter = {}) {
         return this.courseModel.countDocuments(filter).exec();
     }
-    async findById(id) {
-        return this.courseModel.findById(id).exec();
+    async findById(id, options = {}) {
+        const query = this.courseModel.findById(id);
+        if (options.populate) {
+            query.populate(options.populate);
+        }
+        else {
+            query.populate({
+                path: 'instructor',
+                select: 'name email role imageProfileUrl',
+            });
+        }
+        return query.exec();
     }
     async update(id, updateCourseDto) {
         return this.courseModel
@@ -87,7 +101,13 @@ let CoursesRepository = class CoursesRepository {
             .exec();
     }
     async findByInstructor(instructorId) {
-        return this.courseModel.find({ instructor: instructorId }).exec();
+        return this.courseModel
+            .find({ instructor: instructorId })
+            .populate({
+            path: 'instructor',
+            select: 'name email role imageProfileUrl',
+        })
+            .exec();
     }
 };
 exports.CoursesRepository = CoursesRepository;

@@ -6,7 +6,7 @@ export declare class CoursesRepository {
     create(createCourseDto: any): Promise<Course>;
     findAll(filter?: FilterQuery<CourseDocument>, options?: any): Promise<Course[]>;
     count(filter?: FilterQuery<CourseDocument>): Promise<number>;
-    findById(id: string): Promise<Course | null>;
+    findById(id: string, options?: any): Promise<Course | null>;
     update(id: string, updateCourseDto: any): Promise<Course | null>;
     delete(id: string): Promise<Course | null>;
     countByInstructor(instructorId: string): Promise<number>;

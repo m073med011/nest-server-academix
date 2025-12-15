@@ -23,6 +23,10 @@ export class CoursesRepository {
       .skip(options.skip)
       .limit(options.limit)
       .sort(options.sort)
+      .populate({
+        path: 'instructor',
+        select: 'name email role imageProfileUrl',
+      })
       .exec();
   }
 
@@ -30,8 +34,20 @@ export class CoursesRepository {
     return this.courseModel.countDocuments(filter).exec();
   }
 
-  async findById(id: string): Promise<Course | null> {
-    return this.courseModel.findById(id).exec();
+  async findById(id: string, options: any = {}): Promise<Course | null> {
+    const query = this.courseModel.findById(id);
+
+    if (options.populate) {
+      query.populate(options.populate);
+    } else {
+      // Default population if none specified
+      query.populate({
+        path: 'instructor',
+        select: 'name email role imageProfileUrl',
+      });
+    }
+
+    return query.exec();
   }
 
   async update(id: string, updateCourseDto: any): Promise<Course | null> {
@@ -76,7 +92,10 @@ export class CoursesRepository {
       .exec();
   }
 
-  async removeStudent(courseId: string, userId: string): Promise<Course | null> {
+  async removeStudent(
+    courseId: string,
+    userId: string,
+  ): Promise<Course | null> {
     return this.courseModel
       .findByIdAndUpdate(
         courseId,
@@ -110,6 +129,12 @@ export class CoursesRepository {
   }
 
   async findByInstructor(instructorId: string): Promise<Course[]> {
-    return this.courseModel.find({ instructor: instructorId }).exec();
+    return this.courseModel
+      .find({ instructor: instructorId })
+      .populate({
+        path: 'instructor',
+        select: 'name email role imageProfileUrl',
+      })
+      .exec();
   }
 }

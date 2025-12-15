@@ -19,6 +19,8 @@ var MaterialType;
     MaterialType["PDF"] = "pdf";
     MaterialType["LINK"] = "link";
     MaterialType["TEXT"] = "text";
+    MaterialType["QUIZ"] = "quiz";
+    MaterialType["ASSIGNMENT"] = "assignment";
 })(MaterialType || (exports.MaterialType = MaterialType = {}));
 let Material = class Material {
     courseId;
@@ -26,9 +28,18 @@ let Material = class Material {
     description;
     type;
     content;
+    url;
     order;
     duration;
     isPublished;
+    isFreePreview;
+    allowDownloads;
+    points;
+    dueDate;
+    submissionTypes;
+    allowLate;
+    openInNewTab;
+    moduleId;
 };
 exports.Material = Material;
 __decorate([
@@ -48,9 +59,13 @@ __decorate([
     __metadata("design:type", String)
 ], Material.prototype, "type", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ required: true }),
+    (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
 ], Material.prototype, "content", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", String)
+], Material.prototype, "url", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ default: 0 }),
     __metadata("design:type", Number)
@@ -63,9 +78,42 @@ __decorate([
     (0, mongoose_1.Prop)({ default: false }),
     __metadata("design:type", Boolean)
 ], Material.prototype, "isPublished", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: false }),
+    __metadata("design:type", Boolean)
+], Material.prototype, "isFreePreview", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: false }),
+    __metadata("design:type", Boolean)
+], Material.prototype, "allowDownloads", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: Number, min: 0 }),
+    __metadata("design:type", Number)
+], Material.prototype, "points", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: Date }),
+    __metadata("design:type", Date)
+], Material.prototype, "dueDate", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: [String], default: [] }),
+    __metadata("design:type", Array)
+], Material.prototype, "submissionTypes", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: false }),
+    __metadata("design:type", Boolean)
+], Material.prototype, "allowLate", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: true }),
+    __metadata("design:type", Boolean)
+], Material.prototype, "openInNewTab", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", String)
+], Material.prototype, "moduleId", void 0);
 exports.Material = Material = __decorate([
     (0, mongoose_1.Schema)({ timestamps: true })
 ], Material);
 exports.MaterialSchema = mongoose_1.SchemaFactory.createForClass(Material);
 exports.MaterialSchema.index({ courseId: 1, order: 1 });
+exports.MaterialSchema.index({ courseId: 1, moduleId: 1, order: 1 });
 //# sourceMappingURL=material.schema.js.map

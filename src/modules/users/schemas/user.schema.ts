@@ -68,25 +68,14 @@ export class User {
 export const UserSchema = SchemaFactory.createForClass(User);
 
 // Pre-save hook for password hashing
-UserSchema.pre('save', async function (next) {
-  const user = this as any;
-  if (!user.isModified('password') || !user.password) {
+UserSchema.pre('save', async function (this: UserDocument, next) {
+  if (!this.isModified('password') || !this.password) {
     return next();
   }
   const salt = await bcrypt.genSalt(10);
-  user.password = await bcrypt.hash(user.password, salt);
+  this.password = await bcrypt.hash(this.password, salt);
   next();
 });
-
-// Register method
-UserSchema.methods.matchPassword = async function (
-  enteredPassword: string,
-): Promise<boolean> {
-  if (!this.password) {
-    return false;
-  }
-  return await bcrypt.compare(enteredPassword, this.password);
-};
 
 // Indexes
 UserSchema.index({ role: 1 });

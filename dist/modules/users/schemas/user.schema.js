@@ -101,20 +101,13 @@ exports.User = User = __decorate([
 ], User);
 exports.UserSchema = mongoose_1.SchemaFactory.createForClass(User);
 exports.UserSchema.pre('save', async function (next) {
-    const user = this;
-    if (!user.isModified('password') || !user.password) {
+    if (!this.isModified('password') || !this.password) {
         return next();
     }
     const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(user.password, salt);
+    this.password = await bcrypt.hash(this.password, salt);
     next();
 });
-exports.UserSchema.methods.matchPassword = async function (enteredPassword) {
-    if (!this.password) {
-        return false;
-    }
-    return await bcrypt.compare(enteredPassword, this.password);
-};
 exports.UserSchema.index({ role: 1 });
 exports.UserSchema.index({ provider: 1 });
 //# sourceMappingURL=user.schema.js.map

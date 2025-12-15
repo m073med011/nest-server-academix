@@ -6,9 +6,62 @@ export enum CourseLevel {
   BEGINNER = 'beginner',
   INTERMEDIATE = 'intermediate',
   ADVANCED = 'advanced',
+  EXPERT = 'expert',
 }
 
 export type CourseDocument = Course & Document;
+
+export enum EnrollmentType {
+  FREE = 'free',
+  SUBSCRIPTION = 'subscription',
+  ONE_TIME_PURCHASE = 'one-time-purchase',
+  ORG_SUBSCRIPTION = 'org-subscription',
+}
+
+export enum CourseType {
+  FREELANCING = 'freelancing',
+  ORGANIZATION = 'organization',
+}
+
+export enum ModuleItemType {
+  LESSON = 'lesson',
+  QUIZ = 'quiz',
+  FILE = 'file',
+  IMAGE = 'image',
+  RESOURCE = 'resource',
+  ASSIGNMENT = 'assignment',
+}
+
+export enum LessonType {
+  TEXT = 'text',
+  VIDEO = 'video',
+}
+
+@Schema()
+export class ModuleItem {
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'Material',
+    required: true,
+  })
+  materialId: any; // Reference to Material document
+
+  @Prop({ default: 0 })
+  order: number;
+}
+
+export const ModuleItemSchema = SchemaFactory.createForClass(ModuleItem);
+
+@Schema()
+export class Module {
+  @Prop({ required: true })
+  title: string;
+
+  @Prop({ type: [ModuleItemSchema], default: [] })
+  items: ModuleItem[];
+}
+
+export const ModuleSchema = SchemaFactory.createForClass(Module);
 
 @Schema({ timestamps: true })
 export class Course {
@@ -48,8 +101,24 @@ export class Course {
   @Prop({ min: 0, max: 5, default: 0 })
   rating: number;
 
-  @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Material' }] })
-  materials: any[]; // TODO: Replace with Material type when available
+  @Prop({ type: [ModuleSchema], default: [] })
+  modules: Module[];
+
+  @Prop({
+    type: String,
+    enum: EnrollmentType,
+    default: EnrollmentType.FREE,
+  })
+  enrollmentType: EnrollmentType;
+
+  @Prop({ type: String, enum: CourseType, default: CourseType.FREELANCING })
+  courseType: CourseType;
+
+  @Prop({ default: false })
+  hasAccessRestrictions: boolean;
+
+  @Prop({ type: Number, default: null })
+  enrollmentCap: number;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Organization' })
   organizationId?: any; // TODO: Replace with Organization type when available
@@ -59,6 +128,21 @@ export class Course {
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Term' })
   termId?: any; // TODO: Replace with Term type when available
+
+  @Prop({ default: 'USD' })
+  currency: string;
+
+  @Prop()
+  promoVideoUrl?: string;
+
+  @Prop({ default: '#137fec' })
+  brandColor: string;
+
+  @Prop({ type: Date })
+  enrollmentStartDate?: Date;
+
+  @Prop({ type: Date })
+  enrollmentEndDate?: Date;
 }
 
 export const CourseSchema = SchemaFactory.createForClass(Course);

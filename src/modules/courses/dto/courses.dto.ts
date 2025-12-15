@@ -1,6 +1,7 @@
 import {
   IsArray,
   IsBoolean,
+  IsDateString,
   IsEnum,
   IsNotEmpty,
   IsNumber,
@@ -11,11 +12,39 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
+import {
+  CourseLevel,
+  EnrollmentType,
+  CourseType,
+  ModuleItemType,
+  LessonType,
+} from '../schemas/course.schema';
 
-export enum CourseLevel {
-  BEGINNER = 'beginner',
-  INTERMEDIATE = 'intermediate',
-  ADVANCED = 'advanced',
+export { CourseLevel, EnrollmentType, CourseType, ModuleItemType, LessonType };
+
+export class ModuleItemDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  materialId: string;
+
+  @ApiProperty({ required: false, default: 0 })
+  @IsOptional()
+  @IsNumber()
+  order?: number;
+}
+
+export class ModuleDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  title: string;
+
+  @ApiProperty({ type: [ModuleItemDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ModuleItemDto)
+  items: ModuleItemDto[];
 }
 
 export class CreateCourseDto {
@@ -29,20 +58,20 @@ export class CreateCourseDto {
   @IsString()
   description: string;
 
-  @ApiProperty({ required: false })
-  @IsOptional()
+  @ApiProperty()
+  @IsNotEmpty()
   @IsString()
-  thumbnailUrl?: string;
+  category: string;
 
   @ApiProperty({ enum: CourseLevel })
   @IsNotEmpty()
   @IsEnum(CourseLevel)
   level: CourseLevel;
 
-  @ApiProperty()
-  @IsNotEmpty()
+  @ApiProperty({ required: false })
+  @IsOptional()
   @IsString()
-  category: string;
+  thumbnailUrl?: string;
 
   @ApiProperty()
   @IsNotEmpty()
@@ -55,6 +84,34 @@ export class CreateCourseDto {
   @IsNumber()
   @Min(0)
   duration: number;
+
+  @ApiProperty({ type: [ModuleDto], required: false })
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ModuleDto)
+  modules?: ModuleDto[];
+
+  @ApiProperty({ enum: EnrollmentType, required: false })
+  @IsOptional()
+  @IsEnum(EnrollmentType)
+  enrollmentType?: EnrollmentType;
+
+  @ApiProperty({ enum: CourseType, required: false })
+  @IsOptional()
+  @IsEnum(CourseType)
+  courseType?: CourseType;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsBoolean()
+  hasAccessRestrictions?: boolean;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  enrollmentCap?: number;
 
   @ApiProperty({ required: false })
   @IsOptional()
@@ -76,6 +133,31 @@ export class CreateCourseDto {
   @IsOptional()
   @IsBoolean()
   isOrgPrivate?: boolean;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  currency?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  promoVideoUrl?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  brandColor?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsDateString()
+  enrollmentStartDate?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsDateString()
+  enrollmentEndDate?: string;
 }
 
 export class UpdateCourseDto {
@@ -110,6 +192,34 @@ export class UpdateCourseDto {
   @Min(0)
   price?: number;
 
+  @ApiProperty({ type: [ModuleDto], required: false })
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ModuleDto)
+  modules?: ModuleDto[];
+
+  @ApiProperty({ enum: EnrollmentType, required: false })
+  @IsOptional()
+  @IsEnum(EnrollmentType)
+  enrollmentType?: EnrollmentType;
+
+  @ApiProperty({ enum: CourseType, required: false })
+  @IsOptional()
+  @IsEnum(CourseType)
+  courseType?: CourseType;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsBoolean()
+  hasAccessRestrictions?: boolean;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  enrollmentCap?: number;
+
   @ApiProperty({ required: false })
   @IsOptional()
   @IsArray()
@@ -125,6 +235,31 @@ export class UpdateCourseDto {
   @IsOptional()
   @IsBoolean()
   isOrgPrivate?: boolean;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  currency?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  promoVideoUrl?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  brandColor?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsDateString()
+  enrollmentStartDate?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsDateString()
+  enrollmentEndDate?: string;
 }
 
 export class CourseFilterDto {
@@ -152,6 +287,11 @@ export class CourseFilterDto {
   @IsOptional()
   @IsString()
   search?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  sort?: string;
 }
 
 export class AddEditorDto {

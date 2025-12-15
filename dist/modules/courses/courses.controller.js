@@ -18,6 +18,9 @@ const courses_service_1 = require("./courses.service");
 const passport_1 = require("@nestjs/passport");
 const swagger_1 = require("@nestjs/swagger");
 const courses_dto_1 = require("./dto/courses.dto");
+const roles_decorator_1 = require("../../common/decorators/roles.decorator");
+const roles_guard_1 = require("../../common/guards/roles.guard");
+const user_schema_1 = require("../users/schemas/user.schema");
 let CoursesController = class CoursesController {
     coursesService;
     constructor(coursesService) {
@@ -60,7 +63,8 @@ let CoursesController = class CoursesController {
 exports.CoursesController = CoursesController;
 __decorate([
     (0, common_1.Post)(),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(user_schema_1.UserRole.INSTRUCTOR, user_schema_1.UserRole.ADMIN, user_schema_1.UserRole.FREELANCER, user_schema_1.UserRole.ORGANIZER),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Create a new course' }),
     (0, swagger_1.ApiResponse)({ status: 201, description: 'Course created.' }),

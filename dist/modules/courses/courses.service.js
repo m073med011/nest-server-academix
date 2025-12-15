@@ -13,6 +13,7 @@ exports.CoursesService = void 0;
 const common_1 = require("@nestjs/common");
 const courses_repository_1 = require("./courses.repository");
 const payments_service_1 = require("../payments/payments.service");
+const courses_dto_1 = require("./dto/courses.dto");
 let CoursesService = class CoursesService {
     coursesRepository;
     paymentsService;
@@ -22,16 +23,27 @@ let CoursesService = class CoursesService {
     }
     async create(createCourseDto, instructorId) {
         const courseData = { ...createCourseDto, instructor: instructorId };
+        if (courseData.courseType === courses_dto_1.CourseType.ORGANIZATION) {
+            courseData.enrollmentType = courses_dto_1.EnrollmentType.ORG_SUBSCRIPTION;
+            courseData.isOrgPrivate = true;
+            courseData.hasAccessRestrictions = false;
+            courseData.price = 0;
+            courseData.enrollmentCap = 0;
+        }
         return this.coursesRepository.create(courseData);
     }
     async findAll(filterDto) {
-        const { page = '1', limit = '10', category, level, search } = filterDto;
-        const filter = { isPublished: true };
-        filter.$or = [
-            { isOrgPrivate: false },
-            { isOrgPrivate: { $exists: false } },
-            { organizationId: { $exists: false } },
-        ];
+        const page = filterDto.page || '1';
+        const limit = filterDto.limit || '10';
+        const { category, level, search, sort } = filterDto;
+        const filter = {
+            isPublished: true,
+            $or: [
+                { isOrgPrivate: false },
+                { isOrgPrivate: { $exists: false } },
+                { organizationId: { $exists: false } },
+            ],
+        };
         if (category)
             filter.category = category;
         if (level)
@@ -39,10 +51,32 @@ let CoursesService = class CoursesService {
         if (search) {
             filter.$text = { $search: search };
         }
+        let sortOption = { createdAt: -1 };
+        if (sort) {
+            switch (sort) {
+                case 'popular':
+                    sortOption = { students: -1 };
+                    break;
+                case 'rated':
+                    sortOption = { rating: -1 };
+                    break;
+                case 'newest':
+                    sortOption = { createdAt: -1 };
+                    break;
+                case 'price_asc':
+                    sortOption = { price: 1 };
+                    break;
+                case 'price_desc':
+                    sortOption = { price: -1 };
+                    break;
+                default:
+                    sortOption = { createdAt: -1 };
+            }
+        }
         const options = {
             limit: Number(limit),
             skip: (Number(page) - 1) * Number(limit),
-            sort: '-createdAt',
+            sort: sortOption,
         };
         const courses = await this.coursesRepository.findAll(filter, options);
         const total = await this.coursesRepository.count(filter);
@@ -59,7 +93,12 @@ let CoursesService = class CoursesService {
         };
     }
     async findOne(id) {
-        const course = await this.coursesRepository.findById(id);
+        const course = await this.coursesRepository.findById(id, {
+            populate: [
+                { path: 'instructor', select: 'name email imageProfileUrl' },
+                { path: 'modules.items.materialId' },
+            ],
+        });
         if (!course) {
             throw new common_1.NotFoundException('Course not found');
         }
