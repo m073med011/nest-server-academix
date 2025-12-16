@@ -45,5 +45,24 @@ CartSchema.virtual('itemsWithCourses', {
   foreignField: '_id',
 });
 
+// Virtual for item count
+CartSchema.virtual('itemCount').get(function() {
+  return this.items ? this.items.length : 0;
+});
+
+// Virtual for total price (calculated from populated course prices)
+CartSchema.virtual('totalPrice').get(function() {
+  if (!this.items || this.items.length === 0) return 0;
+
+  return this.items.reduce((sum, item) => {
+    // Check if courseId is populated with course data
+    const course = item.courseId as any;
+    if (course && typeof course === 'object' && course.price) {
+      return sum + course.price;
+    }
+    return sum;
+  }, 0);
+});
+
 CartSchema.set('toJSON', { virtuals: true });
 CartSchema.set('toObject', { virtuals: true });

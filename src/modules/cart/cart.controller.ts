@@ -29,7 +29,13 @@ export class CartController {
     try {
       const userId = req.user._id.toString();
       const cart = await this.cartService.findByUserId(userId);
-      return cart || { userId, items: [] };
+
+      if (!cart) {
+        return { userId, items: [], itemCount: 0, totalPrice: 0 };
+      }
+
+      // Convert to JSON to ensure virtuals are included
+      return cart.toJSON();
     } catch (error) {
       throw new BadRequestException('Failed to fetch cart');
     }
@@ -68,7 +74,8 @@ export class CartController {
         );
       }
 
-      return await this.cartService.addItem(userId, courseId);
+      const cart = await this.cartService.addItem(userId, courseId);
+      return cart.toJSON();
     } catch (error) {
       console.error('Add to cart error:', error);
       if (error instanceof BadRequestException) {
@@ -86,7 +93,8 @@ export class CartController {
 
     try {
       const userId = req.user._id.toString();
-      return await this.cartService.removeItem(userId, courseId);
+      const cart = await this.cartService.removeItem(userId, courseId);
+      return cart ? cart.toJSON() : { userId, items: [], itemCount: 0, totalPrice: 0 };
     } catch (error) {
       throw new BadRequestException('Failed to remove item from cart');
     }
@@ -103,7 +111,8 @@ export class CartController {
 
     try {
       const userId = req.user._id.toString();
-      return await this.cartService.removeMultipleItems(userId, courseIds);
+      const cart = await this.cartService.removeMultipleItems(userId, courseIds);
+      return cart ? cart.toJSON() : { userId, items: [], itemCount: 0, totalPrice: 0 };
     } catch (error) {
       throw new BadRequestException('Failed to remove items from cart');
     }
@@ -113,7 +122,8 @@ export class CartController {
   async clearCart(@Request() req) {
     try {
       const userId = req.user._id.toString();
-      return await this.cartService.clearCart(userId);
+      const cart = await this.cartService.clearCart(userId);
+      return cart ? cart.toJSON() : { userId, items: [], itemCount: 0, totalPrice: 0 };
     } catch (error) {
       throw new BadRequestException('Failed to clear cart');
     }

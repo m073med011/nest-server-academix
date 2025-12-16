@@ -13,7 +13,7 @@ export class CartRepository {
   }
 
   async findByUserId(userId: string): Promise<CartDocument | null> {
-    return this.cartModel
+    const cart = await this.cartModel
       .findOne({ userId })
       .populate({
         path: 'items.courseId',
@@ -21,6 +21,14 @@ export class CartRepository {
         select: 'title description price level thumbnail thumbnailUrl duration rating instructor students'
       })
       .exec();
+
+    // Clean up items with null courseId (deleted courses)
+    if (cart && cart.items.some((item) => !item.courseId)) {
+      cart.items = cart.items.filter((item) => item.courseId !== null);
+      await cart.save();
+    }
+
+    return cart;
   }
 
   async addItem(userId: string, courseId: string): Promise<CartDocument> {

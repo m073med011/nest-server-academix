@@ -10,11 +10,11 @@ export declare class OrganizationsController {
     remove(id: string): Promise<{
         message: string;
     }>;
-    searchUser(searchUserDto: SearchUserDto): Promise<import("mongoose").Document<unknown, {}, import("../users/schemas/user.schema").User, {}, {}> & import("../users/schemas/user.schema").User & {
+    searchUser(searchUserDto: SearchUserDto): Promise<import("mongoose").Document<unknown, {}, import("../users/schemas/user.schema").User, {}, {}> & Omit<import("../users/schemas/user.schema").User & {
         _id: import("mongoose").Types.ObjectId;
     } & {
         __v: number;
-    }>;
+    }, "matchPassword"> & import("../users/schemas/user.schema").UserMethods>;
     addMember(id: string, addMemberDto: AddMemberDto): Promise<import("mongoose").Document<unknown, {}, import("./schemas/organization-membership.schema").OrganizationMembership, {}, {}> & import("./schemas/organization-membership.schema").OrganizationMembership & {
         _id: import("mongoose").Types.ObjectId;
     } & {

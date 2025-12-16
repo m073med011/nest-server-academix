@@ -1,9 +1,9 @@
 import { PaymentMethod } from '../schemas/payment.schema';
 export declare class BillingDataDto {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phoneNumber: string;
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    phoneNumber?: string;
     apartment?: string;
     floor?: string;
     street?: string;

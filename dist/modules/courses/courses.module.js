@@ -22,7 +22,7 @@ exports.CoursesModule = CoursesModule = __decorate([
     (0, common_1.Module)({
         imports: [
             mongoose_1.MongooseModule.forFeature([{ name: course_schema_1.Course.name, schema: course_schema_1.CourseSchema }]),
-            payments_module_1.PaymentsModule,
+            (0, common_1.forwardRef)(() => payments_module_1.PaymentsModule),
             (0, common_1.forwardRef)(() => users_module_1.UsersModule),
         ],
         controllers: [courses_controller_1.CoursesController],

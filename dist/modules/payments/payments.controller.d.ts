@@ -5,6 +5,7 @@ import { CartService } from '../cart/cart.service';
 import { CoursesService } from '../courses/courses.service';
 import { DiscountService } from '../discount/discount.service';
 import { InvoiceService } from '../invoice/invoice.service';
+import { UsersService } from '../users/users.service';
 export declare class PaymentsController {
     private readonly paymentsService;
     private readonly paymobService;
@@ -12,8 +13,9 @@ export declare class PaymentsController {
     private readonly coursesService;
     private readonly discountService;
     private readonly invoiceService;
+    private readonly usersService;
     private readonly logger;
-    constructor(paymentsService: PaymentsService, paymobService: PaymobService, cartService: CartService, coursesService: CoursesService, discountService: DiscountService, invoiceService: InvoiceService);
+    constructor(paymentsService: PaymentsService, paymobService: PaymobService, cartService: CartService, coursesService: CoursesService, discountService: DiscountService, invoiceService: InvoiceService, usersService: UsersService);
     initiateCheckout(req: any, checkoutDto: CheckoutDto): Promise<{
         success: boolean;
         payment: any;

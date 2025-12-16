@@ -27,7 +27,7 @@ let CartRepository = class CartRepository {
         return newCart.save();
     }
     async findByUserId(userId) {
-        return this.cartModel
+        const cart = await this.cartModel
             .findOne({ userId })
             .populate({
             path: 'items.courseId',
@@ -35,6 +35,11 @@ let CartRepository = class CartRepository {
             select: 'title description price level thumbnail thumbnailUrl duration rating instructor students'
         })
             .exec();
+        if (cart && cart.items.some((item) => !item.courseId)) {
+            cart.items = cart.items.filter((item) => item.courseId !== null);
+            await cart.save();
+        }
+        return cart;
     }
     async addItem(userId, courseId) {
         let cart = await this.cartModel.findOne({ userId }).exec();

@@ -3497,13 +3497,7 @@
           "state": {
             "type": "string"
           }
-        },
-        "required": [
-          "firstName",
-          "lastName",
-          "email",
-          "phoneNumber"
-        ]
+        }
       },
       "CheckoutDto": {
         "type": "object",

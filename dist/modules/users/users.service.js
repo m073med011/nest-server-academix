@@ -61,7 +61,7 @@ let UsersService = class UsersService {
         return this.update(userId, updateProfileDto);
     }
     async changePassword(userId, changePasswordDto) {
-        const user = await this.usersRepository.findById(userId);
+        const user = await this.usersRepository.findByIdWithPassword(userId);
         if (!user)
             throw new common_1.NotFoundException('User not found');
         const isMatch = await user.matchPassword(changePasswordDto.currentPassword);

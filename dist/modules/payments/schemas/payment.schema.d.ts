@@ -15,10 +15,10 @@ export declare enum PaymentStatus {
 }
 export type PaymentDocument = Payment & Document;
 export declare class BillingData {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phoneNumber: string;
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    phoneNumber?: string;
     apartment?: string;
     floor?: string;
     street?: string;

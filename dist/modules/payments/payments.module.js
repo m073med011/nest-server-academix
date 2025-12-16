@@ -18,6 +18,7 @@ const cart_module_1 = require("../cart/cart.module");
 const courses_module_1 = require("../courses/courses.module");
 const discount_module_1 = require("../discount/discount.module");
 const invoice_module_1 = require("../invoice/invoice.module");
+const users_module_1 = require("../users/users.module");
 let PaymentsModule = class PaymentsModule {
 };
 exports.PaymentsModule = PaymentsModule;
@@ -29,6 +30,7 @@ exports.PaymentsModule = PaymentsModule = __decorate([
             (0, common_1.forwardRef)(() => courses_module_1.CoursesModule),
             (0, common_1.forwardRef)(() => discount_module_1.DiscountModule),
             (0, common_1.forwardRef)(() => invoice_module_1.InvoiceModule),
+            (0, common_1.forwardRef)(() => users_module_1.UsersModule),
         ],
         controllers: [payments_controller_1.PaymentsController],
         providers: [payments_service_1.PaymentsService, payments_repository_1.PaymentsRepository, paymob_service_1.PaymobService],

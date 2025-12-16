@@ -185,11 +185,11 @@ export declare class AuthService {
             role: UserRole;
         };
     }>;
-    validateOAuthUser(details: any): Promise<import("mongoose").Document<unknown, {}, import("../users/schemas/user.schema").User, {}, {}> & import("../users/schemas/user.schema").User & {
+    validateOAuthUser(details: any): Promise<import("mongoose").Document<unknown, {}, import("../users/schemas/user.schema").User, {}, {}> & Omit<import("../users/schemas/user.schema").User & {
         _id: import("mongoose").Types.ObjectId;
     } & {
         __v: number;
-    }>;
+    }, "matchPassword"> & import("../users/schemas/user.schema").UserMethods>;
     googleLogin(req: any): Promise<{
         success: boolean;
         message: string;

@@ -21,17 +21,17 @@ export type PaymentDocument = Payment & Document;
 
 @Schema()
 export class BillingData {
-  @Prop({ required: true })
-  firstName: string;
+  @Prop({ required: false })
+  firstName?: string;
 
-  @Prop({ required: true })
-  lastName: string;
+  @Prop({ required: false })
+  lastName?: string;
 
-  @Prop({ required: true })
-  email: string;
+  @Prop({ required: false })
+  email?: string;
 
-  @Prop({ required: true })
-  phoneNumber: string;
+  @Prop({ required: false })
+  phoneNumber?: string;
 
   @Prop({ required: false })
   apartment?: string;

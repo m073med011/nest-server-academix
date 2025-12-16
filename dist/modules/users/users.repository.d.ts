@@ -11,5 +11,6 @@ export declare class UsersRepository {
     delete(filter: FilterQuery<UserDocument>): Promise<boolean>;
     searchByEmail(email: string): Promise<UserDocument[]>;
     findByEmailWithPassword(email: string): Promise<UserDocument | null>;
+    findByIdWithPassword(id: string): Promise<UserDocument | null>;
     findByIdWithPopulatedCourses(id: string): Promise<UserDocument | null>;
 }

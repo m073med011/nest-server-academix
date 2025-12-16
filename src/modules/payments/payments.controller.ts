@@ -28,6 +28,7 @@ import { CartService } from '../cart/cart.service';
 import { CoursesService } from '../courses/courses.service';
 import { DiscountService } from '../discount/discount.service';
 import { InvoiceService } from '../invoice/invoice.service';
+import { UsersService } from '../users/users.service';
 
 @ApiTags('payments')
 @Controller('payments')
@@ -45,6 +46,7 @@ export class PaymentsController {
     private readonly discountService: DiscountService,
     @Inject(forwardRef(() => InvoiceService))
     private readonly invoiceService: InvoiceService,
+    private readonly usersService: UsersService,
   ) {}
 
   @Post('checkout')
@@ -147,6 +149,19 @@ export class PaymentsController {
       );
     }
 
+    // Update user phone number if provided (optional now)
+    if (checkoutDto.billingData?.phoneNumber) {
+      try {
+        await this.usersService.update(userId, {
+          phoneNumber: checkoutDto.billingData.phoneNumber,
+        });
+      } catch (error) {
+        this.logger.warn(
+          `Failed to update phone number for user ${userId}: ${error.message}`,
+        );
+      }
+    }
+
     // Initiate payment with discount
     return this.paymentsService.initiateCheckout(
       userId,
@@ -162,9 +177,14 @@ export class PaymentsController {
   @Post('verify/:paymentId')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Manually verify and complete payment (fallback for webhook)' })
+  @ApiOperation({
+    summary: 'Manually verify and complete payment (fallback for webhook)',
+  })
   @ApiResponse({ status: 200, description: 'Payment verified and completed' })
-  async manuallyVerifyPayment(@Param('paymentId') paymentId: string, @Request() req) {
+  async manuallyVerifyPayment(
+    @Param('paymentId') paymentId: string,
+    @Request() req,
+  ) {
     const userId = req.user._id.toString();
 
     try {
@@ -232,14 +252,25 @@ export class PaymentsController {
 
         // 3. Clear purchased courses from cart
         try {
-          const cart = await this.cartService.findByUserId(payment.userId.toString());
+          const cart = await this.cartService.findByUserId(
+            payment.userId.toString(),
+          );
           if (cart && cart.items.length > 0) {
             // Remove purchased courses from cart (batch operation)
-            const courseIdsToRemove = payment.courseIds.map((id: any) => id.toString());
-            await this.cartService.removeMultipleItems(payment.userId.toString(), courseIdsToRemove);
-            this.logger.log(`Removed ${courseIdsToRemove.length} course(s) from cart for user ${payment.userId}`);
+            const courseIdsToRemove = payment.courseIds.map((id: any) =>
+              id.toString(),
+            );
+            await this.cartService.removeMultipleItems(
+              payment.userId.toString(),
+              courseIdsToRemove,
+            );
+            this.logger.log(
+              `Removed ${courseIdsToRemove.length} course(s) from cart for user ${payment.userId}`,
+            );
           } else {
-            this.logger.log(`Cart empty or not found for user ${payment.userId}`);
+            this.logger.log(
+              `Cart empty or not found for user ${payment.userId}`,
+            );
           }
         } catch (error) {
           this.logger.error('Failed to update cart:', error);
@@ -277,7 +308,10 @@ export class PaymentsController {
   @Post('webhook')
   @ApiOperation({ summary: 'Handle Paymob webhook' })
   @ApiResponse({ status: 200, description: 'Webhook processed successfully' })
-  async handleWebhook(@Body() webhookData: any, @Headers('hmac') signature: string) {
+  async handleWebhook(
+    @Body() webhookData: any,
+    @Headers('hmac') signature: string,
+  ) {
     this.logger.log('=== PAYMOB WEBHOOK RECEIVED ===');
     this.logger.log(`Webhook data: ${JSON.stringify(webhookData)}`);
     this.logger.log(`HMAC signature: ${signature}`);
@@ -304,9 +338,8 @@ export class PaymentsController {
       },
     } = webhookData;
 
-    const payment: any = await this.paymentsService.findByMerchantOrderId(
-      merchant_order_id,
-    );
+    const payment: any =
+      await this.paymentsService.findByMerchantOrderId(merchant_order_id);
 
     if (!payment) {
       this.logger.warn(`Payment not found for order: ${merchant_order_id}`);
@@ -330,10 +363,7 @@ export class PaymentsController {
             `User ${payment.userId} enrolled in course ${courseId}`,
           );
         } catch (error) {
-          this.logger.error(
-            `Enrollment failed for course ${courseId}:`,
-            error,
-          );
+          this.logger.error(`Enrollment failed for course ${courseId}:`, error);
         }
       }
 
@@ -353,12 +383,21 @@ export class PaymentsController {
 
       // 3. Clear purchased courses from cart
       try {
-        const cart = await this.cartService.findByUserId(payment.userId.toString());
+        const cart = await this.cartService.findByUserId(
+          payment.userId.toString(),
+        );
         if (cart && cart.items.length > 0) {
           // Remove purchased courses from cart (batch operation)
-          const courseIdsToRemove = payment.courseIds.map((id: any) => id.toString());
-          await this.cartService.removeMultipleItems(payment.userId.toString(), courseIdsToRemove);
-          this.logger.log(`Removed ${courseIdsToRemove.length} course(s) from cart for user ${payment.userId}`);
+          const courseIdsToRemove = payment.courseIds.map((id: any) =>
+            id.toString(),
+          );
+          await this.cartService.removeMultipleItems(
+            payment.userId.toString(),
+            courseIdsToRemove,
+          );
+          this.logger.log(
+            `Removed ${courseIdsToRemove.length} course(s) from cart for user ${payment.userId}`,
+          );
         } else {
           this.logger.log(`Cart empty or not found for user ${payment.userId}`);
         }
@@ -424,13 +463,13 @@ export class PaymentsController {
       currency: payment.currency,
       paymentMethod: payment.paymentMethod,
       billingData: {
-        firstName: payment.billingData.firstName,
-        lastName: payment.billingData.lastName,
-        email: payment.billingData.email,
-        phoneNumber: payment.billingData.phoneNumber,
-        address: payment.billingData.street || '',
-        city: payment.billingData.city || '',
-        country: payment.billingData.country || 'EG',
+        firstName: payment.billingData?.firstName || '',
+        lastName: payment.billingData?.lastName || '',
+        email: payment.billingData?.email || '',
+        phoneNumber: payment.billingData?.phoneNumber || '',
+        address: payment.billingData?.street || '',
+        city: payment.billingData?.city || '',
+        country: payment.billingData?.country || 'EG',
       },
       items,
       subtotal: payment.originalAmount || payment.amount,

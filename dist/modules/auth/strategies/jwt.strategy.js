@@ -26,13 +26,10 @@ let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(pas
         this.usersService = usersService;
     }
     async validate(payload) {
-        console.log("JwtStrategy: Validating payload", payload);
         const user = await this.usersService.findById(payload.sub);
         if (!user) {
-            console.log("JwtStrategy: User not found for sub", payload.sub);
             return null;
         }
-        console.log("JwtStrategy: User found", user._id);
         return user;
     }
 };

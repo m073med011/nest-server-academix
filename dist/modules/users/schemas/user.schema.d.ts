@@ -1,5 +1,8 @@
 import { HydratedDocument, Types } from 'mongoose';
-export type UserDocument = HydratedDocument<User>;
+export interface UserMethods {
+    matchPassword(enteredPassword: string): Promise<boolean>;
+}
+export type UserDocument = HydratedDocument<User, UserMethods>;
 export declare enum UserRole {
     STUDENT = "student",
     INSTRUCTOR = "instructor",
@@ -25,7 +28,6 @@ export declare class User {
     imageProfileUrl?: string;
     emailVerified: boolean;
     twoFactorEnabled: boolean;
-    matchPassword(enteredPassword: string): Promise<boolean>;
 }
 export declare const UserSchema: import("mongoose").Schema<User, import("mongoose").Model<User, any, any, any, import("mongoose").Document<unknown, any, User, any, {}> & User & {
     _id: Types.ObjectId;

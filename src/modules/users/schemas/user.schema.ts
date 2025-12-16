@@ -2,7 +2,11 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 
-export type UserDocument = HydratedDocument<User>;
+export interface UserMethods {
+  matchPassword(enteredPassword: string): Promise<boolean>;
+}
+
+export type UserDocument = HydratedDocument<User, UserMethods>;
 
 export enum UserRole {
   STUDENT = 'student',
@@ -55,17 +59,19 @@ export class User {
 
   @Prop({ default: false })
   twoFactorEnabled: boolean;
-
-  // Methods
-  async matchPassword(enteredPassword: string): Promise<boolean> {
-    if (!this.password) {
-      return false;
-    }
-    return await bcrypt.compare(enteredPassword, this.password);
-  }
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+// Instance method for password comparison
+UserSchema.methods.matchPassword = async function (
+  enteredPassword: string,
+): Promise<boolean> {
+  if (!this.password) {
+    return false;
+  }
+  return await bcrypt.compare(enteredPassword, this.password);
+};
 
 // Pre-save hook for password hashing
 UserSchema.pre('save', async function (this: UserDocument, next) {

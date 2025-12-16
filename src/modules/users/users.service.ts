@@ -75,7 +75,7 @@ export class UsersService {
     userId: string,
     changePasswordDto: ChangePasswordDto,
   ): Promise<{ message: string }> {
-    const user = await this.usersRepository.findById(userId);
+    const user = await this.usersRepository.findByIdWithPassword(userId);
     if (!user) throw new NotFoundException('User not found');
 
     const isMatch = await user.matchPassword(changePasswordDto.currentPassword);

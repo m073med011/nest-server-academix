@@ -21,11 +21,11 @@ export declare class OrganizationsService {
     remove(id: string): Promise<{
         message: string;
     }>;
-    searchUser(email: string): Promise<import("mongoose").Document<unknown, {}, import("../users/schemas/user.schema").User, {}, {}> & import("../users/schemas/user.schema").User & {
+    searchUser(email: string): Promise<import("mongoose").Document<unknown, {}, import("../users/schemas/user.schema").User, {}, {}> & Omit<import("../users/schemas/user.schema").User & {
         _id: Types.ObjectId;
     } & {
         __v: number;
-    }>;
+    }, "matchPassword"> & import("../users/schemas/user.schema").UserMethods>;
     addMember(organizationId: string, addMemberDto: AddMemberDto): Promise<import("mongoose").Document<unknown, {}, import("./schemas/organization-membership.schema").OrganizationMembership, {}, {}> & import("./schemas/organization-membership.schema").OrganizationMembership & {
         _id: Types.ObjectId;
     } & {

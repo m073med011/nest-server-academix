@@ -7,10 +7,10 @@ declare const JwtStrategy_base: new (...args: [opt: import("passport-jwt").Strat
 export declare class JwtStrategy extends JwtStrategy_base {
     private usersService;
     constructor(configService: ConfigService, usersService: UsersService);
-    validate(payload: any): Promise<(import("mongoose").Document<unknown, {}, import("../../users/schemas/user.schema").User, {}, {}> & import("../../users/schemas/user.schema").User & {
+    validate(payload: any): Promise<(import("mongoose").Document<unknown, {}, import("../../users/schemas/user.schema").User, {}, {}> & Omit<import("../../users/schemas/user.schema").User & {
         _id: import("mongoose").Types.ObjectId;
     } & {
         __v: number;
-    }) | null>;
+    }, "matchPassword"> & import("../../users/schemas/user.schema").UserMethods) | null>;
 }
 export {};

@@ -3,21 +3,21 @@ import { UpdateProfileDto, ChangePasswordDto, SwitchContextDto } from './dto/use
 export declare class UsersController {
     private readonly usersService;
     constructor(usersService: UsersService);
-    searchUsers(email: string, req: any): Promise<(import("mongoose").Document<unknown, {}, import("./schemas/user.schema").User, {}, {}> & import("./schemas/user.schema").User & {
+    searchUsers(email: string, req: any): Promise<(import("mongoose").Document<unknown, {}, import("./schemas/user.schema").User, {}, {}> & Omit<import("./schemas/user.schema").User & {
         _id: import("mongoose").Types.ObjectId;
     } & {
         __v: number;
-    })[]>;
-    getProfile(req: any): Promise<import("mongoose").Document<unknown, {}, import("./schemas/user.schema").User, {}, {}> & import("./schemas/user.schema").User & {
+    }, "matchPassword"> & import("./schemas/user.schema").UserMethods)[]>;
+    getProfile(req: any): Promise<import("mongoose").Document<unknown, {}, import("./schemas/user.schema").User, {}, {}> & Omit<import("./schemas/user.schema").User & {
         _id: import("mongoose").Types.ObjectId;
     } & {
         __v: number;
-    }>;
-    updateProfile(req: any, updateProfileDto: UpdateProfileDto): Promise<import("mongoose").Document<unknown, {}, import("./schemas/user.schema").User, {}, {}> & import("./schemas/user.schema").User & {
+    }, "matchPassword"> & import("./schemas/user.schema").UserMethods>;
+    updateProfile(req: any, updateProfileDto: UpdateProfileDto): Promise<import("mongoose").Document<unknown, {}, import("./schemas/user.schema").User, {}, {}> & Omit<import("./schemas/user.schema").User & {
         _id: import("mongoose").Types.ObjectId;
     } & {
         __v: number;
-    }>;
+    }, "matchPassword"> & import("./schemas/user.schema").UserMethods>;
     changePassword(req: any, changePasswordDto: ChangePasswordDto): Promise<{
         message: string;
     }>;

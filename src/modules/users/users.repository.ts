@@ -51,6 +51,10 @@ export class UsersRepository {
     return this.userModel.findOne({ email }).select('+password').exec();
   }
 
+  async findByIdWithPassword(id: string): Promise<UserDocument | null> {
+    return this.userModel.findById(id).select('+password').exec();
+  }
+
   async findByIdWithPopulatedCourses(id: string): Promise<UserDocument | null> {
     return this.userModel.findById(id).populate('purchasedCourses').exec();
   }

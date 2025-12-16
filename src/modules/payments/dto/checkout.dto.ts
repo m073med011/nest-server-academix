@@ -4,21 +4,25 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { PaymentMethod } from '../schemas/payment.schema';
 
 export class BillingDataDto {
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsString()
-  firstName: string;
+  @IsOptional()
+  firstName?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsString()
-  lastName: string;
+  @IsOptional()
+  lastName?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsString()
-  email: string;
+  @IsOptional()
+  email?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsString()
-  phoneNumber: string;
+  @IsOptional()
+  phoneNumber?: string;
 
   @ApiPropertyOptional()
   @IsString()

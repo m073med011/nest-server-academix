@@ -40,12 +40,6 @@ let User = class User {
     imageProfileUrl;
     emailVerified;
     twoFactorEnabled;
-    async matchPassword(enteredPassword) {
-        if (!this.password) {
-            return false;
-        }
-        return await bcrypt.compare(enteredPassword, this.password);
-    }
 };
 exports.User = User;
 __decorate([
@@ -100,6 +94,12 @@ exports.User = User = __decorate([
     (0, mongoose_1.Schema)({ timestamps: true })
 ], User);
 exports.UserSchema = mongoose_1.SchemaFactory.createForClass(User);
+exports.UserSchema.methods.matchPassword = async function (enteredPassword) {
+    if (!this.password) {
+        return false;
+    }
+    return await bcrypt.compare(enteredPassword, this.password);
+};
 exports.UserSchema.pre('save', async function (next) {
     if (!this.isModified('password') || !this.password) {
         return next();

@@ -28,7 +28,10 @@ let CartController = class CartController {
         try {
             const userId = req.user._id.toString();
             const cart = await this.cartService.findByUserId(userId);
-            return cart || { userId, items: [] };
+            if (!cart) {
+                return { userId, items: [], itemCount: 0, totalPrice: 0 };
+            }
+            return cart.toJSON();
         }
         catch (error) {
             throw new common_1.BadRequestException('Failed to fetch cart');
@@ -53,7 +56,8 @@ let CartController = class CartController {
             if (isPurchased) {
                 throw new common_1.BadRequestException('You already own this course. Check your purchased courses.');
             }
-            return await this.cartService.addItem(userId, courseId);
+            const cart = await this.cartService.addItem(userId, courseId);
+            return cart.toJSON();
         }
         catch (error) {
             console.error('Add to cart error:', error);
@@ -69,7 +73,8 @@ let CartController = class CartController {
         }
         try {
             const userId = req.user._id.toString();
-            return await this.cartService.removeItem(userId, courseId);
+            const cart = await this.cartService.removeItem(userId, courseId);
+            return cart ? cart.toJSON() : { userId, items: [], itemCount: 0, totalPrice: 0 };
         }
         catch (error) {
             throw new common_1.BadRequestException('Failed to remove item from cart');
@@ -81,7 +86,8 @@ let CartController = class CartController {
         }
         try {
             const userId = req.user._id.toString();
-            return await this.cartService.removeMultipleItems(userId, courseIds);
+            const cart = await this.cartService.removeMultipleItems(userId, courseIds);
+            return cart ? cart.toJSON() : { userId, items: [], itemCount: 0, totalPrice: 0 };
         }
         catch (error) {
             throw new common_1.BadRequestException('Failed to remove items from cart');
@@ -90,7 +96,8 @@ let CartController = class CartController {
     async clearCart(req) {
         try {
             const userId = req.user._id.toString();
-            return await this.cartService.clearCart(userId);
+            const cart = await this.cartService.clearCart(userId);
+            return cart ? cart.toJSON() : { userId, items: [], itemCount: 0, totalPrice: 0 };
         }
         catch (error) {
             throw new common_1.BadRequestException('Failed to clear cart');

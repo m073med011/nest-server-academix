@@ -10,7 +10,7 @@ import { UsersModule } from '../users/users.module';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Course.name, schema: CourseSchema }]),
-    PaymentsModule,
+    forwardRef(() => PaymentsModule),
     forwardRef(() => UsersModule),
   ],
   controllers: [CoursesController],

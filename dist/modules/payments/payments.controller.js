@@ -24,6 +24,7 @@ const cart_service_1 = require("../cart/cart.service");
 const courses_service_1 = require("../courses/courses.service");
 const discount_service_1 = require("../discount/discount.service");
 const invoice_service_1 = require("../invoice/invoice.service");
+const users_service_1 = require("../users/users.service");
 let PaymentsController = PaymentsController_1 = class PaymentsController {
     paymentsService;
     paymobService;
@@ -31,14 +32,16 @@ let PaymentsController = PaymentsController_1 = class PaymentsController {
     coursesService;
     discountService;
     invoiceService;
+    usersService;
     logger = new common_1.Logger(PaymentsController_1.name);
-    constructor(paymentsService, paymobService, cartService, coursesService, discountService, invoiceService) {
+    constructor(paymentsService, paymobService, cartService, coursesService, discountService, invoiceService, usersService) {
         this.paymentsService = paymentsService;
         this.paymobService = paymobService;
         this.cartService = cartService;
         this.coursesService = coursesService;
         this.discountService = discountService;
         this.invoiceService = invoiceService;
+        this.usersService = usersService;
     }
     async initiateCheckout(req, checkoutDto) {
         const userId = req.user._id.toString();
@@ -91,6 +94,16 @@ let PaymentsController = PaymentsController_1 = class PaymentsController {
             discountCodeId = discountResult.discount?._id;
             discountAmount = discountResult.discountAmount;
             this.logger.log(`Discount applied: ${checkoutDto.discountCode}, amount: ${discountAmount}`);
+        }
+        if (checkoutDto.billingData?.phoneNumber) {
+            try {
+                await this.usersService.update(userId, {
+                    phoneNumber: checkoutDto.billingData.phoneNumber,
+                });
+            }
+            catch (error) {
+                this.logger.warn(`Failed to update phone number for user ${userId}: ${error.message}`);
+            }
         }
         return this.paymentsService.initiateCheckout(userId, checkoutDto, courseIds, totalAmount, isCartPayment, discountCodeId, discountAmount);
     }
@@ -273,13 +286,13 @@ let PaymentsController = PaymentsController_1 = class PaymentsController {
             currency: payment.currency,
             paymentMethod: payment.paymentMethod,
             billingData: {
-                firstName: payment.billingData.firstName,
-                lastName: payment.billingData.lastName,
-                email: payment.billingData.email,
-                phoneNumber: payment.billingData.phoneNumber,
-                address: payment.billingData.street || '',
-                city: payment.billingData.city || '',
-                country: payment.billingData.country || 'EG',
+                firstName: payment.billingData?.firstName || '',
+                lastName: payment.billingData?.lastName || '',
+                email: payment.billingData?.email || '',
+                phoneNumber: payment.billingData?.phoneNumber || '',
+                address: payment.billingData?.street || '',
+                city: payment.billingData?.city || '',
+                country: payment.billingData?.country || 'EG',
             },
             items,
             subtotal: payment.originalAmount || payment.amount,
@@ -325,7 +338,9 @@ __decorate([
     (0, common_1.Post)('verify/:paymentId'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, swagger_1.ApiBearerAuth)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Manually verify and complete payment (fallback for webhook)' }),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Manually verify and complete payment (fallback for webhook)',
+    }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Payment verified and completed' }),
     __param(0, (0, common_1.Param)('paymentId')),
     __param(1, (0, common_1.Request)()),
@@ -396,6 +411,7 @@ exports.PaymentsController = PaymentsController = PaymentsController_1 = __decor
         cart_service_1.CartService,
         courses_service_1.CoursesService,
         discount_service_1.DiscountService,
-        invoice_service_1.InvoiceService])
+        invoice_service_1.InvoiceService,
+        users_service_1.UsersService])
 ], PaymentsController);
 //# sourceMappingURL=payments.controller.js.map

@@ -9,6 +9,7 @@ import { CartModule } from '../cart/cart.module';
 import { CoursesModule } from '../courses/courses.module';
 import { DiscountModule } from '../discount/discount.module';
 import { InvoiceModule } from '../invoice/invoice.module';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { InvoiceModule } from '../invoice/invoice.module';
     forwardRef(() => CoursesModule),
     forwardRef(() => DiscountModule),
     forwardRef(() => InvoiceModule),
+    forwardRef(() => UsersModule),
   ],
   controllers: [PaymentsController],
   providers: [PaymentsService, PaymentsRepository, PaymobService],

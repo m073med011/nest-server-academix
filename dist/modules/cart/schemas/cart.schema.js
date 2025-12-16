@@ -60,6 +60,20 @@ exports.CartSchema.virtual('itemsWithCourses', {
     localField: 'items.courseId',
     foreignField: '_id',
 });
+exports.CartSchema.virtual('itemCount').get(function () {
+    return this.items ? this.items.length : 0;
+});
+exports.CartSchema.virtual('totalPrice').get(function () {
+    if (!this.items || this.items.length === 0)
+        return 0;
+    return this.items.reduce((sum, item) => {
+        const course = item.courseId;
+        if (course && typeof course === 'object' && course.price) {
+            return sum + course.price;
+        }
+        return sum;
+    }, 0);
+});
 exports.CartSchema.set('toJSON', { virtuals: true });
 exports.CartSchema.set('toObject', { virtuals: true });
 //# sourceMappingURL=cart.schema.js.map

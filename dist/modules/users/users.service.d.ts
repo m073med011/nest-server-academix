@@ -12,21 +12,21 @@ export declare class UsersService {
     findById(id: string): Promise<UserDocument | null>;
     update(id: string, updateData: any): Promise<UserDocument>;
     updatePassword(id: string, newPassword: string): Promise<void>;
-    searchUsers(email: string, currentUserId: string): Promise<(import("mongoose").Document<unknown, {}, import("./schemas/user.schema").User, {}, {}> & import("./schemas/user.schema").User & {
+    searchUsers(email: string, currentUserId: string): Promise<(import("mongoose").Document<unknown, {}, import("./schemas/user.schema").User, {}, {}> & Omit<import("./schemas/user.schema").User & {
         _id: import("mongoose").Types.ObjectId;
     } & {
         __v: number;
-    })[]>;
-    getProfile(userId: string): Promise<import("mongoose").Document<unknown, {}, import("./schemas/user.schema").User, {}, {}> & import("./schemas/user.schema").User & {
+    }, "matchPassword"> & import("./schemas/user.schema").UserMethods)[]>;
+    getProfile(userId: string): Promise<import("mongoose").Document<unknown, {}, import("./schemas/user.schema").User, {}, {}> & Omit<import("./schemas/user.schema").User & {
         _id: import("mongoose").Types.ObjectId;
     } & {
         __v: number;
-    }>;
-    updateProfile(userId: string, updateProfileDto: UpdateProfileDto): Promise<import("mongoose").Document<unknown, {}, import("./schemas/user.schema").User, {}, {}> & import("./schemas/user.schema").User & {
+    }, "matchPassword"> & import("./schemas/user.schema").UserMethods>;
+    updateProfile(userId: string, updateProfileDto: UpdateProfileDto): Promise<import("mongoose").Document<unknown, {}, import("./schemas/user.schema").User, {}, {}> & Omit<import("./schemas/user.schema").User & {
         _id: import("mongoose").Types.ObjectId;
     } & {
         __v: number;
-    }>;
+    }, "matchPassword"> & import("./schemas/user.schema").UserMethods>;
     changePassword(userId: string, changePasswordDto: ChangePasswordDto): Promise<{
         message: string;
     }>;
