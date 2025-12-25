@@ -75,25 +75,6 @@ let UsersService = class UsersService {
     async getMyOrganizations(userId) {
         return this.membershipRepository.findByUser(userId);
     }
-    async switchContext(userId, switchContextDto) {
-        const membership = await this.membershipRepository.findOne({
-            userId,
-            organizationId: switchContextDto.organizationId,
-            status: 'active',
-        });
-        if (!membership) {
-            throw new common_1.BadRequestException('User is not an active member of this organization');
-        }
-        const updatedUser = await this.usersRepository.update({ _id: userId }, { lastActiveOrganization: switchContextDto.organizationId });
-        if (!updatedUser) {
-            throw new common_1.NotFoundException('User not found');
-        }
-        return {
-            message: 'Context switched successfully',
-            activeOrganizationId: switchContextDto.organizationId,
-            activeOrganization: updatedUser.lastActiveOrganization,
-        };
-    }
 };
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([

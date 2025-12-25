@@ -95,4 +95,6 @@ export declare class OrganizationsService {
         message: string;
     }>;
     assignCourseToTerm(organizationId: string, courseId: string, assignTermDto: AssignTermDto): Promise<import("../courses/schemas/course.schema").Course>;
+    addLevel(organizationId: string, levelId: string): Promise<import("./schemas/organization.schema").OrganizationDocument | null>;
+    addTerm(organizationId: string, termId: string): Promise<import("./schemas/organization.schema").OrganizationDocument | null>;
 }

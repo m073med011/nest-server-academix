@@ -2,15 +2,11 @@ import {
   IsArray,
   IsBoolean,
   IsEmail,
-  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
-  ValidateNested,
 } from 'class-validator';
-import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { MembershipStatus } from '../schemas/organization-membership.schema';
 import { RolePermissions } from '../schemas/organization-role.schema';
 
 export class CreateOrganizationDto {
@@ -23,6 +19,11 @@ export class CreateOrganizationDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  orgcover?: string;
 }
 
 export class UpdateOrganizationDto {
@@ -35,6 +36,11 @@ export class UpdateOrganizationDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  orgcover?: string;
 
   @ApiProperty({ required: false })
   @IsOptional()

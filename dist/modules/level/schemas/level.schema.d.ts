@@ -6,6 +6,7 @@ export declare class Level {
     description: string;
     organizationId: Organization;
     order: number;
+    terms: MongooseSchema.Types.ObjectId[];
 }
 export declare const LevelSchema: MongooseSchema<Level, import("mongoose").Model<Level, any, any, any, Document<unknown, any, Level, any, {}> & Level & {
     _id: import("mongoose").Types.ObjectId;

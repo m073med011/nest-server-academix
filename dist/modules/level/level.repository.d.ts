@@ -9,4 +9,5 @@ export declare class LevelRepository {
     findByOrganization(organizationId: string): Promise<LevelDocument[]>;
     update(id: string, updateLevelDto: any): Promise<LevelDocument | null>;
     delete(id: string): Promise<LevelDocument | null>;
+    addTerm(id: string, termId: string): Promise<LevelDocument | null>;
 }

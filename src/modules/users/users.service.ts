@@ -6,11 +6,7 @@ import {
 import { UsersRepository } from './users.repository';
 import { UserDocument } from './schemas/user.schema';
 import { OrganizationMembershipRepository } from '../organizations/organization-membership.repository';
-import {
-  UpdateProfileDto,
-  ChangePasswordDto,
-  SwitchContextDto,
-} from './dto/users.dto';
+import { UpdateProfileDto, ChangePasswordDto } from './dto/users.dto';
 
 @Injectable()
 export class UsersService {
@@ -91,34 +87,5 @@ export class UsersService {
 
   async getMyOrganizations(userId: string) {
     return this.membershipRepository.findByUser(userId);
-  }
-
-  async switchContext(userId: string, switchContextDto: SwitchContextDto) {
-    const membership = await this.membershipRepository.findOne({
-      userId,
-      organizationId: switchContextDto.organizationId,
-      status: 'active',
-    });
-
-    if (!membership) {
-      throw new BadRequestException(
-        'User is not an active member of this organization',
-      );
-    }
-
-    const updatedUser = await this.usersRepository.update(
-      { _id: userId },
-      { lastActiveOrganization: switchContextDto.organizationId },
-    );
-
-    if (!updatedUser) {
-      throw new NotFoundException('User not found');
-    }
-
-    return {
-      message: 'Context switched successfully',
-      activeOrganizationId: switchContextDto.organizationId,
-      activeOrganization: updatedUser.lastActiveOrganization,
-    };
   }
 }

@@ -37,13 +37,6 @@ export class ChangePasswordDto {
   newPassword: string;
 }
 
-export class SwitchContextDto {
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  organizationId: string;
-}
-
 export class SearchUsersDto {
   @ApiProperty({ required: true })
   @IsNotEmpty()

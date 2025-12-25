@@ -39,7 +39,7 @@ let OrganizationsService = class OrganizationsService {
     async create(createOrganizationDto, ownerId) {
         const org = await this.organizationsRepository.create({
             ...createOrganizationDto,
-            ownerId,
+            owner: ownerId,
         });
         const adminRole = await this.roleRepository.create({
             name: 'Admin',
@@ -239,6 +239,12 @@ let OrganizationsService = class OrganizationsService {
         return this.coursesService.update(courseId, {
             termId: assignTermDto.termId,
         });
+    }
+    async addLevel(organizationId, levelId) {
+        return this.organizationsRepository.addLevel(organizationId, levelId);
+    }
+    async addTerm(organizationId, termId) {
+        return this.organizationsRepository.addTerm(organizationId, termId);
     }
 };
 exports.OrganizationsService = OrganizationsService;

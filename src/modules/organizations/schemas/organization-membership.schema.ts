@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Types } from 'mongoose';
+import { HydratedDocument, Schema as MongooseSchema, Types } from 'mongoose';
 
 export type OrganizationMembershipDocument =
   HydratedDocument<OrganizationMembership>;
@@ -12,19 +12,27 @@ export enum MembershipStatus {
 
 @Schema({ timestamps: true })
 export class OrganizationMembership {
-  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
   userId: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'Organization', required: true })
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'Organization',
+    required: true,
+  })
   organizationId: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'OrganizationRole', required: true })
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'OrganizationRole',
+    required: true,
+  })
   roleId: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'Level' })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Level' })
   levelId?: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'Term' })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Term' })
   termId?: Types.ObjectId;
 
   @Prop({

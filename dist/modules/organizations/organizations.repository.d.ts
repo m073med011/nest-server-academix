@@ -8,4 +8,6 @@ export declare class OrganizationsRepository {
     findById(id: string): Promise<OrganizationDocument | null>;
     update(id: string, updateOrganizationDto: any): Promise<OrganizationDocument | null>;
     delete(id: string): Promise<OrganizationDocument | null>;
+    addLevel(id: string, levelId: string): Promise<OrganizationDocument | null>;
+    addTerm(id: string, termId: string): Promise<OrganizationDocument | null>;
 }

@@ -1,4 +1,4 @@
-import { HydratedDocument, Types } from 'mongoose';
+import { HydratedDocument, Schema as MongooseSchema, Types } from 'mongoose';
 export type OrganizationMembershipDocument = HydratedDocument<OrganizationMembership>;
 export declare enum MembershipStatus {
     ACTIVE = "active",
@@ -15,7 +15,7 @@ export declare class OrganizationMembership {
     joinedAt: Date;
     leftAt?: Date;
 }
-export declare const OrganizationMembershipSchema: import("mongoose").Schema<OrganizationMembership, import("mongoose").Model<OrganizationMembership, any, any, any, import("mongoose").Document<unknown, any, OrganizationMembership, any, {}> & OrganizationMembership & {
+export declare const OrganizationMembershipSchema: MongooseSchema<OrganizationMembership, import("mongoose").Model<OrganizationMembership, any, any, any, import("mongoose").Document<unknown, any, OrganizationMembership, any, {}> & OrganizationMembership & {
     _id: Types.ObjectId;
 } & {
     __v: number;

@@ -30,23 +30,31 @@ let OrganizationMembership = class OrganizationMembership {
 };
 exports.OrganizationMembership = OrganizationMembership;
 __decorate([
-    (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, ref: 'User', required: true }),
+    (0, mongoose_1.Prop)({ type: mongoose_2.Schema.Types.ObjectId, ref: 'User', required: true }),
     __metadata("design:type", mongoose_2.Types.ObjectId)
 ], OrganizationMembership.prototype, "userId", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, ref: 'Organization', required: true }),
+    (0, mongoose_1.Prop)({
+        type: mongoose_2.Schema.Types.ObjectId,
+        ref: 'Organization',
+        required: true,
+    }),
     __metadata("design:type", mongoose_2.Types.ObjectId)
 ], OrganizationMembership.prototype, "organizationId", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, ref: 'OrganizationRole', required: true }),
+    (0, mongoose_1.Prop)({
+        type: mongoose_2.Schema.Types.ObjectId,
+        ref: 'OrganizationRole',
+        required: true,
+    }),
     __metadata("design:type", mongoose_2.Types.ObjectId)
 ], OrganizationMembership.prototype, "roleId", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, ref: 'Level' }),
+    (0, mongoose_1.Prop)({ type: mongoose_2.Schema.Types.ObjectId, ref: 'Level' }),
     __metadata("design:type", mongoose_2.Types.ObjectId)
 ], OrganizationMembership.prototype, "levelId", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, ref: 'Term' }),
+    (0, mongoose_1.Prop)({ type: mongoose_2.Schema.Types.ObjectId, ref: 'Term' }),
     __metadata("design:type", mongoose_2.Types.ObjectId)
 ], OrganizationMembership.prototype, "termId", void 0);
 __decorate([

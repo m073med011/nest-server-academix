@@ -16,6 +16,7 @@ const organization_role_schema_1 = require("../schemas/organization-role.schema"
 class CreateOrganizationDto {
     name;
     description;
+    orgcover;
 }
 exports.CreateOrganizationDto = CreateOrganizationDto;
 __decorate([
@@ -30,9 +31,16 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateOrganizationDto.prototype, "description", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateOrganizationDto.prototype, "orgcover", void 0);
 class UpdateOrganizationDto {
     name;
     description;
+    orgcover;
     settings;
 }
 exports.UpdateOrganizationDto = UpdateOrganizationDto;
@@ -48,6 +56,12 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateOrganizationDto.prototype, "description", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], UpdateOrganizationDto.prototype, "orgcover", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ required: false }),
     (0, class_validator_1.IsOptional)(),

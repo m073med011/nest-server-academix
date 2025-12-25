@@ -40,6 +40,16 @@ let OrganizationsRepository = class OrganizationsRepository {
     async delete(id) {
         return this.organizationModel.findByIdAndDelete(id).exec();
     }
+    async addLevel(id, levelId) {
+        return this.organizationModel
+            .findByIdAndUpdate(id, { $push: { levels: levelId } }, { new: true })
+            .exec();
+    }
+    async addTerm(id, termId) {
+        return this.organizationModel
+            .findByIdAndUpdate(id, { $push: { terms: termId } }, { new: true })
+            .exec();
+    }
 };
 exports.OrganizationsRepository = OrganizationsRepository;
 exports.OrganizationsRepository = OrganizationsRepository = __decorate([

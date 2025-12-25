@@ -142,36 +142,6 @@
         ]
       }
     },
-    "/v1/users/switch-context": {
-      "post": {
-        "operationId": "UsersController_switchContext_v1",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SwitchContextDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Context switched."
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "Switch active organization context",
-        "tags": [
-          "users"
-        ]
-      }
-    },
     "/v1/organizations": {
       "post": {
         "operationId": "OrganizationsController_create_v1",
@@ -2689,6 +2659,218 @@
         ]
       }
     },
+    "/v1/levels/{levelId}/terms": {
+      "post": {
+        "operationId": "TermController_create_v1",
+        "parameters": [
+          {
+            "name": "levelId",
+            "required": true,
+            "in": "path",
+            "description": "ID of the level",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTermDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Term created successfully."
+          },
+          "400": {
+            "description": "Invalid input data."
+          },
+          "404": {
+            "description": "Level not found."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a new term for a level",
+        "tags": [
+          "levels"
+        ]
+      },
+      "get": {
+        "operationId": "TermController_findAll_v1",
+        "parameters": [
+          {
+            "name": "levelId",
+            "required": true,
+            "in": "path",
+            "description": "ID of the level",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Terms retrieved successfully."
+          },
+          "404": {
+            "description": "Level not found."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get all terms for a level",
+        "tags": [
+          "levels"
+        ]
+      }
+    },
+    "/v1/levels/{levelId}/terms/{termId}": {
+      "get": {
+        "operationId": "TermController_findOne_v1",
+        "parameters": [
+          {
+            "name": "levelId",
+            "required": true,
+            "in": "path",
+            "description": "ID of the level",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "termId",
+            "required": true,
+            "in": "path",
+            "description": "ID of the term",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Term retrieved successfully."
+          },
+          "404": {
+            "description": "Term or level not found."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get a specific term by ID",
+        "tags": [
+          "levels"
+        ]
+      },
+      "patch": {
+        "operationId": "TermController_update_v1",
+        "parameters": [
+          {
+            "name": "levelId",
+            "required": true,
+            "in": "path",
+            "description": "ID of the level",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "termId",
+            "required": true,
+            "in": "path",
+            "description": "ID of the term",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTermDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Term updated successfully."
+          },
+          "400": {
+            "description": "Invalid input data."
+          },
+          "404": {
+            "description": "Term or level not found."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update a term",
+        "tags": [
+          "levels"
+        ]
+      },
+      "delete": {
+        "operationId": "TermController_remove_v1",
+        "parameters": [
+          {
+            "name": "levelId",
+            "required": true,
+            "in": "path",
+            "description": "ID of the level",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "termId",
+            "required": true,
+            "in": "path",
+            "description": "ID of the term",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Term deleted successfully."
+          },
+          "404": {
+            "description": "Term or level not found."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Delete a term",
+        "tags": [
+          "levels"
+        ]
+      }
+    },
     "/v1/materials": {
       "post": {
         "operationId": "MaterialController_create_v1",
@@ -3019,17 +3201,6 @@
           "newPassword"
         ]
       },
-      "SwitchContextDto": {
-        "type": "object",
-        "properties": {
-          "organizationId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "organizationId"
-        ]
-      },
       "CreateOrganizationDto": {
         "type": "object",
         "properties": {
@@ -3037,6 +3208,9 @@
             "type": "string"
           },
           "description": {
+            "type": "string"
+          },
+          "orgcover": {
             "type": "string"
           }
         },
@@ -3051,6 +3225,9 @@
             "type": "string"
           },
           "description": {
+            "type": "string"
+          },
+          "orgcover": {
             "type": "string"
           },
           "settings": {
@@ -3773,6 +3950,65 @@
           "email",
           "purpose"
         ]
+      },
+      "CreateTermDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the term",
+            "example": "Fall 2025"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the term",
+            "example": "Fall semester 2025"
+          },
+          "startDate": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Start date of the term",
+            "example": "2025-09-01"
+          },
+          "endDate": {
+            "format": "date-time",
+            "type": "string",
+            "description": "End date of the term",
+            "example": "2025-12-15"
+          }
+        },
+        "required": [
+          "name",
+          "startDate",
+          "endDate"
+        ]
+      },
+      "UpdateTermDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the term",
+            "example": "Fall 2025"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the term",
+            "example": "Fall semester 2025"
+          },
+          "startDate": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Start date of the term",
+            "example": "2025-09-01"
+          },
+          "endDate": {
+            "format": "date-time",
+            "type": "string",
+            "description": "End date of the term",
+            "example": "2025-12-15"
+          }
+        }
       }
     }
   }

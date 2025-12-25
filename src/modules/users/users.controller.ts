@@ -19,11 +19,7 @@ import {
   ApiBearerAuth,
   ApiQuery,
 } from '@nestjs/swagger';
-import {
-  UpdateProfileDto,
-  ChangePasswordDto,
-  SwitchContextDto,
-} from './dto/users.dto';
+import { UpdateProfileDto, ChangePasswordDto } from './dto/users.dto';
 import { Response } from 'express';
 
 @ApiTags('users')
@@ -73,15 +69,5 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Organizations retrieved.' })
   async getMyOrganizations(@Request() req) {
     return this.usersService.getMyOrganizations(req.user._id);
-  }
-
-  @Post('switch-context')
-  @ApiOperation({ summary: 'Switch active organization context' })
-  @ApiResponse({ status: 200, description: 'Context switched.' })
-  async switchContext(
-    @Request() req,
-    @Body() switchContextDto: SwitchContextDto,
-  ) {
-    return this.usersService.switchContext(req.user._id, switchContextDto);
   }
 }

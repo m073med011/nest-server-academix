@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, FilterQuery } from 'mongoose';
+import { Model, FilterQuery, Types } from 'mongoose';
 import {
   OrganizationMembership,
   OrganizationMembershipDocument,
@@ -14,7 +14,21 @@ export class OrganizationMembershipRepository {
   ) {}
 
   async create(membership: any): Promise<OrganizationMembershipDocument> {
-    const newMembership = new this.membershipModel(membership);
+    const castedMembership = {
+      ...membership,
+      userId: new Types.ObjectId(membership.userId),
+      organizationId: new Types.ObjectId(membership.organizationId),
+      roleId: new Types.ObjectId(membership.roleId),
+    };
+
+    if (membership.levelId) {
+      castedMembership.levelId = new Types.ObjectId(membership.levelId);
+    }
+    if (membership.termId) {
+      castedMembership.termId = new Types.ObjectId(membership.termId);
+    }
+
+    const newMembership = new this.membershipModel(castedMembership);
     return newMembership.save();
   }
 

@@ -43,6 +43,11 @@ let LevelRepository = class LevelRepository {
     async delete(id) {
         return this.levelModel.findByIdAndDelete(id).exec();
     }
+    async addTerm(id, termId) {
+        return this.levelModel
+            .findByIdAndUpdate(id, { $push: { terms: termId } }, { new: true })
+            .exec();
+    }
 };
 exports.LevelRepository = LevelRepository;
 exports.LevelRepository = LevelRepository = __decorate([

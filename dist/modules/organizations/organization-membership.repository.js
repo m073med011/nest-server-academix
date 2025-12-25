@@ -23,7 +23,19 @@ let OrganizationMembershipRepository = class OrganizationMembershipRepository {
         this.membershipModel = membershipModel;
     }
     async create(membership) {
-        const newMembership = new this.membershipModel(membership);
+        const castedMembership = {
+            ...membership,
+            userId: new mongoose_2.Types.ObjectId(membership.userId),
+            organizationId: new mongoose_2.Types.ObjectId(membership.organizationId),
+            roleId: new mongoose_2.Types.ObjectId(membership.roleId),
+        };
+        if (membership.levelId) {
+            castedMembership.levelId = new mongoose_2.Types.ObjectId(membership.levelId);
+        }
+        if (membership.termId) {
+            castedMembership.termId = new mongoose_2.Types.ObjectId(membership.termId);
+        }
+        const newMembership = new this.membershipModel(castedMembership);
         return newMembership.save();
     }
     async findOne(filter) {

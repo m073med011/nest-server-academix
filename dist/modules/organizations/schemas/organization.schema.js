@@ -37,8 +37,11 @@ exports.OrganizationSettings = OrganizationSettings = __decorate([
 let Organization = class Organization {
     name;
     description;
+    orgcover;
     owner;
     settings;
+    levels;
+    terms;
 };
 exports.Organization = Organization;
 __decorate([
@@ -49,6 +52,10 @@ __decorate([
     (0, mongoose_1.Prop)({ maxlength: 1000 }),
     __metadata("design:type", String)
 ], Organization.prototype, "description", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", String)
+], Organization.prototype, "orgcover", void 0);
 __decorate([
     (0, mongoose_1.Prop)({
         type: mongoose_2.Schema.Types.ObjectId,
@@ -62,6 +69,14 @@ __decorate([
     (0, mongoose_1.Prop)({ type: OrganizationSettings, default: () => ({}) }),
     __metadata("design:type", OrganizationSettings)
 ], Organization.prototype, "settings", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: [{ type: mongoose_2.Schema.Types.ObjectId, ref: 'Level' }] }),
+    __metadata("design:type", Array)
+], Organization.prototype, "levels", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: [{ type: mongoose_2.Schema.Types.ObjectId, ref: 'Term' }] }),
+    __metadata("design:type", Array)
+], Organization.prototype, "terms", void 0);
 exports.Organization = Organization = __decorate([
     (0, mongoose_1.Schema)({ timestamps: true })
 ], Organization);
@@ -70,11 +85,6 @@ exports.OrganizationSchema.index({ owner: 1 });
 exports.OrganizationSchema.index({ name: 1 });
 exports.OrganizationSchema.virtual('members', {
     ref: 'OrganizationMembership',
-    localField: '_id',
-    foreignField: 'organizationId',
-});
-exports.OrganizationSchema.virtual('levels', {
-    ref: 'Level',
     localField: '_id',
     foreignField: 'organizationId',
 });

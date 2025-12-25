@@ -35,4 +35,10 @@ export class LevelRepository {
   async delete(id: string): Promise<LevelDocument | null> {
     return this.levelModel.findByIdAndDelete(id).exec();
   }
+
+  async addTerm(id: string, termId: string): Promise<LevelDocument | null> {
+    return this.levelModel
+      .findByIdAndUpdate(id, { $push: { terms: termId } }, { new: true })
+      .exec();
+  }
 }

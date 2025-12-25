@@ -8,17 +8,26 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LevelService = void 0;
 const common_1 = require("@nestjs/common");
 const level_repository_1 = require("./level.repository");
+const organizations_service_1 = require("../organizations/organizations.service");
 let LevelService = class LevelService {
     levelRepository;
-    constructor(levelRepository) {
+    organizationsService;
+    constructor(levelRepository, organizationsService) {
         this.levelRepository = levelRepository;
+        this.organizationsService = organizationsService;
     }
-    create(createLevelDto) {
-        return this.levelRepository.create(createLevelDto);
+    async create(createLevelDto) {
+        await this.organizationsService.findOne(createLevelDto.organizationId);
+        const level = await this.levelRepository.create(createLevelDto);
+        await this.organizationsService.addLevel(createLevelDto.organizationId, level._id.toString());
+        return level;
     }
     findAll() {
         return this.levelRepository.findAll();
@@ -26,7 +35,8 @@ let LevelService = class LevelService {
     findOne(id) {
         return this.levelRepository.findById(id);
     }
-    findByOrganization(organizationId) {
+    async findByOrganization(organizationId) {
+        await this.organizationsService.findOne(organizationId);
         return this.levelRepository.findByOrganization(organizationId);
     }
     update(id, updateLevelDto) {
@@ -39,6 +49,8 @@ let LevelService = class LevelService {
 exports.LevelService = LevelService;
 exports.LevelService = LevelService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [level_repository_1.LevelRepository])
+    __param(1, (0, common_1.Inject)((0, common_1.forwardRef)(() => organizations_service_1.OrganizationsService))),
+    __metadata("design:paramtypes", [level_repository_1.LevelRepository,
+        organizations_service_1.OrganizationsService])
 ], LevelService);
 //# sourceMappingURL=level.service.js.map

@@ -24,6 +24,9 @@ export class Organization {
   @Prop({ maxlength: 1000 })
   description: string;
 
+  @Prop()
+  orgcover: string;
+
   @Prop({
     type: MongooseSchema.Types.ObjectId,
     ref: 'User',
@@ -34,6 +37,12 @@ export class Organization {
 
   @Prop({ type: OrganizationSettings, default: () => ({}) })
   settings: OrganizationSettings;
+
+  @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Level' }] })
+  levels: MongooseSchema.Types.ObjectId[];
+
+  @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Term' }] })
+  terms: MongooseSchema.Types.ObjectId[];
 }
 
 export const OrganizationSchema = SchemaFactory.createForClass(Organization);
@@ -45,12 +54,6 @@ OrganizationSchema.index({ name: 1 });
 // Virtuals
 OrganizationSchema.virtual('members', {
   ref: 'OrganizationMembership',
-  localField: '_id',
-  foreignField: 'organizationId',
-});
-
-OrganizationSchema.virtual('levels', {
-  ref: 'Level',
   localField: '_id',
   foreignField: 'organizationId',
 });

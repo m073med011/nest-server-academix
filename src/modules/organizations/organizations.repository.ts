@@ -38,4 +38,22 @@ export class OrganizationsRepository {
   async delete(id: string): Promise<OrganizationDocument | null> {
     return this.organizationModel.findByIdAndDelete(id).exec();
   }
+
+  async addLevel(
+    id: string,
+    levelId: string,
+  ): Promise<OrganizationDocument | null> {
+    return this.organizationModel
+      .findByIdAndUpdate(id, { $push: { levels: levelId } }, { new: true })
+      .exec();
+  }
+
+  async addTerm(
+    id: string,
+    termId: string,
+  ): Promise<OrganizationDocument | null> {
+    return this.organizationModel
+      .findByIdAndUpdate(id, { $push: { terms: termId } }, { new: true })
+      .exec();
+  }
 }

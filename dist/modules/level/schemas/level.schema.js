@@ -18,6 +18,7 @@ let Level = class Level {
     description;
     organizationId;
     order;
+    terms;
 };
 exports.Level = Level;
 __decorate([
@@ -40,17 +41,16 @@ __decorate([
     (0, mongoose_1.Prop)({ default: 0 }),
     __metadata("design:type", Number)
 ], Level.prototype, "order", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: [{ type: mongoose_2.Schema.Types.ObjectId, ref: 'Term' }] }),
+    __metadata("design:type", Array)
+], Level.prototype, "terms", void 0);
 exports.Level = Level = __decorate([
     (0, mongoose_1.Schema)({ timestamps: true })
 ], Level);
 exports.LevelSchema = mongoose_1.SchemaFactory.createForClass(Level);
 exports.LevelSchema.index({ organizationId: 1, order: 1 });
 exports.LevelSchema.index({ organizationId: 1, name: 1 }, { unique: true });
-exports.LevelSchema.virtual('terms', {
-    ref: 'Term',
-    localField: '_id',
-    foreignField: 'levelId',
-});
 exports.LevelSchema.virtual('students', {
     ref: 'OrganizationMembership',
     localField: '_id',

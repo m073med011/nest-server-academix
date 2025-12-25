@@ -2,10 +2,12 @@ import { RolePermissions } from '../schemas/organization-role.schema';
 export declare class CreateOrganizationDto {
     name: string;
     description?: string;
+    orgcover?: string;
 }
 export declare class UpdateOrganizationDto {
     name?: string;
     description?: string;
+    orgcover?: string;
     settings?: any;
 }
 export declare class SearchUserDto {

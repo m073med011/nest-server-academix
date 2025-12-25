@@ -38,9 +38,6 @@ let UsersController = class UsersController {
     async getMyOrganizations(req) {
         return this.usersService.getMyOrganizations(req.user._id);
     }
-    async switchContext(req, switchContextDto) {
-        return this.usersService.switchContext(req.user._id, switchContextDto);
-    }
 };
 exports.UsersController = UsersController;
 __decorate([
@@ -92,16 +89,6 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "getMyOrganizations", null);
-__decorate([
-    (0, common_1.Post)('switch-context'),
-    (0, swagger_1.ApiOperation)({ summary: 'Switch active organization context' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Context switched.' }),
-    __param(0, (0, common_1.Request)()),
-    __param(1, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, users_dto_1.SwitchContextDto]),
-    __metadata("design:returntype", Promise)
-], UsersController.prototype, "switchContext", null);
 exports.UsersController = UsersController = __decorate([
     (0, swagger_1.ApiTags)('users'),
     (0, common_1.Controller)('users'),

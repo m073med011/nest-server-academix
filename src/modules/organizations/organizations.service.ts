@@ -42,7 +42,7 @@ export class OrganizationsService {
   async create(createOrganizationDto: CreateOrganizationDto, ownerId: string) {
     const org = await this.organizationsRepository.create({
       ...createOrganizationDto,
-      ownerId,
+      owner: ownerId,
     });
 
     // Create default roles
@@ -301,5 +301,13 @@ export class OrganizationsService {
     return this.coursesService.update(courseId, {
       termId: assignTermDto.termId,
     } as any);
+  }
+
+  async addLevel(organizationId: string, levelId: string) {
+    return this.organizationsRepository.addLevel(organizationId, levelId);
+  }
+
+  async addTerm(organizationId: string, termId: string) {
+    return this.organizationsRepository.addTerm(organizationId, termId);
   }
 }

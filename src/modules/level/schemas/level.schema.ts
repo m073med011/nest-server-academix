@@ -21,6 +21,9 @@ export class Level {
 
   @Prop({ default: 0 })
   order: number;
+
+  @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Term' }] })
+  terms: MongooseSchema.Types.ObjectId[];
 }
 
 export const LevelSchema = SchemaFactory.createForClass(Level);
@@ -30,12 +33,6 @@ LevelSchema.index({ organizationId: 1, order: 1 });
 LevelSchema.index({ organizationId: 1, name: 1 }, { unique: true });
 
 // Virtuals
-LevelSchema.virtual('terms', {
-  ref: 'Term',
-  localField: '_id',
-  foreignField: 'levelId',
-});
-
 LevelSchema.virtual('students', {
   ref: 'OrganizationMembership',
   localField: '_id',

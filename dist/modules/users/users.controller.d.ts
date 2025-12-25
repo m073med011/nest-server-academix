@@ -1,5 +1,5 @@
 import { UsersService } from './users.service';
-import { UpdateProfileDto, ChangePasswordDto, SwitchContextDto } from './dto/users.dto';
+import { UpdateProfileDto, ChangePasswordDto } from './dto/users.dto';
 export declare class UsersController {
     private readonly usersService;
     constructor(usersService: UsersService);
@@ -26,9 +26,4 @@ export declare class UsersController {
     } & {
         __v: number;
     })[]>;
-    switchContext(req: any, switchContextDto: SwitchContextDto): Promise<{
-        message: string;
-        activeOrganizationId: string;
-        activeOrganization: import("mongoose").Types.ObjectId;
-    }>;
 }

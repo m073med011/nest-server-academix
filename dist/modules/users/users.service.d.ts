@@ -1,7 +1,7 @@
 import { UsersRepository } from './users.repository';
 import { UserDocument } from './schemas/user.schema';
 import { OrganizationMembershipRepository } from '../organizations/organization-membership.repository';
-import { UpdateProfileDto, ChangePasswordDto, SwitchContextDto } from './dto/users.dto';
+import { UpdateProfileDto, ChangePasswordDto } from './dto/users.dto';
 export declare class UsersService {
     private readonly usersRepository;
     private readonly membershipRepository;
@@ -35,9 +35,4 @@ export declare class UsersService {
     } & {
         __v: number;
     })[]>;
-    switchContext(userId: string, switchContextDto: SwitchContextDto): Promise<{
-        message: string;
-        activeOrganizationId: string;
-        activeOrganization: import("mongoose").Types.ObjectId;
-    }>;
 }
