@@ -22,6 +22,7 @@ import { TermRepository } from './term.repository';
 import { OrganizationRoleRepository } from './organization-role.repository';
 import { UsersModule } from '../users/users.module';
 import { CoursesModule } from '../courses/courses.module';
+import { OrganizationPermissionGuard } from '../../common/guards/organization-permission.guard';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { CoursesModule } from '../courses/courses.module';
     OrganizationMembershipRepository,
     OrganizationRoleRepository,
     TermRepository,
+    OrganizationPermissionGuard,
   ],
   exports: [
     OrganizationsService,

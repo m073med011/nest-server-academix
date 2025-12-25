@@ -109,6 +109,14 @@ let CoursesRepository = class CoursesRepository {
         })
             .exec();
     }
+    async updateMany(filter, update) {
+        const result = await this.courseModel.updateMany(filter, update).exec();
+        return { modifiedCount: result.modifiedCount || 0 };
+    }
+    async deleteMany(filter) {
+        const result = await this.courseModel.deleteMany(filter).exec();
+        return { deletedCount: result.deletedCount || 0 };
+    }
 };
 exports.CoursesRepository = CoursesRepository;
 exports.CoursesRepository = CoursesRepository = __decorate([

@@ -58,4 +58,12 @@ export class UsersRepository {
   async findByIdWithPopulatedCourses(id: string): Promise<UserDocument | null> {
     return this.userModel.findById(id).populate('purchasedCourses').exec();
   }
+
+  async updateMany(
+    filter: FilterQuery<UserDocument>,
+    update: any,
+  ): Promise<{ modifiedCount: number }> {
+    const result = await this.userModel.updateMany(filter, update).exec();
+    return { modifiedCount: result.modifiedCount || 0 };
+  }
 }

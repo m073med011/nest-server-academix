@@ -35,6 +35,10 @@ let TermRepository = class TermRepository {
     async find(filter) {
         return this.termModel.find(filter).exec();
     }
+    async deleteMany(filter) {
+        const result = await this.termModel.deleteMany(filter).exec();
+        return { deletedCount: result.deletedCount || 0 };
+    }
 };
 exports.TermRepository = TermRepository;
 exports.TermRepository = TermRepository = __decorate([

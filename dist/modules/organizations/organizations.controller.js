@@ -18,6 +18,8 @@ const organizations_service_1 = require("./organizations.service");
 const passport_1 = require("@nestjs/passport");
 const swagger_1 = require("@nestjs/swagger");
 const organizations_dto_1 = require("./dto/organizations.dto");
+const organization_permission_guard_1 = require("../../common/guards/organization-permission.guard");
+const organization_permission_decorator_1 = require("../../common/decorators/organization-permission.decorator");
 let OrganizationsController = class OrganizationsController {
     organizationsService;
     constructor(organizationsService) {
@@ -35,8 +37,17 @@ let OrganizationsController = class OrganizationsController {
     async update(id, updateOrganizationDto) {
         return this.organizationsService.update(id, updateOrganizationDto);
     }
-    async remove(id) {
-        return this.organizationsService.remove(id);
+    async remove(id, req) {
+        return this.organizationsService.remove(id, req.user._id);
+    }
+    async restore(id, req) {
+        return this.organizationsService.restore(id, req.user._id);
+    }
+    async permanentDelete(id, req) {
+        return this.organizationsService.permanentDelete(id, req.user._id);
+    }
+    async getDeleted(req) {
+        return this.organizationsService.findDeletedForUser(req.user._id);
     }
     async searchUser(searchUserDto) {
         return this.organizationsService.searchUser(searchUserDto.email);
@@ -47,14 +58,14 @@ let OrganizationsController = class OrganizationsController {
     async removeMember(id, userId) {
         return this.organizationsService.removeMember(id, userId);
     }
-    async getMembers(id, status) {
-        return this.organizationsService.getMembers(id, status);
+    async getMembers(id, queryDto) {
+        return this.organizationsService.getMembers(id, queryDto);
     }
     async leaveMembership(id, req) {
         return this.organizationsService.leaveMembership(id, req.user._id);
     }
-    async getOrganizationUsers(id, roleId) {
-        return this.organizationsService.getOrganizationUsers(id, roleId);
+    async getOrganizationUsers(id, queryDto) {
+        return this.organizationsService.getOrganizationUsers(id, queryDto);
     }
     async updateMemberRole(id, userId, updateMemberRoleDto) {
         return this.organizationsService.updateMemberRole(id, userId, updateMemberRoleDto);
@@ -125,7 +136,8 @@ __decorate([
 ], OrganizationsController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':id'),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), organization_permission_guard_1.OrganizationPermissionGuard),
+    (0, organization_permission_decorator_1.RequirePermission)('canManageOrganization'),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Update organization' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Organization updated.' }),
@@ -137,15 +149,59 @@ __decorate([
 ], OrganizationsController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), organization_permission_guard_1.OrganizationPermissionGuard),
+    (0, organization_permission_decorator_1.RequireOwner)(),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Delete organization' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Organization deleted.' }),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], OrganizationsController.prototype, "remove", null);
+__decorate([
+    (0, common_1.Post)(':id/restore'),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), organization_permission_guard_1.OrganizationPermissionGuard),
+    (0, organization_permission_decorator_1.RequireOwner)(),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Restore deleted organization' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Organization restored.' }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], OrganizationsController.prototype, "restore", null);
+__decorate([
+    (0, common_1.Delete)(':id/permanent'),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), organization_permission_guard_1.OrganizationPermissionGuard),
+    (0, organization_permission_decorator_1.RequireOwner)(),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Permanently delete organization',
+        description: 'WARNING: This action is irreversible. Organization must be soft-deleted first.',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Organization permanently deleted.',
+    }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], OrganizationsController.prototype, "permanentDelete", null);
+__decorate([
+    (0, common_1.Get)('deleted'),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Get deleted organizations (owner only)' }),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], OrganizationsController.prototype, "getDeleted", null);
 __decorate([
     (0, common_1.Post)('search-user'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
@@ -159,7 +215,8 @@ __decorate([
 ], OrganizationsController.prototype, "searchUser", null);
 __decorate([
     (0, common_1.Post)(':id/members'),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), organization_permission_guard_1.OrganizationPermissionGuard),
+    (0, organization_permission_decorator_1.RequirePermission)('canManageStudents'),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Add member to organization' }),
     (0, swagger_1.ApiResponse)({ status: 201, description: 'Member added.' }),
@@ -171,7 +228,8 @@ __decorate([
 ], OrganizationsController.prototype, "addMember", null);
 __decorate([
     (0, common_1.Delete)(':id/members/:userId'),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), organization_permission_guard_1.OrganizationPermissionGuard),
+    (0, organization_permission_decorator_1.RequirePermission)('canManageStudents'),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Remove member from organization' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Member removed.' }),
@@ -185,13 +243,15 @@ __decorate([
     (0, common_1.Get)(':id/members'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, swagger_1.ApiBearerAuth)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Get organization members' }),
-    (0, swagger_1.ApiQuery)({ name: 'status', required: false }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Members retrieved.' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Get organization members (paginated)' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Members retrieved with pagination.',
+    }),
     __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Query)('status')),
+    __param(1, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [String, organizations_dto_1.GetMembersDto]),
     __metadata("design:returntype", Promise)
 ], OrganizationsController.prototype, "getMembers", null);
 __decorate([
@@ -210,18 +270,21 @@ __decorate([
     (0, common_1.Get)(':id/users'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, swagger_1.ApiBearerAuth)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Get organization users by role' }),
-    (0, swagger_1.ApiQuery)({ name: 'roleId', required: false }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Users retrieved.' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Get organization users (paginated)' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Active users retrieved with pagination.',
+    }),
     __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Query)('roleId')),
+    __param(1, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [String, organizations_dto_1.GetMembersDto]),
     __metadata("design:returntype", Promise)
 ], OrganizationsController.prototype, "getOrganizationUsers", null);
 __decorate([
     (0, common_1.Patch)(':id/users/:userId/role'),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), organization_permission_guard_1.OrganizationPermissionGuard),
+    (0, organization_permission_decorator_1.RequirePermission)('canManageRoles'),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Update member role' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Member role updated.' }),
@@ -257,7 +320,8 @@ __decorate([
 ], OrganizationsController.prototype, "getRoles", null);
 __decorate([
     (0, common_1.Post)(':id/roles'),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), organization_permission_guard_1.OrganizationPermissionGuard),
+    (0, organization_permission_decorator_1.RequirePermission)('canManageRoles'),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Create organization role' }),
     (0, swagger_1.ApiResponse)({ status: 201, description: 'Role created.' }),
@@ -269,7 +333,8 @@ __decorate([
 ], OrganizationsController.prototype, "createRole", null);
 __decorate([
     (0, common_1.Patch)(':id/roles/:roleId'),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), organization_permission_guard_1.OrganizationPermissionGuard),
+    (0, organization_permission_decorator_1.RequirePermission)('canManageRoles'),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Update organization role' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Role updated.' }),
@@ -282,7 +347,8 @@ __decorate([
 ], OrganizationsController.prototype, "updateRole", null);
 __decorate([
     (0, common_1.Delete)(':id/roles/:roleId'),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), organization_permission_guard_1.OrganizationPermissionGuard),
+    (0, organization_permission_decorator_1.RequirePermission)('canManageRoles'),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Delete organization role' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Role deleted.' }),
@@ -316,7 +382,8 @@ __decorate([
 ], OrganizationsController.prototype, "getOrganizationCourses", null);
 __decorate([
     (0, common_1.Post)(':id/courses'),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), organization_permission_guard_1.OrganizationPermissionGuard),
+    (0, organization_permission_decorator_1.RequirePermission)('canManageCourses'),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Create organization course' }),
     (0, swagger_1.ApiResponse)({ status: 201, description: 'Course created.' }),
@@ -329,7 +396,8 @@ __decorate([
 ], OrganizationsController.prototype, "createOrganizationCourse", null);
 __decorate([
     (0, common_1.Patch)(':id/courses/:courseId'),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), organization_permission_guard_1.OrganizationPermissionGuard),
+    (0, organization_permission_decorator_1.RequirePermission)('canManageCourses'),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Update organization course' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Course updated.' }),
@@ -342,7 +410,8 @@ __decorate([
 ], OrganizationsController.prototype, "updateOrganizationCourse", null);
 __decorate([
     (0, common_1.Delete)(':id/courses/:courseId'),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), organization_permission_guard_1.OrganizationPermissionGuard),
+    (0, organization_permission_decorator_1.RequirePermission)('canManageCourses'),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Delete organization course' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Course deleted.' }),
@@ -354,7 +423,8 @@ __decorate([
 ], OrganizationsController.prototype, "deleteOrganizationCourse", null);
 __decorate([
     (0, common_1.Patch)(':id/courses/:courseId/assign-term'),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), organization_permission_guard_1.OrganizationPermissionGuard),
+    (0, organization_permission_decorator_1.RequirePermission)('canManageCourses'),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Assign course to term' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Course assigned to term.' }),

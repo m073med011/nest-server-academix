@@ -85,4 +85,26 @@ exports.OrganizationMembershipSchema.index({ userId: 1, organizationId: 1, statu
     unique: true,
     partialFilterExpression: { status: MembershipStatus.ACTIVE },
 });
+exports.OrganizationMembershipSchema.index({
+    organizationId: 1,
+    status: 1,
+    roleId: 1,
+});
+exports.OrganizationMembershipSchema.index({
+    userId: 1,
+    status: 1,
+});
+exports.OrganizationMembershipSchema.index({
+    organizationId: 1,
+    joinedAt: 1,
+});
+exports.OrganizationMembershipSchema.index({
+    organizationId: 1,
+    leftAt: 1,
+});
+exports.OrganizationMembershipSchema.index({
+    organizationId: 1,
+    status: 1,
+    joinedAt: -1,
+});
 //# sourceMappingURL=organization-membership.schema.js.map

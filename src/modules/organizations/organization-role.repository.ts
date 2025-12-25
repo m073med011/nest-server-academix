@@ -47,4 +47,9 @@ export class OrganizationRoleRepository {
     const result = await this.roleModel.findByIdAndDelete(id).exec();
     return !!result;
   }
+
+  async deleteMany(filter: any): Promise<{ deletedCount: number }> {
+    const result = await this.roleModel.deleteMany(filter).exec();
+    return { deletedCount: result.deletedCount || 0 };
+  }
 }

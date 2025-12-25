@@ -26,11 +26,22 @@ let OrganizationsRepository = class OrganizationsRepository {
         const newOrganization = new this.organizationModel(createOrganizationDto);
         return newOrganization.save();
     }
-    async findAll() {
-        return this.organizationModel.find().exec();
+    async findAll(includeDeleted = false) {
+        const filter = includeDeleted ? {} : { deletedAt: null };
+        return this.organizationModel
+            .find(filter)
+            .populate('owner', 'name email imageProfileUrl')
+            .exec();
     }
-    async findById(id) {
-        return this.organizationModel.findById(id).exec();
+    async findById(id, includeDeleted = false) {
+        const filter = { _id: id };
+        if (!includeDeleted) {
+            filter.deletedAt = null;
+        }
+        return this.organizationModel
+            .findOne(filter)
+            .populate('owner', 'name email imageProfileUrl')
+            .exec();
     }
     async update(id, updateOrganizationDto) {
         return this.organizationModel
@@ -39,6 +50,9 @@ let OrganizationsRepository = class OrganizationsRepository {
     }
     async delete(id) {
         return this.organizationModel.findByIdAndDelete(id).exec();
+    }
+    async findDeleted() {
+        return this.organizationModel.find({ deletedAt: { $ne: null } }).exec();
     }
     async addLevel(id, levelId) {
         return this.organizationModel

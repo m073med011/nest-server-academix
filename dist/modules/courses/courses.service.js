@@ -163,6 +163,23 @@ let CoursesService = class CoursesService {
     countDistinctStudentsForInstructor(instructorId) {
         return this.coursesRepository.countDistinctStudentsForInstructor(instructorId);
     }
+    async archiveByOrganization(organizationId) {
+        const result = await this.coursesRepository.updateMany({ organizationId }, {
+            $set: {
+                isArchived: true,
+                archivedAt: new Date(),
+            },
+        });
+        return {
+            archivedCount: result.modifiedCount || 0,
+        };
+    }
+    async permanentDeleteByOrganization(organizationId) {
+        const result = await this.coursesRepository.deleteMany({ organizationId });
+        return {
+            deletedCount: result.deletedCount || 0,
+        };
+    }
 };
 exports.CoursesService = CoursesService;
 exports.CoursesService = CoursesService = __decorate([

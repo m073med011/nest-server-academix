@@ -4,6 +4,7 @@ import {
   BadRequestException,
   Inject,
   forwardRef,
+  ForbiddenException,
 } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { OrganizationsRepository } from './organizations.repository';
@@ -12,6 +13,7 @@ import { OrganizationRoleRepository } from './organization-role.repository';
 import { TermRepository } from './term.repository';
 import { UsersService } from '../users/users.service';
 import { CoursesService } from '../courses/courses.service';
+import { UsersRepository } from '../users/users.repository';
 import {
   CreateOrganizationDto,
   UpdateOrganizationDto,
@@ -23,8 +25,17 @@ import {
   UpdateOrganizationCourseDto,
   AssignTermDto,
   OrganizationCourseFilterDto,
+  PaginatedResponse,
+  GetMembersDto,
 } from './dto/organizations.dto';
-import { MembershipStatus } from './schemas/organization-membership.schema';
+import {
+  MembershipStatus,
+  OrganizationMembershipDocument,
+} from './schemas/organization-membership.schema';
+import {
+  CreateMembershipDto,
+  CreateRoleDto as CreateRoleRepoDto,
+} from './dto/repository.dto';
 
 @Injectable()
 export class OrganizationsService {
@@ -37,6 +48,8 @@ export class OrganizationsService {
     private readonly usersService: UsersService,
     @Inject(forwardRef(() => CoursesService))
     private readonly coursesService: CoursesService,
+    @Inject(forwardRef(() => UsersRepository))
+    private readonly usersRepository: UsersRepository,
   ) {}
 
   async create(createOrganizationDto: CreateOrganizationDto, ownerId: string) {
@@ -46,7 +59,7 @@ export class OrganizationsService {
     });
 
     // Create default roles
-    const adminRole = await this.roleRepository.create({
+    const adminRoleDto: CreateRoleRepoDto = {
       name: 'Admin',
       organizationId: org._id,
       permissions: {
@@ -60,7 +73,9 @@ export class OrganizationsService {
         canViewReports: true,
       },
       isSystemRole: true,
-    } as any);
+    };
+
+    const adminRole = await this.roleRepository.create(adminRoleDto);
 
     await this.roleRepository.create({
       name: 'Instructor',
@@ -95,12 +110,14 @@ export class OrganizationsService {
     } as any);
 
     // Add owner as member with Admin role
-    await this.membershipRepository.create({
+    const membershipDto: CreateMembershipDto = {
       userId: ownerId,
       organizationId: org._id,
       roleId: adminRole._id,
       status: MembershipStatus.ACTIVE,
-    } as any);
+    };
+
+    await this.membershipRepository.create(membershipDto);
 
     return org;
   }
@@ -124,10 +141,189 @@ export class OrganizationsService {
     return org;
   }
 
-  async remove(id: string) {
-    const org = await this.organizationsRepository.delete(id);
-    if (!org) throw new NotFoundException('Organization not found');
-    return { message: 'Organization deleted successfully' };
+  /**
+   * Soft delete organization with cascade cleanup
+   * @param id - Organization ID
+   * @param requesterId - User ID requesting deletion (must be owner)
+   */
+  async remove(id: string, requesterId: string) {
+    // 1. Verify organization exists
+    const org = await this.organizationsRepository.findById(id);
+    if (!org) {
+      throw new NotFoundException('Organization not found');
+    }
+
+    // 2. Verify requester is owner (double-check, guard should handle this)
+    if (org.owner.toString() !== requesterId) {
+      throw new ForbiddenException(
+        'Only organization owner can delete organization',
+      );
+    }
+
+    // 3. Check if already deleted
+    if (org.deletedAt) {
+      throw new BadRequestException('Organization is already deleted');
+    }
+
+    // 4. Mark organization as deleted (soft delete)
+    org.deletedAt = new Date();
+    org.deletedBy = requesterId as any;
+    await org.save();
+
+    // 5. Cascade operations (in transaction-like pattern)
+    try {
+      // 5a. Mark all memberships as LEFT
+      const memberships = await this.membershipRepository.find({
+        organizationId: id,
+        status: MembershipStatus.ACTIVE,
+      });
+
+      for (const membership of memberships) {
+        membership.status = MembershipStatus.LEFT;
+        membership.leftAt = new Date();
+        await membership.save();
+      }
+
+      // 5b. Clear lastActiveOrganization for affected users
+      await this.usersRepository.updateMany(
+        { lastActiveOrganization: id },
+        { $set: { lastActiveOrganization: null } },
+      );
+
+      // 5c. Soft delete or archive courses
+      await this.coursesService.archiveByOrganization(id);
+
+      // 5d. Keep roles and terms for audit trail (don't delete)
+      // They're referenced by historical memberships
+
+      return {
+        message: 'Organization deleted successfully',
+        deletedAt: org.deletedAt,
+        affectedMemberships: memberships.length,
+      };
+    } catch (error) {
+      // Rollback soft delete if cascade fails
+      org.deletedAt = null;
+      org.deletedBy = null;
+      await org.save();
+
+      throw new BadRequestException(
+        `Failed to delete organization: ${error.message}`,
+      );
+    }
+  }
+
+  /**
+   * Restore soft-deleted organization (admin only)
+   * @param id - Organization ID
+   * @param requesterId - Admin user ID
+   */
+  async restore(id: string, requesterId: string) {
+    const org = await this.organizationsRepository.findById(id);
+
+    if (!org) {
+      throw new NotFoundException('Organization not found');
+    }
+
+    if (!org.deletedAt) {
+      throw new BadRequestException('Organization is not deleted');
+    }
+
+    // Verify requester is owner
+    if (org.owner.toString() !== requesterId) {
+      throw new ForbiddenException(
+        'Only organization owner can restore organization',
+      );
+    }
+
+    // Restore organization
+    org.deletedAt = null;
+    org.deletedBy = null;
+    await org.save();
+
+    return {
+      message: 'Organization restored successfully',
+      restoredAt: new Date(),
+    };
+  }
+
+  /**
+   * Permanently delete organization and all related data
+   * WARNING: This is irreversible
+   * @param id - Organization ID
+   * @param requesterId - Owner user ID
+   */
+  async permanentDelete(id: string, requesterId: string) {
+    const org = await this.organizationsRepository.findById(id);
+
+    if (!org) {
+      throw new NotFoundException('Organization not found');
+    }
+
+    // Must be soft-deleted first
+    if (!org.deletedAt) {
+      throw new BadRequestException(
+        'Organization must be soft-deleted before permanent deletion',
+      );
+    }
+
+    // Verify requester is owner
+    if (org.owner.toString() !== requesterId) {
+      throw new ForbiddenException(
+        'Only organization owner can permanently delete organization',
+      );
+    }
+
+    // Permanent cascade delete
+    const results = {
+      memberships: 0,
+      roles: 0,
+      terms: 0,
+      courses: 0,
+    };
+
+    // Delete all memberships
+    const membershipResult = await this.membershipRepository.deleteMany({
+      organizationId: id,
+    });
+    results.memberships = membershipResult.deletedCount;
+
+    // Delete all roles
+    const roleResult = await this.roleRepository.deleteMany({
+      organizationId: id,
+    });
+    results.roles = roleResult.deletedCount;
+
+    // Delete all terms
+    const termResult = await this.termRepository.deleteMany({
+      organizationId: id,
+    });
+    results.terms = termResult.deletedCount;
+
+    // Delete courses
+    const courseResult = await this.coursesService.permanentDeleteByOrganization(
+      id,
+    );
+    results.courses = courseResult.deletedCount;
+
+    // Clear user references
+    await this.usersRepository.updateMany(
+      { lastActiveOrganization: id },
+      { $set: { lastActiveOrganization: null } },
+    );
+
+    // Finally delete organization
+    await this.organizationsRepository.delete(id);
+
+    return {
+      message: 'Organization permanently deleted',
+      deletedRecords: results,
+    };
+  }
+
+  async findDeletedForUser(userId: string) {
+    const allDeleted = await this.organizationsRepository.findDeleted();
+    return allDeleted.filter((org) => org.owner.toString() === userId);
   }
 
   // User Management
@@ -148,11 +344,13 @@ export class OrganizationsService {
       throw new BadRequestException('User is already a member');
     }
 
-    return this.membershipRepository.create({
+    const membershipDto: CreateMembershipDto = {
       ...addMemberDto,
       organizationId,
       status: MembershipStatus.ACTIVE,
-    } as any);
+    };
+
+    return this.membershipRepository.create(membershipDto);
   }
 
   async removeMember(organizationId: string, userId: string) {
@@ -171,20 +369,58 @@ export class OrganizationsService {
     return { message: 'Member removed successfully' };
   }
 
-  async getMembers(organizationId: string, status?: string) {
+  async getMembers(
+    organizationId: string,
+    queryDto: GetMembersDto,
+  ): Promise<PaginatedResponse<OrganizationMembershipDocument>> {
+    const { page = 1, limit = 50, status, roleId, levelId, termId } = queryDto;
+
+    // Build filter
     const filter: any = { organizationId };
     if (status) filter.status = status;
-    return this.membershipRepository.find(filter);
+    if (roleId) filter.roleId = roleId;
+    if (levelId) filter.levelId = levelId;
+    if (termId) filter.termId = termId;
+
+    // Get paginated results
+    const { data, total } = await this.membershipRepository.findPaginated(
+      filter,
+      {
+        page,
+        limit,
+        sort: { joinedAt: -1 },
+        populate: ['userId', 'roleId', 'levelId', 'termId'],
+      },
+    );
+
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      data,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrev: page > 1,
+      },
+    };
   }
 
   async leaveMembership(organizationId: string, userId: string) {
     return this.removeMember(organizationId, userId);
   }
 
-  async getOrganizationUsers(organizationId: string, roleId?: string) {
-    const filter: any = { organizationId, status: MembershipStatus.ACTIVE };
-    if (roleId) filter.roleId = roleId;
-    return this.membershipRepository.find(filter);
+  async getOrganizationUsers(
+    organizationId: string,
+    queryDto: GetMembersDto,
+  ): Promise<PaginatedResponse<OrganizationMembershipDocument>> {
+    // Force status to ACTIVE for this endpoint
+    return this.getMembers(organizationId, {
+      ...queryDto,
+      status: MembershipStatus.ACTIVE,
+    });
   }
 
   async updateMemberRole(

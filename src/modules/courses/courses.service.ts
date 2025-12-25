@@ -188,4 +188,27 @@ export class CoursesService {
       instructorId,
     );
   }
+
+  async archiveByOrganization(organizationId: string) {
+    const result = await this.coursesRepository.updateMany(
+      { organizationId },
+      {
+        $set: {
+          isArchived: true,
+          archivedAt: new Date(),
+        },
+      },
+    );
+
+    return {
+      archivedCount: result.modifiedCount || 0,
+    };
+  }
+
+  async permanentDeleteByOrganization(organizationId: string) {
+    const result = await this.coursesRepository.deleteMany({ organizationId });
+    return {
+      deletedCount: result.deletedCount || 0,
+    };
+  }
 }

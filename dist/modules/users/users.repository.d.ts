@@ -13,4 +13,7 @@ export declare class UsersRepository {
     findByEmailWithPassword(email: string): Promise<UserDocument | null>;
     findByIdWithPassword(id: string): Promise<UserDocument | null>;
     findByIdWithPopulatedCourses(id: string): Promise<UserDocument | null>;
+    updateMany(filter: FilterQuery<UserDocument>, update: any): Promise<{
+        modifiedCount: number;
+    }>;
 }

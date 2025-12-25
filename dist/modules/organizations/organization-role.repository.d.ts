@@ -9,4 +9,7 @@ export declare class OrganizationRoleRepository {
     find(filter: FilterQuery<OrganizationRoleDocument>): Promise<OrganizationRoleDocument[]>;
     update(id: string, updateData: Partial<OrganizationRole>): Promise<OrganizationRoleDocument | null>;
     delete(id: string): Promise<boolean>;
+    deleteMany(filter: any): Promise<{
+        deletedCount: number;
+    }>;
 }

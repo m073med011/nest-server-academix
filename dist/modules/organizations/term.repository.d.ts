@@ -7,4 +7,7 @@ export declare class TermRepository {
     findOne(filter: FilterQuery<TermDocument>): Promise<TermDocument | null>;
     findById(id: string): Promise<TermDocument | null>;
     find(filter: FilterQuery<TermDocument>): Promise<TermDocument[]>;
+    deleteMany(filter: any): Promise<{
+        deletedCount: number;
+    }>;
 }

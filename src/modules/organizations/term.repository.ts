@@ -25,4 +25,9 @@ export class TermRepository {
   async find(filter: FilterQuery<TermDocument>): Promise<TermDocument[]> {
     return this.termModel.find(filter).exec();
   }
+
+  async deleteMany(filter: any): Promise<{ deletedCount: number }> {
+    const result = await this.termModel.deleteMany(filter).exec();
+    return { deletedCount: result.deletedCount || 0 };
+  }
 }

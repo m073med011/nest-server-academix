@@ -1,4 +1,26 @@
 import { RolePermissions } from '../schemas/organization-role.schema';
+import { MembershipStatus } from '../schemas/organization-membership.schema';
+export declare class PaginationDto {
+    page?: number;
+    limit?: number;
+}
+export declare class GetMembersDto extends PaginationDto {
+    status?: MembershipStatus;
+    roleId?: string;
+    levelId?: string;
+    termId?: string;
+}
+export interface PaginatedResponse<T> {
+    data: T[];
+    pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+        hasNext: boolean;
+        hasPrev: boolean;
+    };
+}
 export declare class CreateOrganizationDto {
     name: string;
     description?: string;

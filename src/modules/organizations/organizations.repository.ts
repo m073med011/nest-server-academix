@@ -18,12 +18,26 @@ export class OrganizationsRepository {
     return newOrganization.save();
   }
 
-  async findAll(): Promise<OrganizationDocument[]> {
-    return this.organizationModel.find().exec();
+  async findAll(includeDeleted = false): Promise<OrganizationDocument[]> {
+    const filter = includeDeleted ? {} : { deletedAt: null };
+    return this.organizationModel
+      .find(filter)
+      .populate('owner', 'name email imageProfileUrl')
+      .exec();
   }
 
-  async findById(id: string): Promise<OrganizationDocument | null> {
-    return this.organizationModel.findById(id).exec();
+  async findById(
+    id: string,
+    includeDeleted = false,
+  ): Promise<OrganizationDocument | null> {
+    const filter: any = { _id: id };
+    if (!includeDeleted) {
+      filter.deletedAt = null;
+    }
+    return this.organizationModel
+      .findOne(filter)
+      .populate('owner', 'name email imageProfileUrl')
+      .exec();
   }
 
   async update(
@@ -37,6 +51,10 @@ export class OrganizationsRepository {
 
   async delete(id: string): Promise<OrganizationDocument | null> {
     return this.organizationModel.findByIdAndDelete(id).exec();
+  }
+
+  async findDeleted(): Promise<OrganizationDocument[]> {
+    return this.organizationModel.find({ deletedAt: { $ne: null } }).exec();
   }
 
   async addLevel(

@@ -42,6 +42,8 @@ let Organization = class Organization {
     settings;
     levels;
     terms;
+    deletedAt;
+    deletedBy;
 };
 exports.Organization = Organization;
 __decorate([
@@ -77,12 +79,21 @@ __decorate([
     (0, mongoose_1.Prop)({ type: [{ type: mongoose_2.Schema.Types.ObjectId, ref: 'Term' }] }),
     __metadata("design:type", Array)
 ], Organization.prototype, "terms", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: Date, default: null }),
+    __metadata("design:type", Object)
+], Organization.prototype, "deletedAt", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.Schema.Types.ObjectId, ref: 'User' }),
+    __metadata("design:type", Object)
+], Organization.prototype, "deletedBy", void 0);
 exports.Organization = Organization = __decorate([
     (0, mongoose_1.Schema)({ timestamps: true })
 ], Organization);
 exports.OrganizationSchema = mongoose_1.SchemaFactory.createForClass(Organization);
 exports.OrganizationSchema.index({ owner: 1 });
 exports.OrganizationSchema.index({ name: 1 });
+exports.OrganizationSchema.index({ deletedAt: 1 });
 exports.OrganizationSchema.virtual('members', {
     ref: 'OrganizationMembership',
     localField: '_id',

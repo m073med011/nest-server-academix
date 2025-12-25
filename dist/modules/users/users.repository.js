@@ -59,6 +59,10 @@ let UsersRepository = class UsersRepository {
     async findByIdWithPopulatedCourses(id) {
         return this.userModel.findById(id).populate('purchasedCourses').exec();
     }
+    async updateMany(filter, update) {
+        const result = await this.userModel.updateMany(filter, update).exec();
+        return { modifiedCount: result.modifiedCount || 0 };
+    }
 };
 exports.UsersRepository = UsersRepository;
 exports.UsersRepository = UsersRepository = __decorate([

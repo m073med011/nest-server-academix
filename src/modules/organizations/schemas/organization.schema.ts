@@ -43,6 +43,12 @@ export class Organization {
 
   @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Term' }] })
   terms: MongooseSchema.Types.ObjectId[];
+
+  @Prop({ type: Date, default: null })
+  deletedAt?: Date | null;
+
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User' })
+  deletedBy?: User | null;
 }
 
 export const OrganizationSchema = SchemaFactory.createForClass(Organization);
@@ -50,6 +56,7 @@ export const OrganizationSchema = SchemaFactory.createForClass(Organization);
 // Indexes
 OrganizationSchema.index({ owner: 1 });
 OrganizationSchema.index({ name: 1 });
+OrganizationSchema.index({ deletedAt: 1 });
 
 // Virtuals
 OrganizationSchema.virtual('members', {

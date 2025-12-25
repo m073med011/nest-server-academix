@@ -22,18 +22,18 @@ let OrganizationMembershipRepository = class OrganizationMembershipRepository {
     constructor(membershipModel) {
         this.membershipModel = membershipModel;
     }
-    async create(membership) {
+    async create(membershipDto) {
         const castedMembership = {
-            ...membership,
-            userId: new mongoose_2.Types.ObjectId(membership.userId),
-            organizationId: new mongoose_2.Types.ObjectId(membership.organizationId),
-            roleId: new mongoose_2.Types.ObjectId(membership.roleId),
+            ...membershipDto,
+            userId: new mongoose_2.Types.ObjectId(membershipDto.userId.toString()),
+            organizationId: new mongoose_2.Types.ObjectId(membershipDto.organizationId.toString()),
+            roleId: new mongoose_2.Types.ObjectId(membershipDto.roleId.toString()),
         };
-        if (membership.levelId) {
-            castedMembership.levelId = new mongoose_2.Types.ObjectId(membership.levelId);
+        if (membershipDto.levelId) {
+            castedMembership.levelId = new mongoose_2.Types.ObjectId(membershipDto.levelId.toString());
         }
-        if (membership.termId) {
-            castedMembership.termId = new mongoose_2.Types.ObjectId(membership.termId);
+        if (membershipDto.termId) {
+            castedMembership.termId = new mongoose_2.Types.ObjectId(membershipDto.termId.toString());
         }
         const newMembership = new this.membershipModel(castedMembership);
         return newMembership.save();
@@ -47,9 +47,46 @@ let OrganizationMembershipRepository = class OrganizationMembershipRepository {
     async findByUser(userId) {
         return this.membershipModel
             .find({ userId, status: 'active' })
-            .populate('organizationId')
+            .populate({
+            path: 'organizationId',
+            populate: {
+                path: 'owner',
+                select: 'name email imageProfileUrl',
+            },
+        })
             .populate('roleId')
             .exec();
+    }
+    async deleteMany(filter) {
+        const result = await this.membershipModel.deleteMany(filter).exec();
+        return { deletedCount: result.deletedCount || 0 };
+    }
+    async count(filter) {
+        return this.membershipModel.countDocuments(filter).exec();
+    }
+    async findPaginated(filter, options) {
+        const { page, limit, sort = { joinedAt: -1 }, populate } = options;
+        const skip = (page - 1) * limit;
+        let query = this.membershipModel
+            .find(filter)
+            .skip(skip)
+            .limit(limit)
+            .sort(sort);
+        if (populate) {
+            if (Array.isArray(populate)) {
+                populate.forEach((field) => {
+                    query = query.populate(field);
+                });
+            }
+            else {
+                query = query.populate(populate);
+            }
+        }
+        const [data, total] = await Promise.all([
+            query.exec(),
+            this.membershipModel.countDocuments(filter).exec(),
+        ]);
+        return { data, total };
     }
 };
 exports.OrganizationMembershipRepository = OrganizationMembershipRepository;

@@ -65,3 +65,37 @@ OrganizationMembershipSchema.index(
     partialFilterExpression: { status: MembershipStatus.ACTIVE },
   },
 );
+
+// NEW INDEXES for improved query performance
+
+// For role-based filtering with organization and status
+OrganizationMembershipSchema.index({
+  organizationId: 1,
+  status: 1,
+  roleId: 1,
+});
+
+// For user's active organizations lookup
+OrganizationMembershipSchema.index({
+  userId: 1,
+  status: 1,
+});
+
+// For analytics: member join date queries
+OrganizationMembershipSchema.index({
+  organizationId: 1,
+  joinedAt: 1,
+});
+
+// For analytics: churn tracking
+OrganizationMembershipSchema.index({
+  organizationId: 1,
+  leftAt: 1,
+});
+
+// Combined index for pagination with status filter
+OrganizationMembershipSchema.index({
+  organizationId: 1,
+  status: 1,
+  joinedAt: -1, // DESC for recent first
+});

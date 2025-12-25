@@ -1,5 +1,5 @@
 import { OrganizationsService } from './organizations.service';
-import { CreateOrganizationDto, UpdateOrganizationDto, SearchUserDto, AddMemberDto, UpdateMemberRoleDto, CreateRoleDto, UpdateRoleDto, CreateOrganizationCourseDto, UpdateOrganizationCourseDto, AssignTermDto, OrganizationCourseFilterDto } from './dto/organizations.dto';
+import { CreateOrganizationDto, UpdateOrganizationDto, SearchUserDto, AddMemberDto, UpdateMemberRoleDto, CreateRoleDto, UpdateRoleDto, CreateOrganizationCourseDto, UpdateOrganizationCourseDto, AssignTermDto, OrganizationCourseFilterDto, GetMembersDto } from './dto/organizations.dto';
 export declare class OrganizationsController {
     private readonly organizationsService;
     constructor(organizationsService: OrganizationsService);
@@ -7,9 +7,25 @@ export declare class OrganizationsController {
     findAll(): Promise<import("./schemas/organization.schema").OrganizationDocument[]>;
     findOne(id: string): Promise<import("./schemas/organization.schema").OrganizationDocument>;
     update(id: string, updateOrganizationDto: UpdateOrganizationDto): Promise<import("./schemas/organization.schema").OrganizationDocument>;
-    remove(id: string): Promise<{
+    remove(id: string, req: any): Promise<{
         message: string;
+        deletedAt: Date;
+        affectedMemberships: number;
     }>;
+    restore(id: string, req: any): Promise<{
+        message: string;
+        restoredAt: Date;
+    }>;
+    permanentDelete(id: string, req: any): Promise<{
+        message: string;
+        deletedRecords: {
+            memberships: number;
+            roles: number;
+            terms: number;
+            courses: number;
+        };
+    }>;
+    getDeleted(req: any): Promise<import("./schemas/organization.schema").OrganizationDocument[]>;
     searchUser(searchUserDto: SearchUserDto): Promise<import("mongoose").Document<unknown, {}, import("../users/schemas/user.schema").User, {}, {}> & Omit<import("../users/schemas/user.schema").User & {
         _id: import("mongoose").Types.ObjectId;
     } & {
@@ -23,19 +39,19 @@ export declare class OrganizationsController {
     removeMember(id: string, userId: string): Promise<{
         message: string;
     }>;
-    getMembers(id: string, status?: string): Promise<(import("mongoose").Document<unknown, {}, import("./schemas/organization-membership.schema").OrganizationMembership, {}, {}> & import("./schemas/organization-membership.schema").OrganizationMembership & {
+    getMembers(id: string, queryDto: GetMembersDto): Promise<import("./dto/organizations.dto").PaginatedResponse<import("mongoose").Document<unknown, {}, import("./schemas/organization-membership.schema").OrganizationMembership, {}, {}> & import("./schemas/organization-membership.schema").OrganizationMembership & {
         _id: import("mongoose").Types.ObjectId;
     } & {
         __v: number;
-    })[]>;
+    }>>;
     leaveMembership(id: string, req: any): Promise<{
         message: string;
     }>;
-    getOrganizationUsers(id: string, roleId?: string): Promise<(import("mongoose").Document<unknown, {}, import("./schemas/organization-membership.schema").OrganizationMembership, {}, {}> & import("./schemas/organization-membership.schema").OrganizationMembership & {
+    getOrganizationUsers(id: string, queryDto: GetMembersDto): Promise<import("./dto/organizations.dto").PaginatedResponse<import("mongoose").Document<unknown, {}, import("./schemas/organization-membership.schema").OrganizationMembership, {}, {}> & import("./schemas/organization-membership.schema").OrganizationMembership & {
         _id: import("mongoose").Types.ObjectId;
     } & {
         __v: number;
-    })[]>;
+    }>>;
     updateMemberRole(id: string, userId: string, updateMemberRoleDto: UpdateMemberRoleDto): Promise<import("mongoose").Document<unknown, {}, import("./schemas/organization-membership.schema").OrganizationMembership, {}, {}> & import("./schemas/organization-membership.schema").OrganizationMembership & {
         _id: import("mongoose").Types.ObjectId;
     } & {

@@ -137,4 +137,14 @@ export class CoursesRepository {
       })
       .exec();
   }
+
+  async updateMany(filter: any, update: any): Promise<{ modifiedCount: number }> {
+    const result = await this.courseModel.updateMany(filter, update).exec();
+    return { modifiedCount: result.modifiedCount || 0 };
+  }
+
+  async deleteMany(filter: any): Promise<{ deletedCount: number }> {
+    const result = await this.courseModel.deleteMany(filter).exec();
+    return { deletedCount: result.deletedCount || 0 };
+  }
 }

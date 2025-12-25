@@ -23,7 +23,6 @@ export declare class User {
     isOAuthUser: boolean;
     provider: AuthProvider;
     purchasedCourses: Types.ObjectId[];
-    organizationMemberships: Types.ObjectId[];
     lastActiveOrganization: Types.ObjectId;
     imageProfileUrl?: string;
     emailVerified: boolean;

@@ -31,7 +31,13 @@ import {
   UpdateOrganizationCourseDto,
   AssignTermDto,
   OrganizationCourseFilterDto,
+  GetMembersDto,
 } from './dto/organizations.dto';
+import { OrganizationPermissionGuard } from '../../common/guards/organization-permission.guard';
+import {
+  RequirePermission,
+  RequireOwner,
+} from '../../common/decorators/organization-permission.decorator';
 
 @ApiTags('organizations')
 @Controller('organizations')
@@ -68,7 +74,8 @@ export class OrganizationsController {
   }
 
   @Patch(':id')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), OrganizationPermissionGuard)
+  @RequirePermission('canManageOrganization')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update organization' })
   @ApiResponse({ status: 200, description: 'Organization updated.' })
@@ -80,12 +87,48 @@ export class OrganizationsController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), OrganizationPermissionGuard)
+  @RequireOwner()
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete organization' })
   @ApiResponse({ status: 200, description: 'Organization deleted.' })
-  async remove(@Param('id') id: string) {
-    return this.organizationsService.remove(id);
+  async remove(@Param('id') id: string, @Request() req) {
+    return this.organizationsService.remove(id, req.user._id);
+  }
+
+  @Post(':id/restore')
+  @UseGuards(AuthGuard('jwt'), OrganizationPermissionGuard)
+  @RequireOwner()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Restore deleted organization' })
+  @ApiResponse({ status: 200, description: 'Organization restored.' })
+  async restore(@Param('id') id: string, @Request() req) {
+    return this.organizationsService.restore(id, req.user._id);
+  }
+
+  @Delete(':id/permanent')
+  @UseGuards(AuthGuard('jwt'), OrganizationPermissionGuard)
+  @RequireOwner()
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Permanently delete organization',
+    description:
+      'WARNING: This action is irreversible. Organization must be soft-deleted first.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Organization permanently deleted.',
+  })
+  async permanentDelete(@Param('id') id: string, @Request() req) {
+    return this.organizationsService.permanentDelete(id, req.user._id);
+  }
+
+  @Get('deleted')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get deleted organizations (owner only)' })
+  async getDeleted(@Request() req) {
+    return this.organizationsService.findDeletedForUser(req.user._id);
   }
 
   // User Management
@@ -99,7 +142,8 @@ export class OrganizationsController {
   }
 
   @Post(':id/members')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), OrganizationPermissionGuard)
+  @RequirePermission('canManageStudents')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Add member to organization' })
   @ApiResponse({ status: 201, description: 'Member added.' })
@@ -108,7 +152,8 @@ export class OrganizationsController {
   }
 
   @Delete(':id/members/:userId')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), OrganizationPermissionGuard)
+  @RequirePermission('canManageStudents')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Remove member from organization' })
   @ApiResponse({ status: 200, description: 'Member removed.' })
@@ -119,11 +164,16 @@ export class OrganizationsController {
   @Get(':id/members')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get organization members' })
-  @ApiQuery({ name: 'status', required: false })
-  @ApiResponse({ status: 200, description: 'Members retrieved.' })
-  async getMembers(@Param('id') id: string, @Query('status') status?: string) {
-    return this.organizationsService.getMembers(id, status);
+  @ApiOperation({ summary: 'Get organization members (paginated)' })
+  @ApiResponse({
+    status: 200,
+    description: 'Members retrieved with pagination.',
+  })
+  async getMembers(
+    @Param('id') id: string,
+    @Query() queryDto: GetMembersDto,
+  ) {
+    return this.organizationsService.getMembers(id, queryDto);
   }
 
   @Post(':id/members/leave')
@@ -138,18 +188,21 @@ export class OrganizationsController {
   @Get(':id/users')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get organization users by role' })
-  @ApiQuery({ name: 'roleId', required: false })
-  @ApiResponse({ status: 200, description: 'Users retrieved.' })
+  @ApiOperation({ summary: 'Get organization users (paginated)' })
+  @ApiResponse({
+    status: 200,
+    description: 'Active users retrieved with pagination.',
+  })
   async getOrganizationUsers(
     @Param('id') id: string,
-    @Query('roleId') roleId?: string,
+    @Query() queryDto: GetMembersDto,
   ) {
-    return this.organizationsService.getOrganizationUsers(id, roleId);
+    return this.organizationsService.getOrganizationUsers(id, queryDto);
   }
 
   @Patch(':id/users/:userId/role')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), OrganizationPermissionGuard)
+  @RequirePermission('canManageRoles')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update member role' })
   @ApiResponse({ status: 200, description: 'Member role updated.' })
@@ -188,7 +241,8 @@ export class OrganizationsController {
   }
 
   @Post(':id/roles')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), OrganizationPermissionGuard)
+  @RequirePermission('canManageRoles')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create organization role' })
   @ApiResponse({ status: 201, description: 'Role created.' })
@@ -200,7 +254,8 @@ export class OrganizationsController {
   }
 
   @Patch(':id/roles/:roleId')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), OrganizationPermissionGuard)
+  @RequirePermission('canManageRoles')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update organization role' })
   @ApiResponse({ status: 200, description: 'Role updated.' })
@@ -213,7 +268,8 @@ export class OrganizationsController {
   }
 
   @Delete(':id/roles/:roleId')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), OrganizationPermissionGuard)
+  @RequirePermission('canManageRoles')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete organization role' })
   @ApiResponse({ status: 200, description: 'Role deleted.' })
@@ -242,7 +298,8 @@ export class OrganizationsController {
   }
 
   @Post(':id/courses')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), OrganizationPermissionGuard)
+  @RequirePermission('canManageCourses')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create organization course' })
   @ApiResponse({ status: 201, description: 'Course created.' })
@@ -259,7 +316,8 @@ export class OrganizationsController {
   }
 
   @Patch(':id/courses/:courseId')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), OrganizationPermissionGuard)
+  @RequirePermission('canManageCourses')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update organization course' })
   @ApiResponse({ status: 200, description: 'Course updated.' })
@@ -276,7 +334,8 @@ export class OrganizationsController {
   }
 
   @Delete(':id/courses/:courseId')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), OrganizationPermissionGuard)
+  @RequirePermission('canManageCourses')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete organization course' })
   @ApiResponse({ status: 200, description: 'Course deleted.' })
@@ -288,7 +347,8 @@ export class OrganizationsController {
   }
 
   @Patch(':id/courses/:courseId/assign-term')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), OrganizationPermissionGuard)
+  @RequirePermission('canManageCourses')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Assign course to term' })
   @ApiResponse({ status: 200, description: 'Course assigned to term.' })

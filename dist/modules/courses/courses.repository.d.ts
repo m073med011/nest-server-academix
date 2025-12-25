@@ -16,4 +16,10 @@ export declare class CoursesRepository {
     addEditor(courseId: string, editorId: string): Promise<Course | null>;
     removeEditor(courseId: string, editorId: string): Promise<Course | null>;
     findByInstructor(instructorId: string): Promise<Course[]>;
+    updateMany(filter: any, update: any): Promise<{
+        modifiedCount: number;
+    }>;
+    deleteMany(filter: any): Promise<{
+        deletedCount: number;
+    }>;
 }

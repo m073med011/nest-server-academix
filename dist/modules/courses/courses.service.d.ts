@@ -46,4 +46,10 @@ export declare class CoursesService {
     findByInstructor(instructorId: string): Promise<import("./schemas/course.schema").Course[]>;
     countByInstructor(instructorId: string): Promise<number>;
     countDistinctStudentsForInstructor(instructorId: string): Promise<number>;
+    archiveByOrganization(organizationId: string): Promise<{
+        archivedCount: number;
+    }>;
+    permanentDeleteByOrganization(organizationId: string): Promise<{
+        deletedCount: number;
+    }>;
 }

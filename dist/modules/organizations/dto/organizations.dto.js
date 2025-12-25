@@ -9,10 +9,89 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.OrganizationCourseFilterDto = exports.AssignTermDto = exports.UpdateOrganizationCourseDto = exports.CreateOrganizationCourseDto = exports.UpdateRoleDto = exports.CreateRoleDto = exports.UpdateMemberRoleDto = exports.AddMemberDto = exports.SearchUserDto = exports.UpdateOrganizationDto = exports.CreateOrganizationDto = void 0;
+exports.OrganizationCourseFilterDto = exports.AssignTermDto = exports.UpdateOrganizationCourseDto = exports.CreateOrganizationCourseDto = exports.UpdateRoleDto = exports.CreateRoleDto = exports.UpdateMemberRoleDto = exports.AddMemberDto = exports.SearchUserDto = exports.UpdateOrganizationDto = exports.CreateOrganizationDto = exports.GetMembersDto = exports.PaginationDto = void 0;
 const class_validator_1 = require("class-validator");
 const swagger_1 = require("@nestjs/swagger");
+const class_transformer_1 = require("class-transformer");
 const organization_role_schema_1 = require("../schemas/organization-role.schema");
+const organization_membership_schema_1 = require("../schemas/organization-membership.schema");
+class PaginationDto {
+    page = 1;
+    limit = 50;
+}
+exports.PaginationDto = PaginationDto;
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'Page number (1-based)',
+        minimum: 1,
+        default: 1,
+        required: false,
+    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.Min)(1),
+    __metadata("design:type", Number)
+], PaginationDto.prototype, "page", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'Number of items per page',
+        minimum: 1,
+        maximum: 100,
+        default: 50,
+        required: false,
+    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.Min)(1),
+    (0, class_validator_1.Max)(100),
+    __metadata("design:type", Number)
+], PaginationDto.prototype, "limit", void 0);
+class GetMembersDto extends PaginationDto {
+    status;
+    roleId;
+    levelId;
+    termId;
+}
+exports.GetMembersDto = GetMembersDto;
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'Filter by membership status',
+        enum: organization_membership_schema_1.MembershipStatus,
+        required: false,
+    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsEnum)(organization_membership_schema_1.MembershipStatus),
+    __metadata("design:type", String)
+], GetMembersDto.prototype, "status", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'Filter by role ID',
+        required: false,
+    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsMongoId)(),
+    __metadata("design:type", String)
+], GetMembersDto.prototype, "roleId", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'Filter by level ID',
+        required: false,
+    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsMongoId)(),
+    __metadata("design:type", String)
+], GetMembersDto.prototype, "levelId", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'Filter by term ID',
+        required: false,
+    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsMongoId)(),
+    __metadata("design:type", String)
+], GetMembersDto.prototype, "termId", void 0);
 class CreateOrganizationDto {
     name;
     description;

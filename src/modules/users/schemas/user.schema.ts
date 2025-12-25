@@ -45,8 +45,9 @@ export class User {
   @Prop({ type: [{ type: Types.ObjectId, ref: 'Course' }] })
   purchasedCourses: Types.ObjectId[];
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: 'OrganizationMembership' }] })
-  organizationMemberships: Types.ObjectId[];
+  // ❌ REMOVE THIS FIELD - Never maintained, causes confusion
+  // @Prop({ type: [{ type: Types.ObjectId, ref: 'OrganizationMembership' }] })
+  // organizationMemberships: Types.ObjectId[];
 
   @Prop({ type: Types.ObjectId, ref: 'Organization', default: null })
   lastActiveOrganization: Types.ObjectId;

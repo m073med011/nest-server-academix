@@ -21,6 +21,7 @@ const term_repository_1 = require("./term.repository");
 const organization_role_repository_1 = require("./organization-role.repository");
 const users_module_1 = require("../users/users.module");
 const courses_module_1 = require("../courses/courses.module");
+const organization_permission_guard_1 = require("../../common/guards/organization-permission.guard");
 let OrganizationsModule = class OrganizationsModule {
 };
 exports.OrganizationsModule = OrganizationsModule;
@@ -46,6 +47,7 @@ exports.OrganizationsModule = OrganizationsModule = __decorate([
             organization_membership_repository_1.OrganizationMembershipRepository,
             organization_role_repository_1.OrganizationRoleRepository,
             term_repository_1.TermRepository,
+            organization_permission_guard_1.OrganizationPermissionGuard,
         ],
         exports: [
             organizations_service_1.OrganizationsService,

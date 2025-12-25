@@ -44,6 +44,10 @@ let OrganizationRoleRepository = class OrganizationRoleRepository {
         const result = await this.roleModel.findByIdAndDelete(id).exec();
         return !!result;
     }
+    async deleteMany(filter) {
+        const result = await this.roleModel.deleteMany(filter).exec();
+        return { deletedCount: result.deletedCount || 0 };
+    }
 };
 exports.OrganizationRoleRepository = OrganizationRoleRepository;
 exports.OrganizationRoleRepository = OrganizationRoleRepository = __decorate([

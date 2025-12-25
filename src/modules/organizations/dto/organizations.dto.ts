@@ -5,9 +5,91 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsInt,
+  Min,
+  Max,
+  IsEnum,
+  IsMongoId,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { RolePermissions } from '../schemas/organization-role.schema';
+import { MembershipStatus } from '../schemas/organization-membership.schema';
+
+export class PaginationDto {
+  @ApiProperty({
+    description: 'Page number (1-based)',
+    minimum: 1,
+    default: 1,
+    required: false,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  page?: number = 1;
+
+  @ApiProperty({
+    description: 'Number of items per page',
+    minimum: 1,
+    maximum: 100,
+    default: 50,
+    required: false,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(100)
+  limit?: number = 50;
+}
+
+export class GetMembersDto extends PaginationDto {
+  @ApiProperty({
+    description: 'Filter by membership status',
+    enum: MembershipStatus,
+    required: false,
+  })
+  @IsOptional()
+  @IsEnum(MembershipStatus)
+  status?: MembershipStatus;
+
+  @ApiProperty({
+    description: 'Filter by role ID',
+    required: false,
+  })
+  @IsOptional()
+  @IsMongoId()
+  roleId?: string;
+
+  @ApiProperty({
+    description: 'Filter by level ID',
+    required: false,
+  })
+  @IsOptional()
+  @IsMongoId()
+  levelId?: string;
+
+  @ApiProperty({
+    description: 'Filter by term ID',
+    required: false,
+  })
+  @IsOptional()
+  @IsMongoId()
+  termId?: string;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+}
 
 export class CreateOrganizationDto {
   @ApiProperty()

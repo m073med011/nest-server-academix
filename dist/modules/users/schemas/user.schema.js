@@ -35,7 +35,6 @@ let User = class User {
     isOAuthUser;
     provider;
     purchasedCourses;
-    organizationMemberships;
     lastActiveOrganization;
     imageProfileUrl;
     emailVerified;
@@ -70,10 +69,6 @@ __decorate([
     (0, mongoose_1.Prop)({ type: [{ type: mongoose_2.Types.ObjectId, ref: 'Course' }] }),
     __metadata("design:type", Array)
 ], User.prototype, "purchasedCourses", void 0);
-__decorate([
-    (0, mongoose_1.Prop)({ type: [{ type: mongoose_2.Types.ObjectId, ref: 'OrganizationMembership' }] }),
-    __metadata("design:type", Array)
-], User.prototype, "organizationMemberships", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, ref: 'Organization', default: null }),
     __metadata("design:type", mongoose_2.Types.ObjectId)
