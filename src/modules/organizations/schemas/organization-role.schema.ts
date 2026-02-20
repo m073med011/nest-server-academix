@@ -30,7 +30,7 @@ export class RolePermissions {
   canViewReports: boolean;
 }
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, collection: 'organization_roles' })
 export class OrganizationRole {
   @Prop({ required: true, trim: true, maxlength: 50 })
   name: string;

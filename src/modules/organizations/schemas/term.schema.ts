@@ -3,7 +3,7 @@ import { HydratedDocument, Types } from 'mongoose';
 
 export type TermDocument = HydratedDocument<Term>;
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, collection: 'academic_terms' })
 export class Term {
   @Prop({ required: true, trim: true, maxlength: 100 })
   name: string;

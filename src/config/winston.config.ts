@@ -4,6 +4,7 @@ import * as winston from 'winston';
 export const winstonConfig = {
   transports: [
     new winston.transports.Console({
+      level: 'debug', // Ensure debug logs are visible
       format: winston.format.combine(
         winston.format.timestamp(),
         winston.format.ms(),

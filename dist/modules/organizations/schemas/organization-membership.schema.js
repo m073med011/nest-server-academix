@@ -74,7 +74,7 @@ __decorate([
     __metadata("design:type", Date)
 ], OrganizationMembership.prototype, "leftAt", void 0);
 exports.OrganizationMembership = OrganizationMembership = __decorate([
-    (0, mongoose_1.Schema)({ timestamps: true })
+    (0, mongoose_1.Schema)({ timestamps: true, collection: 'organization_memberships' })
 ], OrganizationMembership);
 exports.OrganizationMembershipSchema = mongoose_1.SchemaFactory.createForClass(OrganizationMembership);
 exports.OrganizationMembershipSchema.index({ userId: 1, organizationId: 1 });

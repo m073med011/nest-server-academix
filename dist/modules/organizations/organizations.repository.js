@@ -41,6 +41,8 @@ let OrganizationsRepository = class OrganizationsRepository {
         return this.organizationModel
             .findOne(filter)
             .populate('owner', 'name email imageProfileUrl')
+            .populate('levels')
+            .populate('terms')
             .exec();
     }
     async update(id, updateOrganizationDto) {

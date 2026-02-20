@@ -40,22 +40,22 @@ export class OrganizationPermissionGuard implements CanActivate {
       // But here we will follow the plan which implies it's used on endpoints with :id.
       // If used on create(), we should probably skip this guard or make it smart.
       // Let's stick to the plan's code first.
-      
+
       // Actually, for create() usually we don't need this guard because we are creating it.
       // The controller modifications in Task 1.3 show usage on specific methods or methods that HAVE :id.
       // So this check is valid.
-      
+
       // Wait, if I apply it to methods without :id it will fail.
       // But the plan says:
       // if (!organizationId) { throw new ForbiddenException('Organization ID is required'); }
       // This implies it MUST be used on routes with :id.
-      
+
       // Let's implement as per plan.
       if (!organizationId) {
-         // Optimization: If no organization ID and no permission requirements, maybe allow?
-         // But the guard is specifically for Organization Permission.
-         // Let's assume it's only used where org ID is expected.
-         throw new ForbiddenException('Organization ID is required');
+        // Optimization: If no organization ID and no permission requirements, maybe allow?
+        // But the guard is specifically for Organization Permission.
+        // Let's assume it's only used where org ID is expected.
+        throw new ForbiddenException('Organization ID is required');
       }
     }
 
@@ -80,7 +80,11 @@ export class OrganizationPermissionGuard implements CanActivate {
     );
 
     if (requiredPermission) {
-      return this.verifyPermission(organizationId, user._id, requiredPermission);
+      return this.verifyPermission(
+        organizationId,
+        user._id,
+        requiredPermission,
+      );
     }
 
     // No specific requirement, just verify active membership
@@ -91,7 +95,8 @@ export class OrganizationPermissionGuard implements CanActivate {
     organizationId: string,
     userId: string,
   ): Promise<boolean> {
-    const organization = await this.organizationsRepository.findById(organizationId);
+    const organization =
+      await this.organizationsRepository.findById(organizationId);
 
     if (!organization) {
       throw new NotFoundException('Organization not found');
@@ -119,9 +124,7 @@ export class OrganizationPermissionGuard implements CanActivate {
     });
 
     if (!membership) {
-      throw new ForbiddenException(
-        'You are not a member of this organization',
-      );
+      throw new ForbiddenException('You are not a member of this organization');
     }
 
     // 2. Get role with permissions
@@ -135,9 +138,7 @@ export class OrganizationPermissionGuard implements CanActivate {
 
     // 3. Check specific permission
     if (!role.permissions[permission]) {
-      throw new ForbiddenException(
-        `You do not have permission: ${permission}`,
-      );
+      throw new ForbiddenException(`You do not have permission: ${permission}`);
     }
 
     return true;
@@ -154,9 +155,7 @@ export class OrganizationPermissionGuard implements CanActivate {
     });
 
     if (!membership) {
-      throw new ForbiddenException(
-        'You are not a member of this organization',
-      );
+      throw new ForbiddenException('You are not a member of this organization');
     }
 
     return true;

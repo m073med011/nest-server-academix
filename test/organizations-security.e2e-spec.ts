@@ -22,7 +22,7 @@ describe('Organization Security (e2e)', () => {
     // Setup test users and organization
     // Note: This requires a running DB and valid implementation of AuthService to generate tokens
     // For now, we assume these are populated by helper functions or manual setup in a real environment
-    
+
     // Placeholder for setup logic
     // 1. Create users (Admin, Instructor, Student, Outsider)
     // 2. Login users to get tokens

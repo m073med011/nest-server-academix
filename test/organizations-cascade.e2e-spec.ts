@@ -57,7 +57,7 @@ describe('Organization Cascade Delete (e2e)', () => {
         .get('/organizations')
         .expect(200);
 
-      const orgIds = response.body.map(org => org._id);
+      const orgIds = response.body.map((org) => org._id);
       expect(orgIds).not.toContain(organizationId);
     });
   });

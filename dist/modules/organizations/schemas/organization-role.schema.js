@@ -82,7 +82,7 @@ __decorate([
     __metadata("design:type", Boolean)
 ], OrganizationRole.prototype, "isSystemRole", void 0);
 exports.OrganizationRole = OrganizationRole = __decorate([
-    (0, mongoose_1.Schema)({ timestamps: true })
+    (0, mongoose_1.Schema)({ timestamps: true, collection: 'organization_roles' })
 ], OrganizationRole);
 exports.OrganizationRoleSchema = mongoose_1.SchemaFactory.createForClass(OrganizationRole);
 exports.OrganizationRoleSchema.index({ organizationId: 1 });

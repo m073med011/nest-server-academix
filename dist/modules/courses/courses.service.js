@@ -13,7 +13,7 @@ exports.CoursesService = void 0;
 const common_1 = require("@nestjs/common");
 const courses_repository_1 = require("./courses.repository");
 const payments_service_1 = require("../payments/payments.service");
-const courses_dto_1 = require("./dto/courses.dto");
+const course_schema_1 = require("./schemas/course.schema");
 let CoursesService = class CoursesService {
     coursesRepository;
     paymentsService;
@@ -23,12 +23,15 @@ let CoursesService = class CoursesService {
     }
     async create(createCourseDto, instructorId) {
         const courseData = { ...createCourseDto, instructor: instructorId };
-        if (courseData.courseType === courses_dto_1.CourseType.ORGANIZATION) {
-            courseData.enrollmentType = courses_dto_1.EnrollmentType.ORG_SUBSCRIPTION;
+        if (courseData.courseType === course_schema_1.CourseType.ORGANIZATION) {
+            courseData.enrollmentType = course_schema_1.EnrollmentType.ORG_SUBSCRIPTION;
             courseData.isOrgPrivate = true;
             courseData.hasAccessRestrictions = false;
             courseData.price = 0;
             courseData.enrollmentCap = 0;
+        }
+        if (courseData.isPublished === undefined) {
+            courseData.isPublished = true;
         }
         return this.coursesRepository.create(courseData);
     }
@@ -48,6 +51,8 @@ let CoursesService = class CoursesService {
             filter.category = category;
         if (level)
             filter.level = level;
+        if (filterDto.organizationId)
+            filter.organizationId = filterDto.organizationId;
         if (search) {
             filter.$text = { $search: search };
         }
@@ -178,6 +183,20 @@ let CoursesService = class CoursesService {
         const result = await this.coursesRepository.deleteMany({ organizationId });
         return {
             deletedCount: result.deletedCount || 0,
+        };
+    }
+    async assignCoursesToOrganization(courseIds, organizationId) {
+        const result = await this.coursesRepository.updateMany({ _id: { $in: courseIds } }, {
+            $set: {
+                organizationId,
+                isOrgPrivate: true,
+                courseType: course_schema_1.CourseType.ORGANIZATION,
+                enrollmentType: course_schema_1.EnrollmentType.ORG_SUBSCRIPTION,
+            },
+        });
+        return {
+            message: `${result.modifiedCount} courses assigned to organization`,
+            modifiedCount: result.modifiedCount,
         };
     }
 };

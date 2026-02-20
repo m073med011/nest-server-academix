@@ -1,6 +1,15 @@
-import { Injectable, BadRequestException, Inject, forwardRef } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  Inject,
+  forwardRef,
+} from '@nestjs/common';
 import { DiscountRepository } from './discount.repository';
-import { DiscountType, DiscountValueType, ApplicableOn } from './schemas/discount.schema';
+import {
+  DiscountType,
+  DiscountValueType,
+  ApplicableOn,
+} from './schemas/discount.schema';
 import { CoursesService } from '../courses/courses.service';
 
 @Injectable()
@@ -38,7 +47,10 @@ export class DiscountService {
   /**
    * Validate and calculate discount for cart or single course
    */
-  async validateDiscount(code: string, courseIds: string[]): Promise<{
+  async validateDiscount(
+    code: string,
+    courseIds: string[],
+  ): Promise<{
     valid: boolean;
     discount?: any;
     discountAmount: number;
@@ -85,7 +97,8 @@ export class DiscountService {
         valid: false,
         discountAmount: 0,
         finalAmount: 0,
-        message: 'This discount code is only applicable for single course purchases',
+        message:
+          'This discount code is only applicable for single course purchases',
       };
     }
 
@@ -96,7 +109,8 @@ export class DiscountService {
           valid: false,
           discountAmount: 0,
           finalAmount: 0,
-          message: 'This discount code is not applicable for the selected course(s)',
+          message:
+            'This discount code is not applicable for the selected course(s)',
         };
       }
     }

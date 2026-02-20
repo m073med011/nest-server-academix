@@ -122,7 +122,9 @@ export class PaymentsService {
       }
 
       // Process payment with Paymob using final amount
-      this.logger.log(`Processing payment with Paymob for amount: ${finalAmount} EGP`);
+      this.logger.log(
+        `Processing payment with Paymob for amount: ${finalAmount} EGP`,
+      );
       const paymobResponse = await this.paymobService.processPayment(
         {
           amount: finalAmount,
@@ -134,7 +136,9 @@ export class PaymentsService {
         payment._id.toString(),
       );
 
-      this.logger.log(`Paymob response received: ${JSON.stringify({ orderId: paymobResponse.orderId, iframeUrl: paymobResponse.iframeUrl })}`);
+      this.logger.log(
+        `Paymob response received: ${JSON.stringify({ orderId: paymobResponse.orderId, iframeUrl: paymobResponse.iframeUrl })}`,
+      );
 
       // Update payment with Paymob data
       await this.paymentsRepository.update(payment._id.toString(), {
@@ -149,7 +153,9 @@ export class PaymentsService {
         message: 'Payment initiated successfully',
       };
 
-      this.logger.log(`Returning payment response with paymentUrl: ${response.paymentUrl}`);
+      this.logger.log(
+        `Returning payment response with paymentUrl: ${response.paymentUrl}`,
+      );
 
       return response;
     } catch (error) {

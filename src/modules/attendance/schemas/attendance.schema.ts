@@ -13,7 +13,7 @@ export enum AttendanceStatus {
 
 export type AttendanceDocument = Attendance & Document;
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, collection: 'attendance_records' })
 export class Attendance {
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
   userId: User;

@@ -50,7 +50,9 @@ export class DiscountController {
   }
 
   @Post('validate')
-  @ApiOperation({ summary: 'Validate discount code and calculate discount (public endpoint)' })
+  @ApiOperation({
+    summary: 'Validate discount code and calculate discount (public endpoint)',
+  })
   async validateDiscount(
     @Body() validateDto: { code: string; courseIds: string[] },
   ) {

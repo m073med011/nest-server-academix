@@ -88,20 +88,8 @@ let OrganizationsController = class OrganizationsController {
     async acceptInvitation(id, req) {
         return this.organizationsService.acceptInvitation(id, req.user._id);
     }
-    async getOrganizationCourses(id, filterDto) {
-        return this.organizationsService.getOrganizationCourses(id, filterDto);
-    }
-    async createOrganizationCourse(id, createOrganizationCourseDto, req) {
-        return this.organizationsService.createOrganizationCourse(id, createOrganizationCourseDto, req.user._id);
-    }
-    async updateOrganizationCourse(id, courseId, updateOrganizationCourseDto) {
-        return this.organizationsService.updateOrganizationCourse(id, courseId, updateOrganizationCourseDto);
-    }
-    async deleteOrganizationCourse(id, courseId) {
-        return this.organizationsService.deleteOrganizationCourse(id, courseId);
-    }
-    async assignCourseToTerm(id, courseId, assignTermDto) {
-        return this.organizationsService.assignCourseToTerm(id, courseId, assignTermDto);
+    async addCourses(id, addCoursesDto) {
+        return this.organizationsService.addCourses(id, addCoursesDto.courseIds);
     }
 };
 exports.OrganizationsController = OrganizationsController;
@@ -371,70 +359,18 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], OrganizationsController.prototype, "acceptInvitation", null);
 __decorate([
-    (0, common_1.Get)(':id/courses'),
-    (0, swagger_1.ApiOperation)({ summary: 'Get organization courses' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Courses retrieved.' }),
-    __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Query)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, organizations_dto_1.OrganizationCourseFilterDto]),
-    __metadata("design:returntype", Promise)
-], OrganizationsController.prototype, "getOrganizationCourses", null);
-__decorate([
-    (0, common_1.Post)(':id/courses'),
+    (0, common_1.Post)(':id/courses/add'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), organization_permission_guard_1.OrganizationPermissionGuard),
     (0, organization_permission_decorator_1.RequirePermission)('canManageCourses'),
     (0, swagger_1.ApiBearerAuth)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Create organization course' }),
-    (0, swagger_1.ApiResponse)({ status: 201, description: 'Course created.' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Add courses to organization' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Courses added.' }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
-    __param(2, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, organizations_dto_1.CreateOrganizationCourseDto, Object]),
+    __metadata("design:paramtypes", [String, organizations_dto_1.AddCoursesDto]),
     __metadata("design:returntype", Promise)
-], OrganizationsController.prototype, "createOrganizationCourse", null);
-__decorate([
-    (0, common_1.Patch)(':id/courses/:courseId'),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), organization_permission_guard_1.OrganizationPermissionGuard),
-    (0, organization_permission_decorator_1.RequirePermission)('canManageCourses'),
-    (0, swagger_1.ApiBearerAuth)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Update organization course' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Course updated.' }),
-    __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Param)('courseId')),
-    __param(2, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, organizations_dto_1.UpdateOrganizationCourseDto]),
-    __metadata("design:returntype", Promise)
-], OrganizationsController.prototype, "updateOrganizationCourse", null);
-__decorate([
-    (0, common_1.Delete)(':id/courses/:courseId'),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), organization_permission_guard_1.OrganizationPermissionGuard),
-    (0, organization_permission_decorator_1.RequirePermission)('canManageCourses'),
-    (0, swagger_1.ApiBearerAuth)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Delete organization course' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Course deleted.' }),
-    __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Param)('courseId')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
-    __metadata("design:returntype", Promise)
-], OrganizationsController.prototype, "deleteOrganizationCourse", null);
-__decorate([
-    (0, common_1.Patch)(':id/courses/:courseId/assign-term'),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), organization_permission_guard_1.OrganizationPermissionGuard),
-    (0, organization_permission_decorator_1.RequirePermission)('canManageCourses'),
-    (0, swagger_1.ApiBearerAuth)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Assign course to term' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Course assigned to term.' }),
-    __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Param)('courseId')),
-    __param(2, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, organizations_dto_1.AssignTermDto]),
-    __metadata("design:returntype", Promise)
-], OrganizationsController.prototype, "assignCourseToTerm", null);
+], OrganizationsController.prototype, "addCourses", null);
 exports.OrganizationsController = OrganizationsController = __decorate([
     (0, swagger_1.ApiTags)('organizations'),
     (0, common_1.Controller)('organizations'),

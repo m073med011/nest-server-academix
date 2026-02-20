@@ -16,6 +16,8 @@ exports.MaterialController = void 0;
 const common_1 = require("@nestjs/common");
 const material_service_1 = require("./material.service");
 const jwt_auth_guard_1 = require("../../common/guards/jwt-auth.guard");
+const create_material_dto_1 = require("./dto/create-material.dto");
+const update_material_dto_1 = require("./dto/update-material.dto");
 let MaterialController = class MaterialController {
     materialService;
     constructor(materialService) {
@@ -45,7 +47,7 @@ __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [create_material_dto_1.CreateMaterialDto]),
     __metadata("design:returntype", void 0)
 ], MaterialController.prototype, "create", null);
 __decorate([
@@ -73,7 +75,7 @@ __decorate([
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [String, update_material_dto_1.UpdateMaterialDto]),
     __metadata("design:returntype", void 0)
 ], MaterialController.prototype, "update", null);
 __decorate([

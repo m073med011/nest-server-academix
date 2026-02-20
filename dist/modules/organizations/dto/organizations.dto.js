@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.OrganizationCourseFilterDto = exports.AssignTermDto = exports.UpdateOrganizationCourseDto = exports.CreateOrganizationCourseDto = exports.UpdateRoleDto = exports.CreateRoleDto = exports.UpdateMemberRoleDto = exports.AddMemberDto = exports.SearchUserDto = exports.UpdateOrganizationDto = exports.CreateOrganizationDto = exports.GetMembersDto = exports.PaginationDto = void 0;
+exports.AddCoursesDto = exports.UpdateRoleDto = exports.CreateRoleDto = exports.UpdateMemberRoleDto = exports.AddMemberDto = exports.SearchUserDto = exports.UpdateOrganizationDto = exports.CreateOrganizationDto = exports.GetMembersDto = exports.PaginationDto = void 0;
 const class_validator_1 = require("class-validator");
 const swagger_1 = require("@nestjs/swagger");
 const class_transformer_1 = require("class-transformer");
@@ -250,179 +250,15 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", organization_role_schema_1.RolePermissions)
 ], UpdateRoleDto.prototype, "permissions", void 0);
-class CreateOrganizationCourseDto {
-    title;
-    description;
-    thumbnailUrl;
-    level;
-    category;
-    price;
-    tags;
-    isPublished;
-    isOrgPrivate;
+class AddCoursesDto {
+    courseIds;
 }
-exports.CreateOrganizationCourseDto = CreateOrganizationCourseDto;
+exports.AddCoursesDto = AddCoursesDto;
 __decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreateOrganizationCourseDto.prototype, "title", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreateOrganizationCourseDto.prototype, "description", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreateOrganizationCourseDto.prototype, "thumbnailUrl", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreateOrganizationCourseDto.prototype, "level", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreateOrganizationCourseDto.prototype, "category", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", Number)
-], CreateOrganizationCourseDto.prototype, "price", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
-    (0, class_validator_1.IsOptional)(),
+    (0, swagger_1.ApiProperty)({ type: [String] }),
     (0, class_validator_1.IsArray)(),
     (0, class_validator_1.IsString)({ each: true }),
-    __metadata("design:type", Array)
-], CreateOrganizationCourseDto.prototype, "tags", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsBoolean)(),
-    __metadata("design:type", Boolean)
-], CreateOrganizationCourseDto.prototype, "isPublished", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsBoolean)(),
-    __metadata("design:type", Boolean)
-], CreateOrganizationCourseDto.prototype, "isOrgPrivate", void 0);
-class UpdateOrganizationCourseDto {
-    title;
-    description;
-    thumbnailUrl;
-    level;
-    category;
-    price;
-    tags;
-    isPublished;
-    isOrgPrivate;
-}
-exports.UpdateOrganizationCourseDto = UpdateOrganizationCourseDto;
-__decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], UpdateOrganizationCourseDto.prototype, "title", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], UpdateOrganizationCourseDto.prototype, "description", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], UpdateOrganizationCourseDto.prototype, "thumbnailUrl", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], UpdateOrganizationCourseDto.prototype, "level", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], UpdateOrganizationCourseDto.prototype, "category", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", Number)
-], UpdateOrganizationCourseDto.prototype, "price", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsArray)(),
-    (0, class_validator_1.IsString)({ each: true }),
-    __metadata("design:type", Array)
-], UpdateOrganizationCourseDto.prototype, "tags", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsBoolean)(),
-    __metadata("design:type", Boolean)
-], UpdateOrganizationCourseDto.prototype, "isPublished", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsBoolean)(),
-    __metadata("design:type", Boolean)
-], UpdateOrganizationCourseDto.prototype, "isOrgPrivate", void 0);
-class AssignTermDto {
-    termId;
-}
-exports.AssignTermDto = AssignTermDto;
-__decorate([
-    (0, swagger_1.ApiProperty)(),
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], AssignTermDto.prototype, "termId", void 0);
-class OrganizationCourseFilterDto {
-    termId;
-    levelId;
-    instructor;
-    isPublished;
-}
-exports.OrganizationCourseFilterDto = OrganizationCourseFilterDto;
-__decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], OrganizationCourseFilterDto.prototype, "termId", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], OrganizationCourseFilterDto.prototype, "levelId", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], OrganizationCourseFilterDto.prototype, "instructor", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], OrganizationCourseFilterDto.prototype, "isPublished", void 0);
+    __metadata("design:type", Array)
+], AddCoursesDto.prototype, "courseIds", void 0);
 //# sourceMappingURL=organizations.dto.js.map

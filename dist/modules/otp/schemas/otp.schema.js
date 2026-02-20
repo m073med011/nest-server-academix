@@ -55,7 +55,7 @@ __decorate([
     __metadata("design:type", Number)
 ], Otp.prototype, "attempts", void 0);
 exports.Otp = Otp = __decorate([
-    (0, mongoose_1.Schema)({ timestamps: true })
+    (0, mongoose_1.Schema)({ timestamps: true, collection: 'otp_codes' })
 ], Otp);
 exports.OtpSchema = mongoose_1.SchemaFactory.createForClass(Otp);
 exports.OtpSchema.index({ email: 1, purpose: 1, expiresAt: 1 });

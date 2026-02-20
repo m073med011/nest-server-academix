@@ -25,6 +25,13 @@ export declare class Material {
     dueDate: Date;
     submissionTypes: string[];
     allowLate: boolean;
+    assignmentFileUrl: string;
+    quizQuestions: {
+        text: string;
+        options: string[];
+        correctAnswer: string;
+    }[];
+    thumbnailUrl: string;
     openInNewTab: boolean;
     moduleId: string;
 }

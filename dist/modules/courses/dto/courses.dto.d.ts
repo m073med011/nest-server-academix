@@ -59,6 +59,7 @@ export declare class CourseFilterDto {
     level?: CourseLevel;
     search?: string;
     sort?: string;
+    organizationId?: string;
 }
 export declare class AddEditorDto {
     editorId: string;

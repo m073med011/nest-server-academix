@@ -932,63 +932,9 @@
         ]
       }
     },
-    "/v1/organizations/{id}/courses": {
-      "get": {
-        "operationId": "OrganizationsController_getOrganizationCourses_v1",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "termId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "levelId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "instructor",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "isPublished",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Courses retrieved."
-          }
-        },
-        "summary": "Get organization courses",
-        "tags": [
-          "organizations"
-        ]
-      },
+    "/v1/organizations/{id}/courses/add": {
       "post": {
-        "operationId": "OrganizationsController_createOrganizationCourse_v1",
+        "operationId": "OrganizationsController_addCourses_v1",
         "parameters": [
           {
             "name": "id",
@@ -1004,61 +950,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateOrganizationCourseDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Course created."
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "Create organization course",
-        "tags": [
-          "organizations"
-        ]
-      }
-    },
-    "/v1/organizations/{id}/courses/{courseId}": {
-      "patch": {
-        "operationId": "OrganizationsController_updateOrganizationCourse_v1",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "courseId",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateOrganizationCourseDto"
+                "$ref": "#/components/schemas/AddCoursesDto"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Course updated."
+            "description": "Courses added."
           }
         },
         "security": [
@@ -1066,89 +965,7 @@
             "bearer": []
           }
         ],
-        "summary": "Update organization course",
-        "tags": [
-          "organizations"
-        ]
-      },
-      "delete": {
-        "operationId": "OrganizationsController_deleteOrganizationCourse_v1",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "courseId",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Course deleted."
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "Delete organization course",
-        "tags": [
-          "organizations"
-        ]
-      }
-    },
-    "/v1/organizations/{id}/courses/{courseId}/assign-term": {
-      "patch": {
-        "operationId": "OrganizationsController_assignCourseToTerm_v1",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "courseId",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AssignTermDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Course assigned to term."
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "Assign course to term",
+        "summary": "Add courses to organization",
         "tags": [
           "organizations"
         ]
@@ -1234,6 +1051,14 @@
           },
           {
             "name": "sort",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "organizationId",
             "required": false,
             "in": "query",
             "schema": {
@@ -3066,6 +2891,16 @@
       "post": {
         "operationId": "MaterialController_create_v1",
         "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMaterialDto"
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
             "description": ""
@@ -3122,6 +2957,16 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMaterialDto"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": ""
@@ -3509,92 +3354,18 @@
           }
         }
       },
-      "CreateOrganizationCourseDto": {
+      "AddCoursesDto": {
         "type": "object",
         "properties": {
-          "title": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "thumbnailUrl": {
-            "type": "string"
-          },
-          "level": {
-            "type": "string"
-          },
-          "category": {
-            "type": "string"
-          },
-          "price": {
-            "type": "number"
-          },
-          "tags": {
+          "courseIds": {
             "type": "array",
             "items": {
               "type": "string"
             }
-          },
-          "isPublished": {
-            "type": "boolean"
-          },
-          "isOrgPrivate": {
-            "type": "boolean"
           }
         },
         "required": [
-          "title",
-          "description",
-          "level",
-          "category",
-          "price"
-        ]
-      },
-      "UpdateOrganizationCourseDto": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "thumbnailUrl": {
-            "type": "string"
-          },
-          "level": {
-            "type": "string"
-          },
-          "category": {
-            "type": "string"
-          },
-          "price": {
-            "type": "number"
-          },
-          "tags": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "isPublished": {
-            "type": "boolean"
-          },
-          "isOrgPrivate": {
-            "type": "boolean"
-          }
-        }
-      },
-      "AssignTermDto": {
-        "type": "object",
-        "properties": {
-          "termId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "termId"
+          "courseIds"
         ]
       },
       "ModuleItemDto": {
@@ -4200,6 +3971,14 @@
             "example": "2025-12-15"
           }
         }
+      },
+      "CreateMaterialDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "UpdateMaterialDto": {
+        "type": "object",
+        "properties": {}
       }
     }
   }

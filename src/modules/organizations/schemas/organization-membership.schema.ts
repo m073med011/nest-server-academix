@@ -10,7 +10,7 @@ export enum MembershipStatus {
   LEFT = 'left',
 }
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, collection: 'organization_memberships' })
 export class OrganizationMembership {
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
   userId: Types.ObjectId;

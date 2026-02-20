@@ -68,7 +68,8 @@ export class PaymobService {
   constructor(private readonly configService: ConfigService) {
     this.apiKey = this.configService.get<string>('app.paymob.apiKey') || '';
     this.cardIntegrationId =
-      this.configService.get<string>('app.paymob.cardIntegrationId') || '5017355';
+      this.configService.get<string>('app.paymob.cardIntegrationId') ||
+      '5017355';
     this.baseUrl = 'https://accept.paymobsolutions.com/api';
 
     // Log configuration status (without exposing sensitive data)
@@ -79,7 +80,9 @@ export class PaymobService {
   async authenticate(): Promise<string> {
     if (!this.apiKey) {
       this.logger.error('Paymob API Key is not configured');
-      throw new Error('Paymob API Key is missing. Please check your environment configuration.');
+      throw new Error(
+        'Paymob API Key is missing. Please check your environment configuration.',
+      );
     }
 
     this.logger.log('Attempting Paymob authentication...');
@@ -96,7 +99,9 @@ export class PaymobService {
 
     if (!response.ok) {
       const errorText = await response.text();
-      this.logger.error(`Paymob authentication failed: ${response.status} ${response.statusText}`);
+      this.logger.error(
+        `Paymob authentication failed: ${response.status} ${response.statusText}`,
+      );
       this.logger.error(`Error details: ${errorText}`);
       throw new Error(`Paymob authentication failed: ${response.statusText}`);
     }
@@ -111,7 +116,9 @@ export class PaymobService {
     amountCents: number,
     merchantOrderId: string,
   ): Promise<PaymobOrderResponse> {
-    this.logger.log(`Creating order: ${merchantOrderId}, amount: ${amountCents}`);
+    this.logger.log(
+      `Creating order: ${merchantOrderId}, amount: ${amountCents}`,
+    );
 
     const response = await fetch(`${this.baseUrl}/ecommerce/orders`, {
       method: 'POST',
@@ -130,7 +137,9 @@ export class PaymobService {
 
     if (!response.ok) {
       const errorText = await response.text();
-      this.logger.error(`Paymob order creation failed: ${response.status} ${response.statusText}`);
+      this.logger.error(
+        `Paymob order creation failed: ${response.status} ${response.statusText}`,
+      );
       this.logger.error(`Error details: ${errorText}`);
       throw new Error(`Paymob order creation failed: ${response.statusText}`);
     }
@@ -193,7 +202,9 @@ export class PaymobService {
 
     if (!response.ok) {
       const errorText = await response.text();
-      this.logger.error(`Paymob payment key creation failed: ${response.status} ${response.statusText}`);
+      this.logger.error(
+        `Paymob payment key creation failed: ${response.status} ${response.statusText}`,
+      );
       this.logger.error(`Error details: ${errorText}`);
       throw new Error(
         `Paymob payment key creation failed: ${response.statusText}`,
@@ -258,7 +269,6 @@ export class PaymobService {
   }
 
   verifyWebhookSignature(data: any, signature: string): boolean {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const crypto = require('crypto');
     const hmacSecret =
       this.configService.get<string>('paymob.hmacSecret') || '';

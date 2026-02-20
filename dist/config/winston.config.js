@@ -6,6 +6,7 @@ const winston = require("winston");
 exports.winstonConfig = {
     transports: [
         new winston.transports.Console({
+            level: 'debug',
             format: winston.format.combine(winston.format.timestamp(), winston.format.ms(), nest_winston_1.utilities.format.nestLike('NestServer', {
                 colors: true,
                 prettyPrint: true,

@@ -94,7 +94,9 @@ export class CartController {
     try {
       const userId = req.user._id.toString();
       const cart = await this.cartService.removeItem(userId, courseId);
-      return cart ? cart.toJSON() : { userId, items: [], itemCount: 0, totalPrice: 0 };
+      return cart
+        ? cart.toJSON()
+        : { userId, items: [], itemCount: 0, totalPrice: 0 };
     } catch (error) {
       throw new BadRequestException('Failed to remove item from cart');
     }
@@ -111,8 +113,13 @@ export class CartController {
 
     try {
       const userId = req.user._id.toString();
-      const cart = await this.cartService.removeMultipleItems(userId, courseIds);
-      return cart ? cart.toJSON() : { userId, items: [], itemCount: 0, totalPrice: 0 };
+      const cart = await this.cartService.removeMultipleItems(
+        userId,
+        courseIds,
+      );
+      return cart
+        ? cart.toJSON()
+        : { userId, items: [], itemCount: 0, totalPrice: 0 };
     } catch (error) {
       throw new BadRequestException('Failed to remove items from cart');
     }
@@ -123,7 +130,9 @@ export class CartController {
     try {
       const userId = req.user._id.toString();
       const cart = await this.cartService.clearCart(userId);
-      return cart ? cart.toJSON() : { userId, items: [], itemCount: 0, totalPrice: 0 };
+      return cart
+        ? cart.toJSON()
+        : { userId, items: [], itemCount: 0, totalPrice: 0 };
     } catch (error) {
       throw new BadRequestException('Failed to clear cart');
     }

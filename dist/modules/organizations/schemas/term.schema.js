@@ -46,7 +46,7 @@ __decorate([
     __metadata("design:type", Date)
 ], Term.prototype, "endDate", void 0);
 exports.Term = Term = __decorate([
-    (0, mongoose_1.Schema)({ timestamps: true })
+    (0, mongoose_1.Schema)({ timestamps: true, collection: 'academic_terms' })
 ], Term);
 exports.TermSchema = mongoose_1.SchemaFactory.createForClass(Term);
 exports.TermSchema.index({ levelId: 1 });

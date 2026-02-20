@@ -23,7 +23,8 @@ let PaymobService = PaymobService_1 = class PaymobService {
         this.configService = configService;
         this.apiKey = this.configService.get('app.paymob.apiKey') || '';
         this.cardIntegrationId =
-            this.configService.get('app.paymob.cardIntegrationId') || '5017355';
+            this.configService.get('app.paymob.cardIntegrationId') ||
+                '5017355';
         this.baseUrl = 'https://accept.paymobsolutions.com/api';
         this.logger.log(`Paymob API Key configured: ${!!this.apiKey}`);
         this.logger.log(`Card Integration ID: ${this.cardIntegrationId}`);

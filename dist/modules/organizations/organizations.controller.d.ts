@@ -1,11 +1,11 @@
 import { OrganizationsService } from './organizations.service';
-import { CreateOrganizationDto, UpdateOrganizationDto, SearchUserDto, AddMemberDto, UpdateMemberRoleDto, CreateRoleDto, UpdateRoleDto, CreateOrganizationCourseDto, UpdateOrganizationCourseDto, AssignTermDto, OrganizationCourseFilterDto, GetMembersDto } from './dto/organizations.dto';
+import { CreateOrganizationDto, UpdateOrganizationDto, SearchUserDto, AddMemberDto, UpdateMemberRoleDto, CreateRoleDto, UpdateRoleDto, GetMembersDto, AddCoursesDto } from './dto/organizations.dto';
 export declare class OrganizationsController {
     private readonly organizationsService;
     constructor(organizationsService: OrganizationsService);
     create(createOrganizationDto: CreateOrganizationDto, req: any): Promise<import("./schemas/organization.schema").OrganizationDocument>;
     findAll(): Promise<import("./schemas/organization.schema").OrganizationDocument[]>;
-    findOne(id: string): Promise<import("./schemas/organization.schema").OrganizationDocument>;
+    findOne(id: string): Promise<any>;
     update(id: string, updateOrganizationDto: UpdateOrganizationDto): Promise<import("./schemas/organization.schema").OrganizationDocument>;
     remove(id: string, req: any): Promise<{
         message: string;
@@ -83,21 +83,8 @@ export declare class OrganizationsController {
     acceptInvitation(id: string, req: any): Promise<{
         message: string;
     }>;
-    getOrganizationCourses(id: string, filterDto: OrganizationCourseFilterDto): Promise<{
-        success: boolean;
-        data: import("../courses/schemas/course.schema").Course[];
-        pagination: {
-            page: number;
-            limit: number;
-            total: number;
-            totalPages: number;
-            hasMore: boolean;
-        };
-    }>;
-    createOrganizationCourse(id: string, createOrganizationCourseDto: CreateOrganizationCourseDto, req: any): Promise<import("../courses/schemas/course.schema").Course>;
-    updateOrganizationCourse(id: string, courseId: string, updateOrganizationCourseDto: UpdateOrganizationCourseDto): Promise<import("../courses/schemas/course.schema").Course>;
-    deleteOrganizationCourse(id: string, courseId: string): Promise<{
+    addCourses(id: string, addCoursesDto: AddCoursesDto): Promise<{
         message: string;
+        modifiedCount: number;
     }>;
-    assignCourseToTerm(id: string, courseId: string, assignTermDto: AssignTermDto): Promise<import("../courses/schemas/course.schema").Course>;
 }

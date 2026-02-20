@@ -46,7 +46,7 @@ __decorate([
     __metadata("design:type", Array)
 ], Level.prototype, "terms", void 0);
 exports.Level = Level = __decorate([
-    (0, mongoose_1.Schema)({ timestamps: true })
+    (0, mongoose_1.Schema)({ timestamps: true, collection: 'academic_levels' })
 ], Level);
 exports.LevelSchema = mongoose_1.SchemaFactory.createForClass(Level);
 exports.LevelSchema.index({ organizationId: 1, order: 1 });

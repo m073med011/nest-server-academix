@@ -55,10 +55,7 @@ export class TermController {
   @ApiParam({ name: 'termId', description: 'ID of the term' })
   @ApiResponse({ status: 200, description: 'Term retrieved successfully.' })
   @ApiResponse({ status: 404, description: 'Term or level not found.' })
-  findOne(
-    @Param('levelId') levelId: string,
-    @Param('termId') termId: string,
-  ) {
+  findOne(@Param('levelId') levelId: string, @Param('termId') termId: string) {
     return this.termService.findOne(levelId, termId);
   }
 
@@ -83,10 +80,7 @@ export class TermController {
   @ApiParam({ name: 'termId', description: 'ID of the term' })
   @ApiResponse({ status: 200, description: 'Term deleted successfully.' })
   @ApiResponse({ status: 404, description: 'Term or level not found.' })
-  remove(
-    @Param('levelId') levelId: string,
-    @Param('termId') termId: string,
-  ) {
+  remove(@Param('levelId') levelId: string, @Param('termId') termId: string) {
     return this.termService.remove(levelId, termId);
   }
 }

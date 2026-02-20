@@ -4,7 +4,7 @@ import { Organization } from '../../organizations/schemas/organization.schema';
 
 export type LevelDocument = Level & Document;
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, collection: 'academic_levels' })
 export class Level {
   @Prop({ required: true, trim: true, maxlength: 100 })
   name: string;

@@ -37,6 +37,8 @@ export class OrganizationsRepository {
     return this.organizationModel
       .findOne(filter)
       .populate('owner', 'name email imageProfileUrl')
+      .populate('levels')
+      .populate('terms')
       .exec();
   }
 

@@ -20,7 +20,7 @@ export enum ApplicableOn {
 
 export type DiscountDocument = Discount & Document;
 
-@Schema({ timestamps: true, collection: 'discountcodes' })
+@Schema({ timestamps: true, collection: 'discount_codes' })
 export class Discount {
   @Prop({
     required: true,

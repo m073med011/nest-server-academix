@@ -11,13 +11,16 @@ import {
 import { MaterialService } from './material.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 
+import { CreateMaterialDto } from './dto/create-material.dto';
+import { UpdateMaterialDto } from './dto/update-material.dto';
+
 @Controller('materials')
 @UseGuards(JwtAuthGuard)
 export class MaterialController {
   constructor(private readonly materialService: MaterialService) {}
 
   @Post()
-  create(@Body() createMaterialDto: any) {
+  create(@Body() createMaterialDto: CreateMaterialDto) {
     return this.materialService.create(createMaterialDto);
   }
 
@@ -37,7 +40,10 @@ export class MaterialController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMaterialDto: any) {
+  update(
+    @Param('id') id: string,
+    @Body() updateMaterialDto: UpdateMaterialDto,
+  ) {
     return this.materialService.update(id, updateMaterialDto);
   }
 

@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { MaterialRepository } from './material.repository';
+import { CreateMaterialDto } from './dto/create-material.dto';
+import { UpdateMaterialDto } from './dto/update-material.dto';
 
 @Injectable()
 export class MaterialService {
   constructor(private readonly materialRepository: MaterialRepository) {}
 
-  create(createMaterialDto: any) {
+  create(createMaterialDto: CreateMaterialDto) {
     return this.materialRepository.create(createMaterialDto);
   }
 
@@ -21,7 +23,7 @@ export class MaterialService {
     return this.materialRepository.findByCourse(courseId);
   }
 
-  update(id: string, updateMaterialDto: any) {
+  update(id: string, updateMaterialDto: UpdateMaterialDto) {
     return this.materialRepository.update(id, updateMaterialDto);
   }
 

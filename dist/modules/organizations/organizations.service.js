@@ -14,13 +14,13 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrganizationsService = void 0;
 const common_1 = require("@nestjs/common");
+const users_repository_1 = require("../users/users.repository");
 const organizations_repository_1 = require("./organizations.repository");
 const organization_membership_repository_1 = require("./organization-membership.repository");
 const organization_role_repository_1 = require("./organization-role.repository");
 const term_repository_1 = require("./term.repository");
 const users_service_1 = require("../users/users.service");
 const courses_service_1 = require("../courses/courses.service");
-const users_repository_1 = require("../users/users.repository");
 const organization_membership_schema_1 = require("./schemas/organization-membership.schema");
 let OrganizationsService = class OrganizationsService {
     organizationsRepository;
@@ -106,7 +106,10 @@ let OrganizationsService = class OrganizationsService {
         const org = await this.organizationsRepository.findById(id);
         if (!org)
             throw new common_1.NotFoundException('Organization not found');
-        return org;
+        const courses = (await this.coursesService.findAll({
+            organizationId: id,
+        })).data;
+        return { ...org.toObject(), courses: courses };
     }
     async update(id, updateOrganizationDto) {
         const org = await this.organizationsRepository.update(id, updateOrganizationDto);
@@ -282,6 +285,10 @@ let OrganizationsService = class OrganizationsService {
     async leaveMembership(organizationId, userId) {
         return this.removeMember(organizationId, userId);
     }
+    async addCourses(organizationId, courseIds) {
+        await this.findOne(organizationId);
+        return this.coursesService.assignCoursesToOrganization(courseIds, organizationId);
+    }
     async getOrganizationUsers(organizationId, queryDto) {
         return this.getMembers(organizationId, {
             ...queryDto,
@@ -337,32 +344,6 @@ let OrganizationsService = class OrganizationsService {
     }
     async acceptInvitation(organizationId, userId) {
         return { message: 'Invitation accepted' };
-    }
-    async getOrganizationCourses(organizationId, filterDto) {
-        const filter = { organizationId };
-        if (filterDto.termId)
-            filter.termId = filterDto.termId;
-        if (filterDto.levelId)
-            filter.levelId = filterDto.levelId;
-        if (filterDto.instructor)
-            filter.instructor = filterDto.instructor;
-        if (filterDto.isPublished)
-            filter.isPublished = filterDto.isPublished === 'true';
-        return this.coursesService.findAll(filter);
-    }
-    async createOrganizationCourse(organizationId, createDto, instructorId) {
-        return this.coursesService.create({ ...createDto, organizationId }, instructorId);
-    }
-    async updateOrganizationCourse(organizationId, courseId, updateDto) {
-        return this.coursesService.update(courseId, updateDto);
-    }
-    async deleteOrganizationCourse(organizationId, courseId) {
-        return this.coursesService.remove(courseId);
-    }
-    async assignCourseToTerm(organizationId, courseId, assignTermDto) {
-        return this.coursesService.update(courseId, {
-            termId: assignTermDto.termId,
-        });
     }
     async addLevel(organizationId, levelId) {
         return this.organizationsRepository.addLevel(organizationId, levelId);

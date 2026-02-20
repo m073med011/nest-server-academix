@@ -74,7 +74,7 @@ __decorate([
     __metadata("design:type", Date)
 ], Attendance.prototype, "recordedAt", void 0);
 exports.Attendance = Attendance = __decorate([
-    (0, mongoose_1.Schema)({ timestamps: true })
+    (0, mongoose_1.Schema)({ timestamps: true, collection: 'attendance_records' })
 ], Attendance);
 exports.AttendanceSchema = mongoose_1.SchemaFactory.createForClass(Attendance);
 exports.AttendanceSchema.index({ userId: 1, materialId: 1 }, { unique: true });

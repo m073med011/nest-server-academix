@@ -138,7 +138,10 @@ export class CoursesRepository {
       .exec();
   }
 
-  async updateMany(filter: any, update: any): Promise<{ modifiedCount: number }> {
+  async updateMany(
+    filter: any,
+    update: any,
+  ): Promise<{ modifiedCount: number }> {
     const result = await this.courseModel.updateMany(filter, update).exec();
     return { modifiedCount: result.modifiedCount || 0 };
   }

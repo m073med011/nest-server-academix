@@ -18,7 +18,8 @@ export class CartRepository {
       .populate({
         path: 'items.courseId',
         model: 'Course',
-        select: 'title description price level thumbnail thumbnailUrl duration rating instructor students'
+        select:
+          'title description price level thumbnail thumbnailUrl duration rating instructor students',
       })
       .exec();
 
@@ -32,7 +33,9 @@ export class CartRepository {
   }
 
   async addItem(userId: string, courseId: string): Promise<CartDocument> {
-    let cart: CartDocument | null = await this.cartModel.findOne({ userId }).exec();
+    let cart: CartDocument | null = await this.cartModel
+      .findOne({ userId })
+      .exec();
 
     if (!cart) {
       cart = await this.create(userId);
@@ -45,7 +48,7 @@ export class CartRepository {
 
     // Check if course already exists (compare as strings)
     const exists = cart.items.some(
-      (item) => item.courseId.toString() === courseId
+      (item) => item.courseId.toString() === courseId,
     );
 
     if (!exists) {
@@ -59,7 +62,8 @@ export class CartRepository {
       .populate({
         path: 'items.courseId',
         model: 'Course',
-        select: 'title description price level thumbnail thumbnailUrl duration rating instructor students'
+        select:
+          'title description price level thumbnail thumbnailUrl duration rating instructor students',
       })
       .exec();
 
@@ -78,7 +82,7 @@ export class CartRepository {
 
     if (cart) {
       cart.items = cart.items.filter(
-        (item) => item.courseId.toString() !== courseId
+        (item) => item.courseId.toString() !== courseId,
       );
       await cart.save();
 
@@ -97,7 +101,7 @@ export class CartRepository {
 
     if (cart) {
       cart.items = cart.items.filter(
-        (item) => !courseIds.includes(item.courseId.toString())
+        (item) => !courseIds.includes(item.courseId.toString()),
       );
       await cart.save();
 

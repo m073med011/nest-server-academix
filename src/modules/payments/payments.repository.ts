@@ -82,7 +82,9 @@ export class PaymentsRepository {
     return courses;
   }
 
-  async findByMerchantOrderId(merchantOrderId: string): Promise<Payment | null> {
+  async findByMerchantOrderId(
+    merchantOrderId: string,
+  ): Promise<Payment | null> {
     return this.paymentModel.findOne({ paymobOrderId: merchantOrderId }).exec();
   }
 

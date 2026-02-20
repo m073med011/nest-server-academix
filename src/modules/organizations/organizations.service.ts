@@ -6,14 +6,14 @@ import {
   forwardRef,
   ForbiddenException,
 } from '@nestjs/common';
-import { Types } from 'mongoose';
+import { CourseFilterDto } from '../courses/dto/courses.dto';
+import { UsersRepository } from '../users/users.repository';
 import { OrganizationsRepository } from './organizations.repository';
 import { OrganizationMembershipRepository } from './organization-membership.repository';
 import { OrganizationRoleRepository } from './organization-role.repository';
 import { TermRepository } from './term.repository';
 import { UsersService } from '../users/users.service';
 import { CoursesService } from '../courses/courses.service';
-import { UsersRepository } from '../users/users.repository';
 import {
   CreateOrganizationDto,
   UpdateOrganizationDto,
@@ -21,10 +21,6 @@ import {
   UpdateMemberRoleDto,
   CreateRoleDto,
   UpdateRoleDto,
-  CreateOrganizationCourseDto,
-  UpdateOrganizationCourseDto,
-  AssignTermDto,
-  OrganizationCourseFilterDto,
   PaginatedResponse,
   GetMembersDto,
 } from './dto/organizations.dto';
@@ -129,7 +125,14 @@ export class OrganizationsService {
   async findOne(id: string) {
     const org = await this.organizationsRepository.findById(id);
     if (!org) throw new NotFoundException('Organization not found');
-    return org;
+
+    const courses = (
+      await this.coursesService.findAll({
+        organizationId: id,
+      } as CourseFilterDto)
+    ).data;
+
+    return { ...org.toObject(), courses: courses };
   }
 
   async update(id: string, updateOrganizationDto: UpdateOrganizationDto) {
@@ -301,9 +304,8 @@ export class OrganizationsService {
     results.terms = termResult.deletedCount;
 
     // Delete courses
-    const courseResult = await this.coursesService.permanentDeleteByOrganization(
-      id,
-    );
+    const courseResult =
+      await this.coursesService.permanentDeleteByOrganization(id);
     results.courses = courseResult.deletedCount;
 
     // Clear user references
@@ -412,6 +414,17 @@ export class OrganizationsService {
     return this.removeMember(organizationId, userId);
   }
 
+  async addCourses(organizationId: string, courseIds: string[]) {
+    // 1. Verify organization exists
+    await this.findOne(organizationId);
+
+    // 2. Assign courses
+    return this.coursesService.assignCoursesToOrganization(
+      courseIds,
+      organizationId,
+    );
+  }
+
   async getOrganizationUsers(
     organizationId: string,
     queryDto: GetMembersDto,
@@ -492,52 +505,6 @@ export class OrganizationsService {
   }
 
   // Course Management
-  async getOrganizationCourses(
-    organizationId: string,
-    filterDto: OrganizationCourseFilterDto,
-  ) {
-    const filter: any = { organizationId };
-    if (filterDto.termId) filter.termId = filterDto.termId;
-    if (filterDto.levelId) filter.levelId = filterDto.levelId;
-    if (filterDto.instructor) filter.instructor = filterDto.instructor;
-    if (filterDto.isPublished)
-      filter.isPublished = filterDto.isPublished === 'true';
-
-    return this.coursesService.findAll(filter as any);
-  }
-
-  async createOrganizationCourse(
-    organizationId: string,
-    createDto: CreateOrganizationCourseDto,
-    instructorId: string,
-  ) {
-    return this.coursesService.create(
-      { ...createDto, organizationId } as any,
-      instructorId,
-    );
-  }
-
-  async updateOrganizationCourse(
-    organizationId: string,
-    courseId: string,
-    updateDto: UpdateOrganizationCourseDto,
-  ) {
-    return this.coursesService.update(courseId, updateDto as any);
-  }
-
-  async deleteOrganizationCourse(organizationId: string, courseId: string) {
-    return this.coursesService.remove(courseId);
-  }
-
-  async assignCourseToTerm(
-    organizationId: string,
-    courseId: string,
-    assignTermDto: AssignTermDto,
-  ) {
-    return this.coursesService.update(courseId, {
-      termId: assignTermDto.termId,
-    } as any);
-  }
 
   async addLevel(organizationId: string, levelId: string) {
     return this.organizationsRepository.addLevel(organizationId, levelId);

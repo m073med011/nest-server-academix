@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
+const logger_middleware_1 = require("./common/middleware/logger.middleware");
 const config_1 = require("@nestjs/config");
 const mongoose_1 = require("@nestjs/mongoose");
 const nest_winston_1 = require("nest-winston");
@@ -34,6 +35,11 @@ const health_module_1 = require("./modules/health/health.module");
 const throttler_1 = require("@nestjs/throttler");
 const core_1 = require("@nestjs/core");
 let AppModule = class AppModule {
+    configure(consumer) {
+        if (process.env.NODE_ENV === 'development') {
+            consumer.apply(logger_middleware_1.LoggerMiddleware).forRoutes('*');
+        }
+    }
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([

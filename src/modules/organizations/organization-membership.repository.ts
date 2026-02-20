@@ -20,7 +20,9 @@ export class OrganizationMembershipRepository {
     const castedMembership: any = {
       ...membershipDto,
       userId: new Types.ObjectId(membershipDto.userId.toString()),
-      organizationId: new Types.ObjectId(membershipDto.organizationId.toString()),
+      organizationId: new Types.ObjectId(
+        membershipDto.organizationId.toString(),
+      ),
       roleId: new Types.ObjectId(membershipDto.roleId.toString()),
     };
 

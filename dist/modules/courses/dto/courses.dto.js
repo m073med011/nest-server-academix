@@ -358,6 +358,7 @@ class CourseFilterDto {
     level;
     search;
     sort;
+    organizationId;
 }
 exports.CourseFilterDto = CourseFilterDto;
 __decorate([
@@ -396,6 +397,12 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CourseFilterDto.prototype, "sort", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CourseFilterDto.prototype, "organizationId", void 0);
 class AddEditorDto {
     editorId;
 }

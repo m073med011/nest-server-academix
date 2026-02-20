@@ -17,7 +17,6 @@ import {
   ApiOperation,
   ApiResponse,
   ApiBearerAuth,
-  ApiQuery,
 } from '@nestjs/swagger';
 import {
   CreateOrganizationDto,
@@ -27,11 +26,8 @@ import {
   UpdateMemberRoleDto,
   CreateRoleDto,
   UpdateRoleDto,
-  CreateOrganizationCourseDto,
-  UpdateOrganizationCourseDto,
-  AssignTermDto,
-  OrganizationCourseFilterDto,
   GetMembersDto,
+  AddCoursesDto,
 } from './dto/organizations.dto';
 import { OrganizationPermissionGuard } from '../../common/guards/organization-permission.guard';
 import {
@@ -169,10 +165,7 @@ export class OrganizationsController {
     status: 200,
     description: 'Members retrieved with pagination.',
   })
-  async getMembers(
-    @Param('id') id: string,
-    @Query() queryDto: GetMembersDto,
-  ) {
+  async getMembers(@Param('id') id: string, @Query() queryDto: GetMembersDto) {
     return this.organizationsService.getMembers(id, queryDto);
   }
 
@@ -286,81 +279,16 @@ export class OrganizationsController {
     return this.organizationsService.acceptInvitation(id, req.user._id);
   }
 
-  // Course Management
-  @Get(':id/courses')
-  @ApiOperation({ summary: 'Get organization courses' })
-  @ApiResponse({ status: 200, description: 'Courses retrieved.' })
-  async getOrganizationCourses(
-    @Param('id') id: string,
-    @Query() filterDto: OrganizationCourseFilterDto,
-  ) {
-    return this.organizationsService.getOrganizationCourses(id, filterDto);
-  }
-
-  @Post(':id/courses')
+  @Post(':id/courses/add')
   @UseGuards(AuthGuard('jwt'), OrganizationPermissionGuard)
   @RequirePermission('canManageCourses')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Create organization course' })
-  @ApiResponse({ status: 201, description: 'Course created.' })
-  async createOrganizationCourse(
+  @ApiOperation({ summary: 'Add courses to organization' })
+  @ApiResponse({ status: 200, description: 'Courses added.' })
+  async addCourses(
     @Param('id') id: string,
-    @Body() createOrganizationCourseDto: CreateOrganizationCourseDto,
-    @Request() req,
+    @Body() addCoursesDto: AddCoursesDto,
   ) {
-    return this.organizationsService.createOrganizationCourse(
-      id,
-      createOrganizationCourseDto,
-      req.user._id,
-    );
-  }
-
-  @Patch(':id/courses/:courseId')
-  @UseGuards(AuthGuard('jwt'), OrganizationPermissionGuard)
-  @RequirePermission('canManageCourses')
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Update organization course' })
-  @ApiResponse({ status: 200, description: 'Course updated.' })
-  async updateOrganizationCourse(
-    @Param('id') id: string,
-    @Param('courseId') courseId: string,
-    @Body() updateOrganizationCourseDto: UpdateOrganizationCourseDto,
-  ) {
-    return this.organizationsService.updateOrganizationCourse(
-      id,
-      courseId,
-      updateOrganizationCourseDto,
-    );
-  }
-
-  @Delete(':id/courses/:courseId')
-  @UseGuards(AuthGuard('jwt'), OrganizationPermissionGuard)
-  @RequirePermission('canManageCourses')
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Delete organization course' })
-  @ApiResponse({ status: 200, description: 'Course deleted.' })
-  async deleteOrganizationCourse(
-    @Param('id') id: string,
-    @Param('courseId') courseId: string,
-  ) {
-    return this.organizationsService.deleteOrganizationCourse(id, courseId);
-  }
-
-  @Patch(':id/courses/:courseId/assign-term')
-  @UseGuards(AuthGuard('jwt'), OrganizationPermissionGuard)
-  @RequirePermission('canManageCourses')
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Assign course to term' })
-  @ApiResponse({ status: 200, description: 'Course assigned to term.' })
-  async assignCourseToTerm(
-    @Param('id') id: string,
-    @Param('courseId') courseId: string,
-    @Body() assignTermDto: AssignTermDto,
-  ) {
-    return this.organizationsService.assignCourseToTerm(
-      id,
-      courseId,
-      assignTermDto,
-    );
+    return this.organizationsService.addCourses(id, addCoursesDto.courseIds);
   }
 }

@@ -91,7 +91,7 @@ __decorate([
     __metadata("design:type", Date)
 ], Discount.prototype, "expiresAt", void 0);
 exports.Discount = Discount = __decorate([
-    (0, mongoose_1.Schema)({ timestamps: true, collection: 'discountcodes' })
+    (0, mongoose_1.Schema)({ timestamps: true, collection: 'discount_codes' })
 ], Discount);
 exports.DiscountSchema = mongoose_1.SchemaFactory.createForClass(Discount);
 exports.DiscountSchema.index({ type: 1, isActive: 1 });

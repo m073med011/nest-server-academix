@@ -13,7 +13,7 @@ export enum MaterialType {
 
 export type MaterialDocument = Material & Document;
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, collection: 'course_materials' })
 export class Material {
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Course', required: true })
   courseId: Course;
@@ -39,7 +39,7 @@ export class Material {
   @Prop()
   duration: number; // Video duration or read time in minutes
 
-  @Prop({ default: false })
+  @Prop({ default: true })
   isPublished: boolean;
 
   // Video-specific fields
@@ -61,6 +61,31 @@ export class Material {
 
   @Prop({ default: false })
   allowLate: boolean;
+
+  @Prop()
+  assignmentFileUrl: string;
+
+  // Quiz-specific fields
+  @Prop({
+    type: [
+      {
+        text: { type: String, required: true },
+        options: { type: [String], required: true },
+        correctAnswer: { type: String, required: true },
+        _id: false,
+      },
+    ],
+    default: [],
+  })
+  quizQuestions: {
+    text: string;
+    options: string[];
+    correctAnswer: string;
+  }[];
+
+  // Article/Lesson specific fields
+  @Prop()
+  thumbnailUrl: string;
 
   // Link-specific fields
   @Prop({ default: true })

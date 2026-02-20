@@ -292,6 +292,11 @@ export class CourseFilterDto {
   @IsOptional()
   @IsString()
   sort?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  organizationId?: string;
 }
 
 export class AddEditorDto {

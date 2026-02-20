@@ -72,7 +72,10 @@ export class OtpService {
         message: `OTP sent to ${email}`,
       };
     } catch (error) {
-      this.logger.error(`Failed to generate OTP: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to generate OTP: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }

@@ -38,6 +38,9 @@ let Material = class Material {
     dueDate;
     submissionTypes;
     allowLate;
+    assignmentFileUrl;
+    quizQuestions;
+    thumbnailUrl;
     openInNewTab;
     moduleId;
 };
@@ -75,7 +78,7 @@ __decorate([
     __metadata("design:type", Number)
 ], Material.prototype, "duration", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ default: false }),
+    (0, mongoose_1.Prop)({ default: true }),
     __metadata("design:type", Boolean)
 ], Material.prototype, "isPublished", void 0);
 __decorate([
@@ -103,6 +106,28 @@ __decorate([
     __metadata("design:type", Boolean)
 ], Material.prototype, "allowLate", void 0);
 __decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", String)
+], Material.prototype, "assignmentFileUrl", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({
+        type: [
+            {
+                text: { type: String, required: true },
+                options: { type: [String], required: true },
+                correctAnswer: { type: String, required: true },
+                _id: false,
+            },
+        ],
+        default: [],
+    }),
+    __metadata("design:type", Array)
+], Material.prototype, "quizQuestions", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", String)
+], Material.prototype, "thumbnailUrl", void 0);
+__decorate([
     (0, mongoose_1.Prop)({ default: true }),
     __metadata("design:type", Boolean)
 ], Material.prototype, "openInNewTab", void 0);
@@ -111,7 +136,7 @@ __decorate([
     __metadata("design:type", String)
 ], Material.prototype, "moduleId", void 0);
 exports.Material = Material = __decorate([
-    (0, mongoose_1.Schema)({ timestamps: true })
+    (0, mongoose_1.Schema)({ timestamps: true, collection: 'course_materials' })
 ], Material);
 exports.MaterialSchema = mongoose_1.SchemaFactory.createForClass(Material);
 exports.MaterialSchema.index({ courseId: 1, order: 1 });

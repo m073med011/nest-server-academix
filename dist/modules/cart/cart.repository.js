@@ -32,7 +32,7 @@ let CartRepository = class CartRepository {
             .populate({
             path: 'items.courseId',
             model: 'Course',
-            select: 'title description price level thumbnail thumbnailUrl duration rating instructor students'
+            select: 'title description price level thumbnail thumbnailUrl duration rating instructor students',
         })
             .exec();
         if (cart && cart.items.some((item) => !item.courseId)) {
@@ -42,7 +42,9 @@ let CartRepository = class CartRepository {
         return cart;
     }
     async addItem(userId, courseId) {
-        let cart = await this.cartModel.findOne({ userId }).exec();
+        let cart = await this.cartModel
+            .findOne({ userId })
+            .exec();
         if (!cart) {
             cart = await this.create(userId);
         }
@@ -59,7 +61,7 @@ let CartRepository = class CartRepository {
             .populate({
             path: 'items.courseId',
             model: 'Course',
-            select: 'title description price level thumbnail thumbnailUrl duration rating instructor students'
+            select: 'title description price level thumbnail thumbnailUrl duration rating instructor students',
         })
             .exec();
         if (!populatedCart) {

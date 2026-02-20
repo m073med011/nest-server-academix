@@ -9,7 +9,7 @@ export enum OtpPurpose {
 
 export type OtpDocument = Otp & Document;
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, collection: 'otp_codes' })
 export class Otp {
   @Prop({ required: true, length: 6, match: /^\d{6}$/ })
   code: string;

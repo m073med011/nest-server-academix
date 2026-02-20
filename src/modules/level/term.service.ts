@@ -31,7 +31,7 @@ export class TermService {
     // Validate dates
     const startDate = new Date(createTermDto.startDate);
     const endDate = new Date(createTermDto.endDate);
-    
+
     if (endDate <= startDate) {
       throw new BadRequestException('End date must be after start date');
     }
@@ -64,14 +64,16 @@ export class TermService {
 
   async findOne(levelId: string, termId: string) {
     const term = await this.termRepository.findById(termId);
-    
+
     if (!term) {
       throw new NotFoundException(`Term with ID ${termId} not found`);
     }
 
     // Verify that the term belongs to the specified level
     if (term.levelId.toString() !== levelId) {
-      throw new NotFoundException(`Term with ID ${termId} not found in level ${levelId}`);
+      throw new NotFoundException(
+        `Term with ID ${termId} not found in level ${levelId}`,
+      );
     }
 
     return term;
@@ -85,14 +87,14 @@ export class TermService {
     if (updateTermDto.startDate && updateTermDto.endDate) {
       const startDate = new Date(updateTermDto.startDate);
       const endDate = new Date(updateTermDto.endDate);
-      
+
       if (endDate <= startDate) {
         throw new BadRequestException('End date must be after start date');
       }
     }
 
     const updatedTerm = await this.termRepository.update(termId, updateTermDto);
-    
+
     if (!updatedTerm) {
       throw new NotFoundException(`Term with ID ${termId} not found`);
     }
@@ -105,7 +107,7 @@ export class TermService {
     await this.findOne(levelId, termId);
 
     const deletedTerm = await this.termRepository.delete(termId);
-    
+
     if (!deletedTerm) {
       throw new NotFoundException(`Term with ID ${termId} not found`);
     }

@@ -15,7 +15,7 @@ export class CartItem {
 }
 
 export const CartItemSchema = SchemaFactory.createForClass(CartItem);
-
+ 
 @Schema({ timestamps: true, collection: 'carts' })
 export class Cart {
   @Prop({
@@ -46,12 +46,12 @@ CartSchema.virtual('itemsWithCourses', {
 });
 
 // Virtual for item count
-CartSchema.virtual('itemCount').get(function() {
+CartSchema.virtual('itemCount').get(function () {
   return this.items ? this.items.length : 0;
 });
 
 // Virtual for total price (calculated from populated course prices)
-CartSchema.virtual('totalPrice').get(function() {
+CartSchema.virtual('totalPrice').get(function () {
   if (!this.items || this.items.length === 0) return 0;
 
   return this.items.reduce((sum, item) => {

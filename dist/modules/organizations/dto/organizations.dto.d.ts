@@ -55,34 +55,6 @@ export declare class UpdateRoleDto {
     name?: string;
     permissions?: RolePermissions;
 }
-export declare class CreateOrganizationCourseDto {
-    title: string;
-    description: string;
-    thumbnailUrl?: string;
-    level: string;
-    category: string;
-    price: number;
-    tags?: string[];
-    isPublished?: boolean;
-    isOrgPrivate?: boolean;
-}
-export declare class UpdateOrganizationCourseDto {
-    title?: string;
-    description?: string;
-    thumbnailUrl?: string;
-    level?: string;
-    category?: string;
-    price?: number;
-    tags?: string[];
-    isPublished?: boolean;
-    isOrgPrivate?: boolean;
-}
-export declare class AssignTermDto {
-    termId: string;
-}
-export declare class OrganizationCourseFilterDto {
-    termId?: string;
-    levelId?: string;
-    instructor?: string;
-    isPublished?: string;
+export declare class AddCoursesDto {
+    courseIds: string[];
 }

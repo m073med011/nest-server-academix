@@ -2,13 +2,16 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { FilterQuery } from 'mongoose';
 import { CoursesRepository } from './courses.repository';
 import { PaymentsService } from '../payments/payments.service';
-import { CourseDocument } from './schemas/course.schema';
+import {
+  Course,
+  CourseDocument,
+  CourseType,
+  EnrollmentType,
+} from './schemas/course.schema';
 import {
   CreateCourseDto,
   UpdateCourseDto,
   CourseFilterDto,
-  CourseType,
-  EnrollmentType,
 } from './dto/courses.dto';
 
 @Injectable()
@@ -28,6 +31,11 @@ export class CoursesService {
       courseData.hasAccessRestrictions = false;
       courseData.price = 0;
       courseData.enrollmentCap = 0;
+    }
+
+    // Default isPublished to true if not provided
+    if (courseData.isPublished === undefined) {
+      courseData.isPublished = true;
     }
 
     return this.coursesRepository.create(courseData);
@@ -50,6 +58,8 @@ export class CoursesService {
 
     if (category) filter.category = category;
     if (level) filter.level = level;
+    if (filterDto.organizationId)
+      filter.organizationId = filterDto.organizationId;
     if (search) {
       filter.$text = { $search: search };
     }
@@ -209,6 +219,27 @@ export class CoursesService {
     const result = await this.coursesRepository.deleteMany({ organizationId });
     return {
       deletedCount: result.deletedCount || 0,
+    };
+  }
+
+  async assignCoursesToOrganization(
+    courseIds: string[],
+    organizationId: string,
+  ) {
+    const result = await this.coursesRepository.updateMany(
+      { _id: { $in: courseIds } },
+      {
+        $set: {
+          organizationId,
+          isOrgPrivate: true,
+          courseType: CourseType.ORGANIZATION,
+          enrollmentType: EnrollmentType.ORG_SUBSCRIPTION,
+        },
+      },
+    );
+    return {
+      message: `${result.modifiedCount} courses assigned to organization`,
+      modifiedCount: result.modifiedCount,
     };
   }
 }

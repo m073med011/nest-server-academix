@@ -45,7 +45,9 @@ describe('Organization Performance (e2e)', () => {
       const lastPage = Math.ceil(memberCount / 50);
       const start = Date.now();
       await request(app.getHttpServer())
-        .get(`/organizations/${organizationId}/members?page=${lastPage}&limit=50`)
+        .get(
+          `/organizations/${organizationId}/members?page=${lastPage}&limit=50`,
+        )
         .expect(200);
       const duration = Date.now() - start;
 
@@ -56,7 +58,7 @@ describe('Organization Performance (e2e)', () => {
   describe('Query Performance', () => {
     it('should filter by role efficiently', async () => {
       // if (!organizationId) return;
-      
+
       const start = Date.now();
       await request(app.getHttpServer())
         .get(`/organizations/${organizationId}/members?roleId=someRoleId`)
