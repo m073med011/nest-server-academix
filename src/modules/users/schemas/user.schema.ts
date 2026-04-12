@@ -14,7 +14,7 @@ export enum UserRole {
   ADMIN = 'admin',
   FREELANCER = 'freelancer',
   ORGANIZER = 'organizer',
-  GUEST = 'guest',
+  ANONYMOUS = 'anonymous',
 }
 
 export enum AuthProvider {
@@ -33,7 +33,7 @@ export class User {
   @Prop({ select: false, minlength: 6 })
   password?: string;
 
-  @Prop({ type: String, enum: UserRole, default: UserRole.STUDENT })
+  @Prop({ type: String, enum: UserRole, default: UserRole.ANONYMOUS })
   role: UserRole;
 
   @Prop({ default: false })
@@ -60,6 +60,9 @@ export class User {
 
   @Prop({ default: false })
   twoFactorEnabled: boolean;
+
+  @Prop({ default: true })
+  isActive: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

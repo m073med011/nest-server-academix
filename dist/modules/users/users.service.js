@@ -75,6 +75,35 @@ let UsersService = class UsersService {
     async getMyOrganizations(userId) {
         return this.membershipRepository.findByUser(userId);
     }
+    async deleteAccount(userId) {
+        const user = await this.usersRepository.findById(userId);
+        if (!user) {
+            throw new common_1.NotFoundException('User not found');
+        }
+        const isDeleted = await this.usersRepository.delete({ _id: userId });
+        if (!isDeleted) {
+            throw new common_1.BadRequestException('Failed to delete account');
+        }
+        return { message: 'Account deleted successfully' };
+    }
+    async disableAccount(userId) {
+        const user = await this.usersRepository.findById(userId);
+        if (!user) {
+            throw new common_1.NotFoundException('User not found');
+        }
+        user.isActive = false;
+        await user.save();
+        return { message: 'Account disabled successfully' };
+    }
+    async reactivateAccount(userId) {
+        const user = await this.usersRepository.findById(userId);
+        if (!user) {
+            throw new common_1.NotFoundException('User not found');
+        }
+        user.isActive = true;
+        await user.save();
+        return { message: 'Account reactivated successfully' };
+    }
 };
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([

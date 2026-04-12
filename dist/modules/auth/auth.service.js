@@ -62,6 +62,10 @@ let AuthService = class AuthService {
         if (!user) {
             throw new common_1.UnauthorizedException('Invalid credentials');
         }
+        if (user.isActive === false) {
+            await this.usersService.reactivateAccount(user._id.toString());
+            user.isActive = true;
+        }
         if (!user.emailVerified) {
             await this.otpService.generateOtp(user.email, 'email_verification');
             return {
@@ -144,7 +148,7 @@ let AuthService = class AuthService {
             throw new common_1.BadRequestException('User already exists');
         }
         if (registerDto.isOAuthUser && !registerDto.role) {
-            registerDto.role = user_schema_1.UserRole.GUEST;
+            registerDto.role = user_schema_1.UserRole.ANONYMOUS;
         }
         const user = await this.usersService.create(registerDto);
         await this.otpService.generateOtp(user.email, 'email_verification');
@@ -268,7 +272,7 @@ let AuthService = class AuthService {
         const user = await this.usersService.findById(userId);
         if (!user)
             throw new common_1.NotFoundException('User not found');
-        if (user.role !== user_schema_1.UserRole.GUEST) {
+        if (user.role !== user_schema_1.UserRole.ANONYMOUS) {
             throw new common_1.BadRequestException('User already registered');
         }
         const updatedUser = await this.usersService.update(userId, { role });
@@ -296,7 +300,7 @@ let AuthService = class AuthService {
                 imageProfileUrl: picture,
                 provider,
                 isOAuthUser: true,
-                role: user_schema_1.UserRole.GUEST,
+                role: user_schema_1.UserRole.ANONYMOUS,
                 emailVerified: true,
                 password: '',
             });

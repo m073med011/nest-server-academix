@@ -142,6 +142,46 @@
         ]
       }
     },
+    "/v1/users/account": {
+      "delete": {
+        "operationId": "UsersController_deleteAccount_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Account deleted successfully."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Delete current user account",
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/v1/users/account/disable": {
+      "patch": {
+        "operationId": "UsersController_disableAccount_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Account disabled successfully."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Disable current user account",
+        "tags": [
+          "users"
+        ]
+      }
+    },
     "/v1/organizations": {
       "post": {
         "operationId": "OrganizationsController_create_v1",
@@ -3713,7 +3753,7 @@
               "admin",
               "freelancer",
               "organizer",
-              "guest"
+              "anonymous"
             ]
           },
           "isOAuthUser": {
@@ -3825,7 +3865,7 @@
               "admin",
               "freelancer",
               "organizer",
-              "guest"
+              "anonymous"
             ]
           }
         },

@@ -73,6 +73,12 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    // Auto-reactivate account if it was disabled and the user successfully logs in
+    if (user.isActive === false) {
+      await this.usersService.reactivateAccount(user._id.toString());
+      user.isActive = true;
+    }
+
     // Check if email is verified
     if (!user.emailVerified) {
       // Generate OTP for email verification
@@ -182,7 +188,7 @@ export class AuthService {
     }
 
     if (registerDto.isOAuthUser && !registerDto.role) {
-      registerDto.role = UserRole.GUEST;
+      registerDto.role = UserRole.ANONYMOUS;
     }
 
     const user = await this.usersService.create(registerDto);
@@ -361,7 +367,7 @@ export class AuthService {
     const user = await this.usersService.findById(userId);
     if (!user) throw new NotFoundException('User not found');
 
-    if (user.role !== UserRole.GUEST) {
+    if (user.role !== UserRole.ANONYMOUS) {
       throw new BadRequestException('User already registered');
     }
 
@@ -396,7 +402,7 @@ export class AuthService {
         imageProfileUrl: picture,
         provider,
         isOAuthUser: true,
-        role: UserRole.GUEST,
+        role: UserRole.ANONYMOUS,
         emailVerified: true,
         password: '', // Dummy password for OAuth users
       });

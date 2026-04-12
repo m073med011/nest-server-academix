@@ -35,4 +35,13 @@ export declare class UsersService {
     } & {
         __v: number;
     })[]>;
+    deleteAccount(userId: string): Promise<{
+        message: string;
+    }>;
+    disableAccount(userId: string): Promise<{
+        message: string;
+    }>;
+    reactivateAccount(userId: string): Promise<{
+        message: string;
+    }>;
 }

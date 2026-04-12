@@ -88,4 +88,43 @@ export class UsersService {
   async getMyOrganizations(userId: string) {
     return this.membershipRepository.findByUser(userId);
   }
+
+  async deleteAccount(userId: string): Promise<{ message: string }> {
+    const user = await this.usersRepository.findById(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const isDeleted = await this.usersRepository.delete({ _id: userId });
+    
+    if (!isDeleted) {
+      throw new BadRequestException('Failed to delete account');
+    }
+
+    return { message: 'Account deleted successfully' };
+  }
+
+  async disableAccount(userId: string): Promise<{ message: string }> {
+    const user = await this.usersRepository.findById(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    user.isActive = false;
+    await user.save();
+
+    return { message: 'Account disabled successfully' };
+  }
+
+  async reactivateAccount(userId: string): Promise<{ message: string }> {
+    const user = await this.usersRepository.findById(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    user.isActive = true;
+    await user.save();
+
+    return { message: 'Account reactivated successfully' };
+  }
 }

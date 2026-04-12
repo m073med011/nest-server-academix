@@ -9,6 +9,7 @@ import {
   Request,
   HttpStatus,
   Res,
+  Delete,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -69,5 +70,19 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Organizations retrieved.' })
   async getMyOrganizations(@Request() req) {
     return this.usersService.getMyOrganizations(req.user._id);
+  }
+
+  @Delete('account')
+  @ApiOperation({ summary: 'Delete current user account' })
+  @ApiResponse({ status: 200, description: 'Account deleted successfully.' })
+  async deleteAccount(@Request() req) {
+    return this.usersService.deleteAccount(req.user._id);
+  }
+
+  @Patch('account/disable')
+  @ApiOperation({ summary: 'Disable current user account' })
+  @ApiResponse({ status: 200, description: 'Account disabled successfully.' })
+  async disableAccount(@Request() req) {
+    return this.usersService.disableAccount(req.user._id);
   }
 }

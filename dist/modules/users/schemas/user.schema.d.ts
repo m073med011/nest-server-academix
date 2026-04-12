@@ -9,7 +9,7 @@ export declare enum UserRole {
     ADMIN = "admin",
     FREELANCER = "freelancer",
     ORGANIZER = "organizer",
-    GUEST = "guest"
+    ANONYMOUS = "anonymous"
 }
 export declare enum AuthProvider {
     CREDENTIALS = "credentials",
@@ -27,6 +27,7 @@ export declare class User {
     imageProfileUrl?: string;
     emailVerified: boolean;
     twoFactorEnabled: boolean;
+    isActive: boolean;
 }
 export declare const UserSchema: import("mongoose").Schema<User, import("mongoose").Model<User, any, any, any, import("mongoose").Document<unknown, any, User, any, {}> & User & {
     _id: Types.ObjectId;

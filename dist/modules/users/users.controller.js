@@ -38,6 +38,12 @@ let UsersController = class UsersController {
     async getMyOrganizations(req) {
         return this.usersService.getMyOrganizations(req.user._id);
     }
+    async deleteAccount(req) {
+        return this.usersService.deleteAccount(req.user._id);
+    }
+    async disableAccount(req) {
+        return this.usersService.disableAccount(req.user._id);
+    }
 };
 exports.UsersController = UsersController;
 __decorate([
@@ -89,6 +95,24 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "getMyOrganizations", null);
+__decorate([
+    (0, common_1.Delete)('account'),
+    (0, swagger_1.ApiOperation)({ summary: 'Delete current user account' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Account deleted successfully.' }),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "deleteAccount", null);
+__decorate([
+    (0, common_1.Patch)('account/disable'),
+    (0, swagger_1.ApiOperation)({ summary: 'Disable current user account' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Account disabled successfully.' }),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "disableAccount", null);
 exports.UsersController = UsersController = __decorate([
     (0, swagger_1.ApiTags)('users'),
     (0, common_1.Controller)('users'),

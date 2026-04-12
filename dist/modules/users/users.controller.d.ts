@@ -26,4 +26,10 @@ export declare class UsersController {
     } & {
         __v: number;
     })[]>;
+    deleteAccount(req: any): Promise<{
+        message: string;
+    }>;
+    disableAccount(req: any): Promise<{
+        message: string;
+    }>;
 }

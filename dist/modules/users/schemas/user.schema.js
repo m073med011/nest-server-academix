@@ -20,7 +20,7 @@ var UserRole;
     UserRole["ADMIN"] = "admin";
     UserRole["FREELANCER"] = "freelancer";
     UserRole["ORGANIZER"] = "organizer";
-    UserRole["GUEST"] = "guest";
+    UserRole["ANONYMOUS"] = "anonymous";
 })(UserRole || (exports.UserRole = UserRole = {}));
 var AuthProvider;
 (function (AuthProvider) {
@@ -39,6 +39,7 @@ let User = class User {
     imageProfileUrl;
     emailVerified;
     twoFactorEnabled;
+    isActive;
 };
 exports.User = User;
 __decorate([
@@ -54,7 +55,7 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "password", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: String, enum: UserRole, default: UserRole.STUDENT }),
+    (0, mongoose_1.Prop)({ type: String, enum: UserRole, default: UserRole.ANONYMOUS }),
     __metadata("design:type", String)
 ], User.prototype, "role", void 0);
 __decorate([
@@ -85,6 +86,10 @@ __decorate([
     (0, mongoose_1.Prop)({ default: false }),
     __metadata("design:type", Boolean)
 ], User.prototype, "twoFactorEnabled", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: true }),
+    __metadata("design:type", Boolean)
+], User.prototype, "isActive", void 0);
 exports.User = User = __decorate([
     (0, mongoose_1.Schema)({ timestamps: true })
 ], User);
