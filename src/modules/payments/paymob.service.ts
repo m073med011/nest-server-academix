@@ -250,7 +250,7 @@ export class PaymobService {
 
       // Use test iframe ID for development
       const cardIframeId =
-        this.configService.get<string>('app.paymob.cardIframeId') || '872089';
+        this.configService.get<string>('app.paymob.cardIframeId') || '907999';
 
       const iframeUrl = `https://accept.paymobsolutions.com/api/acceptance/iframes/${cardIframeId}?payment_token=${paymentToken}`;
 

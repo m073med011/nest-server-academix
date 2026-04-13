@@ -36,6 +36,7 @@ export declare class AuthController {
         message: string;
     }>;
     completeRegistration(req: any, completeRegistrationDto: CompleteRegistrationDto, res: Response): Promise<Response<any, Record<string, any>>>;
+    reactivateAccount(loginDto: LoginDto, res: Response): Promise<Response<any, Record<string, any>>>;
     googleAuth(req: any): Promise<void>;
     googleAuthRedirect(req: any): Promise<{
         success: boolean;

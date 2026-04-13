@@ -27,7 +27,7 @@ let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(pas
     }
     async validate(payload) {
         const user = await this.usersService.findById(payload.sub);
-        if (!user) {
+        if (!user || user.isActive === false) {
             return null;
         }
         return user;

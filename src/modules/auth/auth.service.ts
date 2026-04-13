@@ -3,6 +3,7 @@ import {
   UnauthorizedException,
   BadRequestException,
   NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
@@ -73,10 +74,19 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    // Auto-reactivate account if it was disabled and the user successfully logs in
+    // Return disabled flag if account is disabled
     if (user.isActive === false) {
-      await this.usersService.reactivateAccount(user._id.toString());
-      user.isActive = true;
+      return {
+        success: true,
+        accountDisabled: true,
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
+        message: 'Your account has been disabled.',
+      };
     }
 
     // Check if email is verified
@@ -144,6 +154,21 @@ export class AuthService {
     if (existingUser) {
       // If it's an OAuth login attempt but user exists
       if (registerDto.isOAuthUser) {
+        // Return disabled flag if account is disabled
+        if (existingUser.isActive === false) {
+          return {
+            success: true,
+            accountDisabled: true,
+            user: {
+              id: existingUser._id,
+              name: existingUser.name,
+              email: existingUser.email,
+              role: existingUser.role,
+            },
+            message: 'Your account has been disabled.',
+          };
+        }
+
         // Check 2FA for existing user logging in via OAuth
         if (existingUser.twoFactorEnabled) {
           await this.otpService.generateOtp(
@@ -419,6 +444,40 @@ export class AuthService {
       success: true,
       message: 'User information from google',
       user: req.user,
+    };
+  }
+
+  async reactivateAccount(loginDto: LoginDto, res: Response) {
+    const user = await this.validateUser(loginDto.email, loginDto.password);
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    if (user.isActive !== false) {
+      throw new BadRequestException('Account is already active');
+    }
+
+    await this.usersService.reactivateAccount(user._id.toString());
+
+    const { accessToken, refreshToken } = this.setAuthCookies(
+      res,
+      user._id.toString(),
+    );
+
+    return {
+      success: true,
+      token: accessToken,
+      refreshToken,
+      message: 'Account reactivated successfully',
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        imageProfileUrl: user.imageProfileUrl,
+        emailVerified: user.emailVerified,
+        twoFactorEnabled: user.twoFactorEnabled,
+      },
     };
   }
 }

@@ -162,6 +162,15 @@ export class AuthController {
     return res.status(HttpStatus.OK).json(result);
   }
 
+  @Post('reactivate-account')
+  @ApiOperation({ summary: 'Reactivate a disabled account' })
+  @ApiResponse({ status: 200, description: 'Account reactivated successfully.' })
+  @ApiResponse({ status: 401, description: 'Invalid credentials.' })
+  async reactivateAccount(@Body() loginDto: LoginDto, @Res() res: Response) {
+    const result = await this.authService.reactivateAccount(loginDto, res);
+    return res.status(HttpStatus.OK).json(result);
+  }
+
   @Get('google')
   @UseGuards(AuthGuard('google'))
   @ApiOperation({ summary: 'Google OAuth login' })

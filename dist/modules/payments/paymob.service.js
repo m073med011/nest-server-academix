@@ -133,7 +133,7 @@ let PaymobService = PaymobService_1 = class PaymobService {
             const amountCents = Math.round(request.amount * 100);
             const order = await this.createOrder(authToken, amountCents, request.merchantOrderId);
             const paymentToken = await this.createPaymentKey(authToken, order.id, amountCents, request.billingData, request.paymentMethod, paymentId);
-            const cardIframeId = this.configService.get('app.paymob.cardIframeId') || '872089';
+            const cardIframeId = this.configService.get('app.paymob.cardIframeId') || '907999';
             const iframeUrl = `https://accept.paymobsolutions.com/api/acceptance/iframes/${cardIframeId}?payment_token=${paymentToken}`;
             this.logger.log(`Using iframe ID: ${cardIframeId}`);
             this.logger.log(`Generated iframe URL: ${iframeUrl}`);

@@ -15,6 +15,23 @@ export declare class AuthService {
     private setAuthCookies;
     login(loginDto: LoginDto, res: Response): Promise<{
         success: boolean;
+        accountDisabled: boolean;
+        user: {
+            id: any;
+            name: any;
+            email: any;
+            role: any;
+            imageProfileUrl?: undefined;
+            emailVerified?: undefined;
+            twoFactorEnabled?: undefined;
+        };
+        message: string;
+        requiresEmailVerification?: undefined;
+        requires2FA?: undefined;
+        token?: undefined;
+        refreshToken?: undefined;
+    } | {
+        success: boolean;
         requiresEmailVerification: boolean;
         user: {
             id: any;
@@ -26,6 +43,7 @@ export declare class AuthService {
             twoFactorEnabled?: undefined;
         };
         message: string;
+        accountDisabled?: undefined;
         requires2FA?: undefined;
         token?: undefined;
         refreshToken?: undefined;
@@ -42,6 +60,7 @@ export declare class AuthService {
             twoFactorEnabled?: undefined;
         };
         message: string;
+        accountDisabled?: undefined;
         requiresEmailVerification?: undefined;
         token?: undefined;
         refreshToken?: undefined;
@@ -58,11 +77,29 @@ export declare class AuthService {
             emailVerified: any;
             twoFactorEnabled: any;
         };
-        requiresEmailVerification?: undefined;
+        accountDisabled?: undefined;
         message?: undefined;
+        requiresEmailVerification?: undefined;
         requires2FA?: undefined;
     }>;
     register(registerDto: RegisterDto, res: Response): Promise<{
+        success: boolean;
+        accountDisabled: boolean;
+        user: {
+            id: import("mongoose").Types.ObjectId;
+            name: string;
+            email: string;
+            role: UserRole;
+            imageProfileUrl?: undefined;
+            emailVerified?: undefined;
+            twoFactorEnabled?: undefined;
+        };
+        message: string;
+        requires2FA?: undefined;
+        token?: undefined;
+        refreshToken?: undefined;
+        requiresEmailVerification?: undefined;
+    } | {
         success: boolean;
         requires2FA: boolean;
         user: {
@@ -75,6 +112,7 @@ export declare class AuthService {
             twoFactorEnabled?: undefined;
         };
         message: string;
+        accountDisabled?: undefined;
         token?: undefined;
         refreshToken?: undefined;
         requiresEmailVerification?: undefined;
@@ -92,6 +130,7 @@ export declare class AuthService {
             emailVerified: boolean;
             twoFactorEnabled: false;
         };
+        accountDisabled?: undefined;
         requires2FA?: undefined;
         requiresEmailVerification?: undefined;
     } | {
@@ -107,6 +146,7 @@ export declare class AuthService {
             twoFactorEnabled?: undefined;
         };
         message: string;
+        accountDisabled?: undefined;
         requires2FA?: undefined;
         token?: undefined;
         refreshToken?: undefined;
@@ -198,5 +238,20 @@ export declare class AuthService {
         success: boolean;
         message: string;
         user: any;
+    }>;
+    reactivateAccount(loginDto: LoginDto, res: Response): Promise<{
+        success: boolean;
+        token: string;
+        refreshToken: string;
+        message: string;
+        user: {
+            id: any;
+            name: any;
+            email: any;
+            role: any;
+            imageProfileUrl: any;
+            emailVerified: any;
+            twoFactorEnabled: any;
+        };
     }>;
 }

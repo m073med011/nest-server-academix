@@ -69,6 +69,10 @@ let AuthController = class AuthController {
         const result = await this.authService.completeRegistration(req.user._id, completeRegistrationDto.role, res);
         return res.status(common_1.HttpStatus.OK).json(result);
     }
+    async reactivateAccount(loginDto, res) {
+        const result = await this.authService.reactivateAccount(loginDto, res);
+        return res.status(common_1.HttpStatus.OK).json(result);
+    }
     async googleAuth(req) { }
     googleAuthRedirect(req) {
         return this.authService.googleLogin(req);
@@ -210,6 +214,17 @@ __decorate([
     __metadata("design:paramtypes", [Object, auth_dto_1.CompleteRegistrationDto, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "completeRegistration", null);
+__decorate([
+    (0, common_1.Post)('reactivate-account'),
+    (0, swagger_1.ApiOperation)({ summary: 'Reactivate a disabled account' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Account reactivated successfully.' }),
+    (0, swagger_1.ApiResponse)({ status: 401, description: 'Invalid credentials.' }),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_dto_1.LoginDto, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "reactivateAccount", null);
 __decorate([
     (0, common_1.Get)('google'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('google')),

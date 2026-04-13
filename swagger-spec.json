@@ -2245,6 +2245,34 @@
         ]
       }
     },
+    "/v1/auth/reactivate-account": {
+      "post": {
+        "operationId": "AuthController_reactivateAccount_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Account reactivated successfully."
+          },
+          "401": {
+            "description": "Invalid credentials."
+          }
+        },
+        "summary": "Reactivate a disabled account",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
     "/v1/auth/google": {
       "get": {
         "operationId": "AuthController_googleAuth_v1",

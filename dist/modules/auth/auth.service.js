@@ -63,8 +63,17 @@ let AuthService = class AuthService {
             throw new common_1.UnauthorizedException('Invalid credentials');
         }
         if (user.isActive === false) {
-            await this.usersService.reactivateAccount(user._id.toString());
-            user.isActive = true;
+            return {
+                success: true,
+                accountDisabled: true,
+                user: {
+                    id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    role: user.role,
+                },
+                message: 'Your account has been disabled.',
+            };
         }
         if (!user.emailVerified) {
             await this.otpService.generateOtp(user.email, 'email_verification');
@@ -114,6 +123,19 @@ let AuthService = class AuthService {
         const existingUser = await this.usersService.findByEmail(registerDto.email);
         if (existingUser) {
             if (registerDto.isOAuthUser) {
+                if (existingUser.isActive === false) {
+                    return {
+                        success: true,
+                        accountDisabled: true,
+                        user: {
+                            id: existingUser._id,
+                            name: existingUser.name,
+                            email: existingUser.email,
+                            role: existingUser.role,
+                        },
+                        message: 'Your account has been disabled.',
+                    };
+                }
                 if (existingUser.twoFactorEnabled) {
                     await this.otpService.generateOtp(existingUser.email, 'two_factor');
                     return {
@@ -315,6 +337,32 @@ let AuthService = class AuthService {
             success: true,
             message: 'User information from google',
             user: req.user,
+        };
+    }
+    async reactivateAccount(loginDto, res) {
+        const user = await this.validateUser(loginDto.email, loginDto.password);
+        if (!user) {
+            throw new common_1.UnauthorizedException('Invalid credentials');
+        }
+        if (user.isActive !== false) {
+            throw new common_1.BadRequestException('Account is already active');
+        }
+        await this.usersService.reactivateAccount(user._id.toString());
+        const { accessToken, refreshToken } = this.setAuthCookies(res, user._id.toString());
+        return {
+            success: true,
+            token: accessToken,
+            refreshToken,
+            message: 'Account reactivated successfully',
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                imageProfileUrl: user.imageProfileUrl,
+                emailVerified: user.emailVerified,
+                twoFactorEnabled: user.twoFactorEnabled,
+            },
         };
     }
 };
