@@ -20,6 +20,8 @@ import {
 import {
   RegisterDto,
   LoginDto,
+  ReactivateAccountDto,
+  ConfirmReactivateAccountDto,
   VerifyEmailDto,
   ForgotPasswordDto,
   ResetPasswordDto,
@@ -162,12 +164,23 @@ export class AuthController {
     return res.status(HttpStatus.OK).json(result);
   }
 
-  @Post('reactivate-account')
-  @ApiOperation({ summary: 'Reactivate a disabled account' })
-  @ApiResponse({ status: 200, description: 'Account reactivated successfully.' })
+  @Post('reactivate-account/request')
+  @ApiOperation({ summary: 'Request OTP to reactivate a disabled account' })
+  @ApiResponse({ status: 200, description: 'OTP sent to email.' })
   @ApiResponse({ status: 401, description: 'Invalid credentials.' })
-  async reactivateAccount(@Body() loginDto: LoginDto, @Res() res: Response) {
-    const result = await this.authService.reactivateAccount(loginDto, res);
+  async requestReactivateAccount(@Body() dto: ReactivateAccountDto) {
+    return this.authService.requestReactivateAccount(dto);
+  }
+
+  @Post('reactivate-account/confirm')
+  @ApiOperation({ summary: 'Confirm OTP to reactivate a disabled account' })
+  @ApiResponse({ status: 200, description: 'Account reactivated successfully.' })
+  @ApiResponse({ status: 400, description: 'Invalid OTP.' })
+  async confirmReactivateAccount(
+    @Body() dto: ConfirmReactivateAccountDto,
+    @Res() res: Response,
+  ) {
+    const result = await this.authService.confirmReactivateAccount(dto, res);
     return res.status(HttpStatus.OK).json(result);
   }
 

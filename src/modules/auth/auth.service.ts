@@ -12,6 +12,8 @@ import { OtpService } from '../otp/otp.service';
 import {
   RegisterDto,
   LoginDto,
+  ReactivateAccountDto,
+  ConfirmReactivateAccountDto,
   VerifyEmailDto,
   ForgotPasswordDto,
   ResetPasswordDto,
@@ -447,11 +449,52 @@ export class AuthService {
     };
   }
 
-  async reactivateAccount(loginDto: LoginDto, res: Response) {
-    const user = await this.validateUser(loginDto.email, loginDto.password);
-    if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+  async requestReactivateAccount(dto: ReactivateAccountDto) {
+    let user: any;
+
+    if (dto.isOAuthUser) {
+      // OAuth user — no password needed, verify by email
+      const found = await this.usersService.findByEmail(dto.email);
+      if (!found || !found.isOAuthUser) {
+        throw new UnauthorizedException('Invalid credentials');
+      }
+      user = found;
+    } else {
+      // Credentials user — validate email + password
+      if (!dto.password) {
+        throw new BadRequestException('Password is required');
+      }
+      user = await this.validateUser(dto.email, dto.password);
+      if (!user) {
+        throw new UnauthorizedException('Invalid credentials');
+      }
     }
+
+    if (user.isActive !== false) {
+      throw new BadRequestException('Account is already active');
+    }
+
+    // Generate OTP for account reactivation
+    await this.otpService.generateOtp(user.email, 'account_reactivation' as any);
+
+    return {
+      success: true,
+      requiresOtp: true,
+      message: 'OTP sent to your email for reactivation',
+    };
+  }
+
+  async confirmReactivateAccount(dto: ConfirmReactivateAccountDto, res: Response) {
+    // Verify OTP
+    const isValid = await this.otpService.verifyOtp(
+      dto.email,
+      dto.otp,
+      'account_reactivation' as any,
+    );
+    if (!isValid.verified) throw new BadRequestException('Invalid OTP');
+
+    const user = await this.usersService.findByEmail(dto.email);
+    if (!user) throw new NotFoundException('User not found');
 
     if (user.isActive !== false) {
       throw new BadRequestException('Account is already active');

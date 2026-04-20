@@ -2,7 +2,7 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { OtpService } from '../otp/otp.service';
-import { RegisterDto, LoginDto, VerifyEmailDto, ForgotPasswordDto, ResetPasswordDto, RefreshTokenDto } from './dto/auth.dto';
+import { RegisterDto, LoginDto, ReactivateAccountDto, ConfirmReactivateAccountDto, VerifyEmailDto, ForgotPasswordDto, ResetPasswordDto, RefreshTokenDto } from './dto/auth.dto';
 import { Response } from 'express';
 import { UserRole } from '../users/schemas/user.schema';
 export declare class AuthService {
@@ -239,19 +239,24 @@ export declare class AuthService {
         message: string;
         user: any;
     }>;
-    reactivateAccount(loginDto: LoginDto, res: Response): Promise<{
+    requestReactivateAccount(dto: ReactivateAccountDto): Promise<{
+        success: boolean;
+        requiresOtp: boolean;
+        message: string;
+    }>;
+    confirmReactivateAccount(dto: ConfirmReactivateAccountDto, res: Response): Promise<{
         success: boolean;
         token: string;
         refreshToken: string;
         message: string;
         user: {
-            id: any;
-            name: any;
-            email: any;
-            role: any;
-            imageProfileUrl: any;
-            emailVerified: any;
-            twoFactorEnabled: any;
+            id: import("mongoose").Types.ObjectId;
+            name: string;
+            email: string;
+            role: UserRole;
+            imageProfileUrl: string | undefined;
+            emailVerified: boolean;
+            twoFactorEnabled: boolean;
         };
     }>;
 }

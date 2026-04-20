@@ -2245,16 +2245,44 @@
         ]
       }
     },
-    "/v1/auth/reactivate-account": {
+    "/v1/auth/reactivate-account/request": {
       "post": {
-        "operationId": "AuthController_reactivateAccount_v1",
+        "operationId": "AuthController_requestReactivateAccount_v1",
         "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/LoginDto"
+                "$ref": "#/components/schemas/ReactivateAccountDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OTP sent to email."
+          },
+          "401": {
+            "description": "Invalid credentials."
+          }
+        },
+        "summary": "Request OTP to reactivate a disabled account",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/v1/auth/reactivate-account/confirm": {
+      "post": {
+        "operationId": "AuthController_confirmReactivateAccount_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmReactivateAccountDto"
               }
             }
           }
@@ -2263,11 +2291,11 @@
           "200": {
             "description": "Account reactivated successfully."
           },
-          "401": {
-            "description": "Invalid credentials."
+          "400": {
+            "description": "Invalid OTP."
           }
         },
-        "summary": "Reactivate a disabled account",
+        "summary": "Confirm OTP to reactivate a disabled account",
         "tags": [
           "auth"
         ]
@@ -3901,6 +3929,38 @@
           "role"
         ]
       },
+      "ReactivateAccountDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "isOAuthUser": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "ConfirmReactivateAccountDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "otp": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "otp"
+        ]
+      },
       "GenerateOtpDto": {
         "type": "object",
         "properties": {
@@ -3915,7 +3975,8 @@
             "enum": [
               "password_reset",
               "email_verification",
-              "login_verification"
+              "login_verification",
+              "account_reactivation"
             ],
             "description": "Purpose of the OTP"
           }
@@ -3946,7 +4007,8 @@
             "enum": [
               "password_reset",
               "email_verification",
-              "login_verification"
+              "login_verification",
+              "account_reactivation"
             ],
             "description": "Purpose of the OTP"
           }
@@ -3971,7 +4033,8 @@
             "enum": [
               "password_reset",
               "email_verification",
-              "login_verification"
+              "login_verification",
+              "account_reactivation"
             ],
             "description": "Purpose of the OTP"
           }

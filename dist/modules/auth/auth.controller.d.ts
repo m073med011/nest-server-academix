@@ -1,5 +1,5 @@
 import { AuthService } from './auth.service';
-import { RegisterDto, LoginDto, VerifyEmailDto, ForgotPasswordDto, ResetPasswordDto, RefreshTokenDto, Enable2FAConfirmDto, CompleteRegistrationDto } from './dto/auth.dto';
+import { RegisterDto, LoginDto, ReactivateAccountDto, ConfirmReactivateAccountDto, VerifyEmailDto, ForgotPasswordDto, ResetPasswordDto, RefreshTokenDto, Enable2FAConfirmDto, CompleteRegistrationDto } from './dto/auth.dto';
 import { Response } from 'express';
 export declare class AuthController {
     private authService;
@@ -36,7 +36,12 @@ export declare class AuthController {
         message: string;
     }>;
     completeRegistration(req: any, completeRegistrationDto: CompleteRegistrationDto, res: Response): Promise<Response<any, Record<string, any>>>;
-    reactivateAccount(loginDto: LoginDto, res: Response): Promise<Response<any, Record<string, any>>>;
+    requestReactivateAccount(dto: ReactivateAccountDto): Promise<{
+        success: boolean;
+        requiresOtp: boolean;
+        message: string;
+    }>;
+    confirmReactivateAccount(dto: ConfirmReactivateAccountDto, res: Response): Promise<Response<any, Record<string, any>>>;
     googleAuth(req: any): Promise<void>;
     googleAuthRedirect(req: any): Promise<{
         success: boolean;

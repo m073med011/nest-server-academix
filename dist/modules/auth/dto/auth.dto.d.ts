@@ -12,6 +12,15 @@ export declare class LoginDto {
     email: string;
     password: string;
 }
+export declare class ReactivateAccountDto {
+    email: string;
+    password?: string;
+    isOAuthUser?: boolean;
+}
+export declare class ConfirmReactivateAccountDto {
+    email: string;
+    otp: string;
+}
 export declare class VerifyEmailDto {
     email: string;
     otp: string;

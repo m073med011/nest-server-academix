@@ -5,6 +5,7 @@ export enum OtpPurpose {
   PASSWORD_RESET = 'password_reset',
   EMAIL_VERIFICATION = 'email_verification',
   LOGIN_VERIFICATION = 'login_verification',
+  ACCOUNT_REACTIVATION = 'account_reactivation',
 }
 
 export type OtpDocument = Otp & Document;

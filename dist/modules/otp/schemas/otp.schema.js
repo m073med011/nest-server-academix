@@ -16,6 +16,7 @@ var OtpPurpose;
     OtpPurpose["PASSWORD_RESET"] = "password_reset";
     OtpPurpose["EMAIL_VERIFICATION"] = "email_verification";
     OtpPurpose["LOGIN_VERIFICATION"] = "login_verification";
+    OtpPurpose["ACCOUNT_REACTIVATION"] = "account_reactivation";
 })(OtpPurpose || (exports.OtpPurpose = OtpPurpose = {}));
 let Otp = class Otp {
     code;

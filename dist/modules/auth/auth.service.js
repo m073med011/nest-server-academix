@@ -339,11 +339,41 @@ let AuthService = class AuthService {
             user: req.user,
         };
     }
-    async reactivateAccount(loginDto, res) {
-        const user = await this.validateUser(loginDto.email, loginDto.password);
-        if (!user) {
-            throw new common_1.UnauthorizedException('Invalid credentials');
+    async requestReactivateAccount(dto) {
+        let user;
+        if (dto.isOAuthUser) {
+            const found = await this.usersService.findByEmail(dto.email);
+            if (!found || !found.isOAuthUser) {
+                throw new common_1.UnauthorizedException('Invalid credentials');
+            }
+            user = found;
         }
+        else {
+            if (!dto.password) {
+                throw new common_1.BadRequestException('Password is required');
+            }
+            user = await this.validateUser(dto.email, dto.password);
+            if (!user) {
+                throw new common_1.UnauthorizedException('Invalid credentials');
+            }
+        }
+        if (user.isActive !== false) {
+            throw new common_1.BadRequestException('Account is already active');
+        }
+        await this.otpService.generateOtp(user.email, 'account_reactivation');
+        return {
+            success: true,
+            requiresOtp: true,
+            message: 'OTP sent to your email for reactivation',
+        };
+    }
+    async confirmReactivateAccount(dto, res) {
+        const isValid = await this.otpService.verifyOtp(dto.email, dto.otp, 'account_reactivation');
+        if (!isValid.verified)
+            throw new common_1.BadRequestException('Invalid OTP');
+        const user = await this.usersService.findByEmail(dto.email);
+        if (!user)
+            throw new common_1.NotFoundException('User not found');
         if (user.isActive !== false) {
             throw new common_1.BadRequestException('Account is already active');
         }

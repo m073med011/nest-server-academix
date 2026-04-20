@@ -61,6 +61,35 @@ export class LoginDto {
   password: string;
 }
 
+export class ReactivateAccountDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  password?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsBoolean()
+  isOAuthUser?: boolean;
+}
+
+export class ConfirmReactivateAccountDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  otp: string;
+}
+
 export class VerifyEmailDto {
   @ApiProperty()
   @IsNotEmpty()
