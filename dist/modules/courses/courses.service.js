@@ -41,18 +41,21 @@ let CoursesService = class CoursesService {
         const { category, level, search, sort } = filterDto;
         const filter = {
             isPublished: true,
-            $or: [
+        };
+        if (filterDto.organizationId) {
+            filter.organizationId = filterDto.organizationId;
+        }
+        else {
+            filter.$or = [
                 { isOrgPrivate: false },
                 { isOrgPrivate: { $exists: false } },
                 { organizationId: { $exists: false } },
-            ],
-        };
+            ];
+        }
         if (category)
             filter.category = category;
         if (level)
             filter.level = level;
-        if (filterDto.organizationId)
-            filter.organizationId = filterDto.organizationId;
         if (search) {
             filter.$text = { $search: search };
         }
