@@ -1,13 +1,22 @@
 import { OrganizationsService } from './organizations.service';
-import { CreateOrganizationDto, UpdateOrganizationDto, SearchUserDto, AddMemberDto, UpdateMemberRoleDto, CreateRoleDto, UpdateRoleDto, GetMembersDto, AddCoursesDto } from './dto/organizations.dto';
+import { CreateOrganizationDto, UpdateOrganizationDto, AddMemberDto, UpdateMemberRoleDto, CreateRoleDto, UpdateRoleDto, GetMembersDto, AddCoursesDto } from './dto/organizations.dto';
 export declare class OrganizationsController {
     private readonly organizationsService;
     constructor(organizationsService: OrganizationsService);
     create(createOrganizationDto: CreateOrganizationDto, req: any): Promise<import("./schemas/organization.schema").OrganizationDocument>;
     findAll(): Promise<import("./schemas/organization.schema").OrganizationDocument[]>;
+    getDeleted(req: any): Promise<import("./schemas/organization.schema").OrganizationDocument[]>;
     findOne(id: string): Promise<any>;
     update(id: string, updateOrganizationDto: UpdateOrganizationDto): Promise<import("./schemas/organization.schema").OrganizationDocument>;
-    remove(id: string, req: any): Promise<{
+    remove(id: string, req: any, permanent?: string): Promise<{
+        message: string;
+        deletedRecords: {
+            memberships: number;
+            roles: number;
+            terms: number;
+            courses: number;
+        };
+    } | {
         message: string;
         deletedAt: Date;
         affectedMemberships: number;
@@ -16,21 +25,6 @@ export declare class OrganizationsController {
         message: string;
         restoredAt: Date;
     }>;
-    permanentDelete(id: string, req: any): Promise<{
-        message: string;
-        deletedRecords: {
-            memberships: number;
-            roles: number;
-            terms: number;
-            courses: number;
-        };
-    }>;
-    getDeleted(req: any): Promise<import("./schemas/organization.schema").OrganizationDocument[]>;
-    searchUser(searchUserDto: SearchUserDto): Promise<import("mongoose").Document<unknown, {}, import("../users/schemas/user.schema").User, {}, {}> & Omit<import("../users/schemas/user.schema").User & {
-        _id: import("mongoose").Types.ObjectId;
-    } & {
-        __v: number;
-    }, "matchPassword"> & import("../users/schemas/user.schema").UserMethods>;
     addMember(id: string, addMemberDto: AddMemberDto): Promise<import("mongoose").Document<unknown, {}, import("./schemas/organization-membership.schema").OrganizationMembership, {}, {}> & import("./schemas/organization-membership.schema").OrganizationMembership & {
         _id: import("mongoose").Types.ObjectId;
     } & {

@@ -4,7 +4,7 @@ import * as winston from 'winston';
 export const winstonConfig = {
   transports: [
     new winston.transports.Console({
-      level: 'debug', // Ensure debug logs are visible
+      level: process.env.NODE_ENV === 'production' ? '' : '', // Show only errors in production, debug in dev
       format: winston.format.combine(
         winston.format.timestamp(),
         winston.format.ms(),

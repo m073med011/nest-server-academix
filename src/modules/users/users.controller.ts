@@ -55,7 +55,7 @@ export class UsersController {
     return this.usersService.updateProfile(req.user._id, updateProfileDto);
   }
 
-  @Post('change-password')
+  @Patch('password')
   @ApiOperation({ summary: 'Change password' })
   @ApiResponse({ status: 200, description: 'Password changed.' })
   async changePassword(

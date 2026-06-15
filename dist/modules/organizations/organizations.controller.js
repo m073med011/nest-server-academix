@@ -31,26 +31,23 @@ let OrganizationsController = class OrganizationsController {
     async findAll() {
         return this.organizationsService.findAll();
     }
+    async getDeleted(req) {
+        return this.organizationsService.findDeletedForUser(req.user._id);
+    }
     async findOne(id) {
         return this.organizationsService.findOne(id);
     }
     async update(id, updateOrganizationDto) {
         return this.organizationsService.update(id, updateOrganizationDto);
     }
-    async remove(id, req) {
+    async remove(id, req, permanent) {
+        if (permanent === 'true') {
+            return this.organizationsService.permanentDelete(id, req.user._id);
+        }
         return this.organizationsService.remove(id, req.user._id);
     }
     async restore(id, req) {
         return this.organizationsService.restore(id, req.user._id);
-    }
-    async permanentDelete(id, req) {
-        return this.organizationsService.permanentDelete(id, req.user._id);
-    }
-    async getDeleted(req) {
-        return this.organizationsService.findDeletedForUser(req.user._id);
-    }
-    async searchUser(searchUserDto) {
-        return this.organizationsService.searchUser(searchUserDto.email);
     }
     async addMember(id, addMemberDto) {
         return this.organizationsService.addMember(id, addMemberDto);
@@ -95,6 +92,7 @@ let OrganizationsController = class OrganizationsController {
 exports.OrganizationsController = OrganizationsController;
 __decorate([
     (0, common_1.Post)(),
+    (0, swagger_1.ApiTags)('Organizations org management'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Create organization' }),
@@ -107,6 +105,7 @@ __decorate([
 ], OrganizationsController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    (0, swagger_1.ApiTags)('Organizations org management'),
     (0, swagger_1.ApiOperation)({ summary: 'Get all organizations' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Organizations retrieved.' }),
     __metadata("design:type", Function),
@@ -114,7 +113,19 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], OrganizationsController.prototype, "findAll", null);
 __decorate([
+    (0, common_1.Get)('deleted'),
+    (0, swagger_1.ApiTags)('Organizations org management'),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Get deleted organizations (owner only)' }),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], OrganizationsController.prototype, "getDeleted", null);
+__decorate([
     (0, common_1.Get)(':id'),
+    (0, swagger_1.ApiTags)('Organizations org management'),
     (0, swagger_1.ApiOperation)({ summary: 'Get organization by ID' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Organization retrieved.' }),
     __param(0, (0, common_1.Param)('id')),
@@ -124,6 +135,7 @@ __decorate([
 ], OrganizationsController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':id'),
+    (0, swagger_1.ApiTags)('Organizations org management'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), organization_permission_guard_1.OrganizationPermissionGuard),
     (0, organization_permission_decorator_1.RequirePermission)('canManageOrganization'),
     (0, swagger_1.ApiBearerAuth)(),
@@ -137,19 +149,23 @@ __decorate([
 ], OrganizationsController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
+    (0, swagger_1.ApiTags)('Organizations org management'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), organization_permission_guard_1.OrganizationPermissionGuard),
     (0, organization_permission_decorator_1.RequireOwner)(),
     (0, swagger_1.ApiBearerAuth)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Delete organization' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Delete organization (soft or permanent)' }),
+    (0, swagger_1.ApiQuery)({ name: 'permanent', required: false, type: Boolean }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Organization deleted.' }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Request)()),
+    __param(2, (0, common_1.Query)('permanent')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [String, Object, String]),
     __metadata("design:returntype", Promise)
 ], OrganizationsController.prototype, "remove", null);
 __decorate([
     (0, common_1.Post)(':id/restore'),
+    (0, swagger_1.ApiTags)('Organizations org management'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), organization_permission_guard_1.OrganizationPermissionGuard),
     (0, organization_permission_decorator_1.RequireOwner)(),
     (0, swagger_1.ApiBearerAuth)(),
@@ -162,47 +178,8 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], OrganizationsController.prototype, "restore", null);
 __decorate([
-    (0, common_1.Delete)(':id/permanent'),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), organization_permission_guard_1.OrganizationPermissionGuard),
-    (0, organization_permission_decorator_1.RequireOwner)(),
-    (0, swagger_1.ApiBearerAuth)(),
-    (0, swagger_1.ApiOperation)({
-        summary: 'Permanently delete organization',
-        description: 'WARNING: This action is irreversible. Organization must be soft-deleted first.',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: 200,
-        description: 'Organization permanently deleted.',
-    }),
-    __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Request)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
-    __metadata("design:returntype", Promise)
-], OrganizationsController.prototype, "permanentDelete", null);
-__decorate([
-    (0, common_1.Get)('deleted'),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
-    (0, swagger_1.ApiBearerAuth)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Get deleted organizations (owner only)' }),
-    __param(0, (0, common_1.Request)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
-], OrganizationsController.prototype, "getDeleted", null);
-__decorate([
-    (0, common_1.Post)('search-user'),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
-    (0, swagger_1.ApiBearerAuth)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Search user by email' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'User found.' }),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [organizations_dto_1.SearchUserDto]),
-    __metadata("design:returntype", Promise)
-], OrganizationsController.prototype, "searchUser", null);
-__decorate([
     (0, common_1.Post)(':id/members'),
+    (0, swagger_1.ApiTags)('Organizations users mangment'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), organization_permission_guard_1.OrganizationPermissionGuard),
     (0, organization_permission_decorator_1.RequirePermission)('canManageStudents'),
     (0, swagger_1.ApiBearerAuth)(),
@@ -216,6 +193,7 @@ __decorate([
 ], OrganizationsController.prototype, "addMember", null);
 __decorate([
     (0, common_1.Delete)(':id/members/:userId'),
+    (0, swagger_1.ApiTags)('Organizations users mangment'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), organization_permission_guard_1.OrganizationPermissionGuard),
     (0, organization_permission_decorator_1.RequirePermission)('canManageStudents'),
     (0, swagger_1.ApiBearerAuth)(),
@@ -229,6 +207,7 @@ __decorate([
 ], OrganizationsController.prototype, "removeMember", null);
 __decorate([
     (0, common_1.Get)(':id/members'),
+    (0, swagger_1.ApiTags)('Organizations users mangment'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Get organization members (paginated)' }),
@@ -244,6 +223,7 @@ __decorate([
 ], OrganizationsController.prototype, "getMembers", null);
 __decorate([
     (0, common_1.Post)(':id/members/leave'),
+    (0, swagger_1.ApiTags)('Organizations users mangment'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Leave organization' }),
@@ -255,7 +235,8 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], OrganizationsController.prototype, "leaveMembership", null);
 __decorate([
-    (0, common_1.Get)(':id/users'),
+    (0, common_1.Get)(':id/members/all'),
+    (0, swagger_1.ApiTags)('Organizations users mangment'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Get organization users (paginated)' }),
@@ -270,7 +251,8 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], OrganizationsController.prototype, "getOrganizationUsers", null);
 __decorate([
-    (0, common_1.Patch)(':id/users/:userId/role'),
+    (0, common_1.Patch)(':id/members/:userId/role'),
+    (0, swagger_1.ApiTags)('Organizations users mangment'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), organization_permission_guard_1.OrganizationPermissionGuard),
     (0, organization_permission_decorator_1.RequirePermission)('canManageRoles'),
     (0, swagger_1.ApiBearerAuth)(),
@@ -284,7 +266,8 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], OrganizationsController.prototype, "updateMemberRole", null);
 __decorate([
-    (0, common_1.Get)(':id/users/:userId'),
+    (0, common_1.Get)(':id/members/:userId'),
+    (0, swagger_1.ApiTags)('Organizations users mangment'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Get member details' }),
@@ -297,6 +280,7 @@ __decorate([
 ], OrganizationsController.prototype, "getMemberDetails", null);
 __decorate([
     (0, common_1.Get)(':id/roles'),
+    (0, swagger_1.ApiTags)('Organizations roles mangment'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Get organization roles' }),
@@ -308,6 +292,7 @@ __decorate([
 ], OrganizationsController.prototype, "getRoles", null);
 __decorate([
     (0, common_1.Post)(':id/roles'),
+    (0, swagger_1.ApiTags)('Organizations roles mangment'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), organization_permission_guard_1.OrganizationPermissionGuard),
     (0, organization_permission_decorator_1.RequirePermission)('canManageRoles'),
     (0, swagger_1.ApiBearerAuth)(),
@@ -321,6 +306,7 @@ __decorate([
 ], OrganizationsController.prototype, "createRole", null);
 __decorate([
     (0, common_1.Patch)(':id/roles/:roleId'),
+    (0, swagger_1.ApiTags)('Organizations roles mangment'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), organization_permission_guard_1.OrganizationPermissionGuard),
     (0, organization_permission_decorator_1.RequirePermission)('canManageRoles'),
     (0, swagger_1.ApiBearerAuth)(),
@@ -335,6 +321,7 @@ __decorate([
 ], OrganizationsController.prototype, "updateRole", null);
 __decorate([
     (0, common_1.Delete)(':id/roles/:roleId'),
+    (0, swagger_1.ApiTags)('Organizations roles mangment'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), organization_permission_guard_1.OrganizationPermissionGuard),
     (0, organization_permission_decorator_1.RequirePermission)('canManageRoles'),
     (0, swagger_1.ApiBearerAuth)(),
@@ -348,6 +335,7 @@ __decorate([
 ], OrganizationsController.prototype, "deleteRole", null);
 __decorate([
     (0, common_1.Post)(':id/invitations/accept'),
+    (0, swagger_1.ApiTags)('Organizations users mangment'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Accept organization invitation' }),
@@ -359,7 +347,8 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], OrganizationsController.prototype, "acceptInvitation", null);
 __decorate([
-    (0, common_1.Post)(':id/courses/add'),
+    (0, common_1.Post)(':id/courses'),
+    (0, swagger_1.ApiTags)('Organizations courses mangment'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), organization_permission_guard_1.OrganizationPermissionGuard),
     (0, organization_permission_decorator_1.RequirePermission)('canManageCourses'),
     (0, swagger_1.ApiBearerAuth)(),
@@ -372,7 +361,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], OrganizationsController.prototype, "addCourses", null);
 exports.OrganizationsController = OrganizationsController = __decorate([
-    (0, swagger_1.ApiTags)('organizations'),
     (0, common_1.Controller)('organizations'),
     __metadata("design:paramtypes", [organizations_service_1.OrganizationsService])
 ], OrganizationsController);

@@ -92,8 +92,8 @@
         ]
       }
     },
-    "/v1/users/change-password": {
-      "post": {
+    "/v1/users/password": {
+      "patch": {
         "operationId": "UsersController_changePassword_v1",
         "parameters": [],
         "requestBody": {
@@ -208,7 +208,8 @@
         ],
         "summary": "Create organization",
         "tags": [
-          "organizations"
+          "Organizations",
+          "Organizations org management"
         ]
       },
       "get": {
@@ -221,7 +222,29 @@
         },
         "summary": "Get all organizations",
         "tags": [
-          "organizations"
+          "Organizations",
+          "Organizations org management"
+        ]
+      }
+    },
+    "/v1/organizations/deleted": {
+      "get": {
+        "operationId": "OrganizationsController_getDeleted_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get deleted organizations (owner only)",
+        "tags": [
+          "Organizations",
+          "Organizations org management"
         ]
       }
     },
@@ -245,7 +268,8 @@
         },
         "summary": "Get organization by ID",
         "tags": [
-          "organizations"
+          "Organizations",
+          "Organizations org management"
         ]
       },
       "patch": {
@@ -282,7 +306,8 @@
         ],
         "summary": "Update organization",
         "tags": [
-          "organizations"
+          "Organizations",
+          "Organizations org management"
         ]
       },
       "delete": {
@@ -294,6 +319,14 @@
             "in": "path",
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "name": "permanent",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
             }
           }
         ],
@@ -307,9 +340,10 @@
             "bearer": []
           }
         ],
-        "summary": "Delete organization",
+        "summary": "Delete organization (soft or permanent)",
         "tags": [
-          "organizations"
+          "Organizations",
+          "Organizations org management"
         ]
       }
     },
@@ -338,87 +372,8 @@
         ],
         "summary": "Restore deleted organization",
         "tags": [
-          "organizations"
-        ]
-      }
-    },
-    "/v1/organizations/{id}/permanent": {
-      "delete": {
-        "description": "WARNING: This action is irreversible. Organization must be soft-deleted first.",
-        "operationId": "OrganizationsController_permanentDelete_v1",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Organization permanently deleted."
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "Permanently delete organization",
-        "tags": [
-          "organizations"
-        ]
-      }
-    },
-    "/v1/organizations/deleted": {
-      "get": {
-        "operationId": "OrganizationsController_getDeleted_v1",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "Get deleted organizations (owner only)",
-        "tags": [
-          "organizations"
-        ]
-      }
-    },
-    "/v1/organizations/search-user": {
-      "post": {
-        "operationId": "OrganizationsController_searchUser_v1",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SearchUserDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "User found."
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "Search user by email",
-        "tags": [
-          "organizations"
+          "Organizations",
+          "Organizations org management"
         ]
       }
     },
@@ -457,7 +412,8 @@
         ],
         "summary": "Add member to organization",
         "tags": [
-          "organizations"
+          "Organizations",
+          "Organizations users mangment"
         ]
       },
       "get": {
@@ -548,7 +504,8 @@
         ],
         "summary": "Get organization members (paginated)",
         "tags": [
-          "organizations"
+          "Organizations",
+          "Organizations users mangment"
         ]
       }
     },
@@ -585,7 +542,44 @@
         ],
         "summary": "Remove member from organization",
         "tags": [
-          "organizations"
+          "Organizations",
+          "Organizations users mangment"
+        ]
+      },
+      "get": {
+        "operationId": "OrganizationsController_getMemberDetails_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Member details retrieved."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get member details",
+        "tags": [
+          "Organizations",
+          "Organizations users mangment"
         ]
       }
     },
@@ -614,11 +608,12 @@
         ],
         "summary": "Leave organization",
         "tags": [
-          "organizations"
+          "Organizations",
+          "Organizations users mangment"
         ]
       }
     },
-    "/v1/organizations/{id}/users": {
+    "/v1/organizations/{id}/members/all": {
       "get": {
         "operationId": "OrganizationsController_getOrganizationUsers_v1",
         "parameters": [
@@ -707,11 +702,12 @@
         ],
         "summary": "Get organization users (paginated)",
         "tags": [
-          "organizations"
+          "Organizations",
+          "Organizations users mangment"
         ]
       }
     },
-    "/v1/organizations/{id}/users/{userId}/role": {
+    "/v1/organizations/{id}/members/{userId}/role": {
       "patch": {
         "operationId": "OrganizationsController_updateMemberRole_v1",
         "parameters": [
@@ -754,44 +750,8 @@
         ],
         "summary": "Update member role",
         "tags": [
-          "organizations"
-        ]
-      }
-    },
-    "/v1/organizations/{id}/users/{userId}": {
-      "get": {
-        "operationId": "OrganizationsController_getMemberDetails_v1",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "userId",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Member details retrieved."
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "Get member details",
-        "tags": [
-          "organizations"
+          "Organizations",
+          "Organizations users mangment"
         ]
       }
     },
@@ -820,7 +780,8 @@
         ],
         "summary": "Get organization roles",
         "tags": [
-          "organizations"
+          "Organizations",
+          "Organizations roles mangment"
         ]
       },
       "post": {
@@ -857,7 +818,8 @@
         ],
         "summary": "Create organization role",
         "tags": [
-          "organizations"
+          "Organizations",
+          "Organizations roles mangment"
         ]
       }
     },
@@ -904,7 +866,8 @@
         ],
         "summary": "Update organization role",
         "tags": [
-          "organizations"
+          "Organizations",
+          "Organizations roles mangment"
         ]
       },
       "delete": {
@@ -939,7 +902,8 @@
         ],
         "summary": "Delete organization role",
         "tags": [
-          "organizations"
+          "Organizations",
+          "Organizations roles mangment"
         ]
       }
     },
@@ -968,11 +932,12 @@
         ],
         "summary": "Accept organization invitation",
         "tags": [
-          "organizations"
+          "Organizations",
+          "Organizations users mangment"
         ]
       }
     },
-    "/v1/organizations/{id}/courses/add": {
+    "/v1/organizations/{id}/courses": {
       "post": {
         "operationId": "OrganizationsController_addCourses_v1",
         "parameters": [
@@ -1007,7 +972,8 @@
         ],
         "summary": "Add courses to organization",
         "tags": [
-          "organizations"
+          "Organizations",
+          "Organizations courses mangment"
         ]
       }
     },
@@ -1689,6 +1655,21 @@
         ]
       }
     },
+    "/v1/discounts/validation": {
+      "post": {
+        "operationId": "DiscountController_validateDiscount_v1",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Validate discount code and calculate discount (public endpoint)",
+        "tags": [
+          "discounts"
+        ]
+      }
+    },
     "/v1/discounts/{id}": {
       "get": {
         "operationId": "DiscountController_findOne_v1",
@@ -1796,21 +1777,6 @@
           }
         ],
         "summary": "Get discount by code",
-        "tags": [
-          "discounts"
-        ]
-      }
-    },
-    "/v1/discounts/validate": {
-      "post": {
-        "operationId": "DiscountController_validateDiscount_v1",
-        "parameters": [],
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "summary": "Validate discount code and calculate discount (public endpoint)",
         "tags": [
           "discounts"
         ]
@@ -1986,7 +1952,7 @@
         ]
       }
     },
-    "/v1/auth/verify-email": {
+    "/v1/auth/email-verification": {
       "post": {
         "operationId": "AuthController_verifyEmail_v1",
         "parameters": [],
@@ -2011,7 +1977,7 @@
         ]
       }
     },
-    "/v1/auth/forgot-password": {
+    "/v1/auth/password-reset-request": {
       "post": {
         "operationId": "AuthController_forgotPassword_v1",
         "parameters": [],
@@ -2036,7 +2002,7 @@
         ]
       }
     },
-    "/v1/auth/reset-password": {
+    "/v1/auth/password-reset": {
       "post": {
         "operationId": "AuthController_resetPassword_v1",
         "parameters": [],
@@ -2145,7 +2111,7 @@
         ]
       }
     },
-    "/v1/auth/enable-2fa": {
+    "/v1/auth/2fa/enable": {
       "post": {
         "operationId": "AuthController_enable2FA_v1",
         "parameters": [],
@@ -2165,7 +2131,7 @@
         ]
       }
     },
-    "/v1/auth/confirm-2fa": {
+    "/v1/auth/2fa/confirm": {
       "post": {
         "operationId": "AuthController_confirm2FA_v1",
         "parameters": [],
@@ -2195,7 +2161,7 @@
         ]
       }
     },
-    "/v1/auth/disable-2fa": {
+    "/v1/auth/2fa/disable": {
       "post": {
         "operationId": "AuthController_disable2FA_v1",
         "parameters": [],
@@ -2215,7 +2181,7 @@
         ]
       }
     },
-    "/v1/auth/complete-registration": {
+    "/v1/auth/registration-completion": {
       "post": {
         "operationId": "AuthController_completeRegistration_v1",
         "parameters": [],
@@ -3366,17 +3332,6 @@
             "type": "object"
           }
         }
-      },
-      "SearchUserDto": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "email"
-        ]
       },
       "AddMemberDto": {
         "type": "object",

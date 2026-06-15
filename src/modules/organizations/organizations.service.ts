@@ -126,13 +126,11 @@ export class OrganizationsService {
     const org = await this.organizationsRepository.findById(id);
     if (!org) throw new NotFoundException('Organization not found');
 
-    const courses = (
-      await this.coursesService.findAll({
-        organizationId: id,
-      } as CourseFilterDto)
-    ).data;
-
-    return { ...org.toObject(), courses: courses };
+    const orgObj = org.toObject();
+    delete orgObj.levels;
+    delete orgObj.terms;
+    
+    return orgObj;
   }
 
   async update(id: string, updateOrganizationDto: UpdateOrganizationDto) {

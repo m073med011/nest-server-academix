@@ -17,6 +17,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiBearerAuth,
+  ApiQuery,
 } from '@nestjs/swagger';
 import {
   CreateOrganizationDto,
@@ -35,12 +36,12 @@ import {
   RequireOwner,
 } from '../../common/decorators/organization-permission.decorator';
 
-@ApiTags('organizations')
 @Controller('organizations')
 export class OrganizationsController {
   constructor(private readonly organizationsService: OrganizationsService) {}
 
   @Post()
+  @ApiTags('Organizations org management')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create organization' })
@@ -56,13 +57,24 @@ export class OrganizationsController {
   }
 
   @Get()
+  @ApiTags('Organizations org management')
   @ApiOperation({ summary: 'Get all organizations' })
   @ApiResponse({ status: 200, description: 'Organizations retrieved.' })
   async findAll() {
     return this.organizationsService.findAll();
   }
 
+  @Get('deleted')
+  @ApiTags('Organizations org management')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get deleted organizations (owner only)' })
+  async getDeleted(@Request() req) {
+    return this.organizationsService.findDeletedForUser(req.user._id);
+  }
+
   @Get(':id')
+  @ApiTags('Organizations org management')
   @ApiOperation({ summary: 'Get organization by ID' })
   @ApiResponse({ status: 200, description: 'Organization retrieved.' })
   async findOne(@Param('id') id: string) {
@@ -70,6 +82,7 @@ export class OrganizationsController {
   }
 
   @Patch(':id')
+  @ApiTags('Organizations org management')
   @UseGuards(AuthGuard('jwt'), OrganizationPermissionGuard)
   @RequirePermission('canManageOrganization')
   @ApiBearerAuth()
@@ -83,16 +96,26 @@ export class OrganizationsController {
   }
 
   @Delete(':id')
+  @ApiTags('Organizations org management')
   @UseGuards(AuthGuard('jwt'), OrganizationPermissionGuard)
   @RequireOwner()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Delete organization' })
+  @ApiOperation({ summary: 'Delete organization (soft or permanent)' })
+  @ApiQuery({ name: 'permanent', required: false, type: Boolean })
   @ApiResponse({ status: 200, description: 'Organization deleted.' })
-  async remove(@Param('id') id: string, @Request() req) {
+  async remove(
+    @Param('id') id: string,
+    @Request() req,
+    @Query('permanent') permanent?: string,
+  ) {
+    if (permanent === 'true') {
+      return this.organizationsService.permanentDelete(id, req.user._id);
+    }
     return this.organizationsService.remove(id, req.user._id);
   }
 
   @Post(':id/restore')
+  @ApiTags('Organizations org management')
   @UseGuards(AuthGuard('jwt'), OrganizationPermissionGuard)
   @RequireOwner()
   @ApiBearerAuth()
@@ -102,42 +125,10 @@ export class OrganizationsController {
     return this.organizationsService.restore(id, req.user._id);
   }
 
-  @Delete(':id/permanent')
-  @UseGuards(AuthGuard('jwt'), OrganizationPermissionGuard)
-  @RequireOwner()
-  @ApiBearerAuth()
-  @ApiOperation({
-    summary: 'Permanently delete organization',
-    description:
-      'WARNING: This action is irreversible. Organization must be soft-deleted first.',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Organization permanently deleted.',
-  })
-  async permanentDelete(@Param('id') id: string, @Request() req) {
-    return this.organizationsService.permanentDelete(id, req.user._id);
-  }
-
-  @Get('deleted')
-  @UseGuards(AuthGuard('jwt'))
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get deleted organizations (owner only)' })
-  async getDeleted(@Request() req) {
-    return this.organizationsService.findDeletedForUser(req.user._id);
-  }
-
   // User Management
-  @Post('search-user')
-  @UseGuards(AuthGuard('jwt'))
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Search user by email' })
-  @ApiResponse({ status: 200, description: 'User found.' })
-  async searchUser(@Body() searchUserDto: SearchUserDto) {
-    return this.organizationsService.searchUser(searchUserDto.email);
-  }
 
   @Post(':id/members')
+  @ApiTags('Organizations users mangment')
   @UseGuards(AuthGuard('jwt'), OrganizationPermissionGuard)
   @RequirePermission('canManageStudents')
   @ApiBearerAuth()
@@ -148,6 +139,7 @@ export class OrganizationsController {
   }
 
   @Delete(':id/members/:userId')
+  @ApiTags('Organizations users mangment')
   @UseGuards(AuthGuard('jwt'), OrganizationPermissionGuard)
   @RequirePermission('canManageStudents')
   @ApiBearerAuth()
@@ -158,6 +150,7 @@ export class OrganizationsController {
   }
 
   @Get(':id/members')
+  @ApiTags('Organizations users mangment')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get organization members (paginated)' })
@@ -170,6 +163,7 @@ export class OrganizationsController {
   }
 
   @Post(':id/members/leave')
+  @ApiTags('Organizations users mangment')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Leave organization' })
@@ -178,7 +172,8 @@ export class OrganizationsController {
     return this.organizationsService.leaveMembership(id, req.user._id);
   }
 
-  @Get(':id/users')
+  @Get(':id/members/all')
+  @ApiTags('Organizations users mangment')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get organization users (paginated)' })
@@ -193,7 +188,8 @@ export class OrganizationsController {
     return this.organizationsService.getOrganizationUsers(id, queryDto);
   }
 
-  @Patch(':id/users/:userId/role')
+  @Patch(':id/members/:userId/role')
+  @ApiTags('Organizations users mangment')
   @UseGuards(AuthGuard('jwt'), OrganizationPermissionGuard)
   @RequirePermission('canManageRoles')
   @ApiBearerAuth()
@@ -211,7 +207,8 @@ export class OrganizationsController {
     );
   }
 
-  @Get(':id/users/:userId')
+  @Get(':id/members/:userId')
+  @ApiTags('Organizations users mangment')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get member details' })
@@ -225,6 +222,7 @@ export class OrganizationsController {
 
   // Role Management
   @Get(':id/roles')
+  @ApiTags('Organizations roles mangment')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get organization roles' })
@@ -234,6 +232,7 @@ export class OrganizationsController {
   }
 
   @Post(':id/roles')
+  @ApiTags('Organizations roles mangment')
   @UseGuards(AuthGuard('jwt'), OrganizationPermissionGuard)
   @RequirePermission('canManageRoles')
   @ApiBearerAuth()
@@ -247,6 +246,7 @@ export class OrganizationsController {
   }
 
   @Patch(':id/roles/:roleId')
+  @ApiTags('Organizations roles mangment')
   @UseGuards(AuthGuard('jwt'), OrganizationPermissionGuard)
   @RequirePermission('canManageRoles')
   @ApiBearerAuth()
@@ -261,6 +261,7 @@ export class OrganizationsController {
   }
 
   @Delete(':id/roles/:roleId')
+  @ApiTags('Organizations roles mangment')
   @UseGuards(AuthGuard('jwt'), OrganizationPermissionGuard)
   @RequirePermission('canManageRoles')
   @ApiBearerAuth()
@@ -271,6 +272,7 @@ export class OrganizationsController {
   }
 
   @Post(':id/invitations/accept')
+  @ApiTags('Organizations users mangment')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Accept organization invitation' })
@@ -279,7 +281,8 @@ export class OrganizationsController {
     return this.organizationsService.acceptInvitation(id, req.user._id);
   }
 
-  @Post(':id/courses/add')
+  @Post(':id/courses')
+  @ApiTags('Organizations courses mangment')
   @UseGuards(AuthGuard('jwt'), OrganizationPermissionGuard)
   @RequirePermission('canManageCourses')
   @ApiBearerAuth()

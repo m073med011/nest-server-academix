@@ -106,10 +106,10 @@ let OrganizationsService = class OrganizationsService {
         const org = await this.organizationsRepository.findById(id);
         if (!org)
             throw new common_1.NotFoundException('Organization not found');
-        const courses = (await this.coursesService.findAll({
-            organizationId: id,
-        })).data;
-        return { ...org.toObject(), courses: courses };
+        const orgObj = org.toObject();
+        delete orgObj.levels;
+        delete orgObj.terms;
+        return orgObj;
     }
     async update(id, updateOrganizationDto) {
         const org = await this.organizationsRepository.update(id, updateOrganizationDto);

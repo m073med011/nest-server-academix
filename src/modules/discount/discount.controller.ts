@@ -33,6 +33,19 @@ export class DiscountController {
     return this.discountService.findAll();
   }
 
+  @Post('validation')
+  @ApiOperation({
+    summary: 'Validate discount code and calculate discount (public endpoint)',
+  })
+  async validateDiscount(
+    @Body() validateDto: { code: string; courseIds: string[] },
+  ) {
+    return this.discountService.validateDiscount(
+      validateDto.code,
+      validateDto.courseIds,
+    );
+  }
+
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
@@ -47,19 +60,6 @@ export class DiscountController {
   @ApiOperation({ summary: 'Get discount by code' })
   findByCode(@Param('code') code: string) {
     return this.discountService.findByCode(code);
-  }
-
-  @Post('validate')
-  @ApiOperation({
-    summary: 'Validate discount code and calculate discount (public endpoint)',
-  })
-  async validateDiscount(
-    @Body() validateDto: { code: string; courseIds: string[] },
-  ) {
-    return this.discountService.validateDiscount(
-      validateDto.code,
-      validateDto.courseIds,
-    );
   }
 
   @Patch(':id')

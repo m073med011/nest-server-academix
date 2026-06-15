@@ -3,20 +3,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { OrganizationsController } from './organizations.controller';
 import { OrganizationsService } from './organizations.service';
 import { OrganizationsRepository } from './organizations.repository';
-import {
-  Organization,
-  OrganizationSchema,
-} from './schemas/organization.schema';
-import {
-  OrganizationRole,
-  OrganizationRoleSchema,
-} from './schemas/organization-role.schema';
-import {
-  OrganizationMembership,
-  OrganizationMembershipSchema,
-} from './schemas/organization-membership.schema';
+import {Organization,OrganizationSchema,} from './schemas/organization.schema';
+import {OrganizationRole,OrganizationRoleSchema,} from './schemas/organization-role.schema';
+import {OrganizationMembership,OrganizationMembershipSchema,} from './schemas/organization-membership.schema';
 import { OrganizationMembershipRepository } from './organization-membership.repository';
-
 import { Term, TermSchema } from './schemas/term.schema';
 import { TermRepository } from './term.repository';
 import { OrganizationRoleRepository } from './organization-role.repository';
