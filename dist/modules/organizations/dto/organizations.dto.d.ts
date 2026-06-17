@@ -58,3 +58,6 @@ export declare class UpdateRoleDto {
 export declare class AddCoursesDto {
     courseIds: string[];
 }
+export declare class DeleteOrganizationsDto {
+    ids: string[];
+}

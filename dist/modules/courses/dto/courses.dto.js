@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AddEditorDto = exports.CourseFilterDto = exports.UpdateCourseDto = exports.CreateCourseDto = exports.ModuleDto = exports.ModuleItemDto = exports.LessonType = exports.ModuleItemType = exports.CourseType = exports.EnrollmentType = exports.CourseLevel = void 0;
+exports.DeleteCoursesDto = exports.AddEditorDto = exports.CourseFilterDto = exports.UpdateCourseDto = exports.CreateCourseDto = exports.ModuleDto = exports.ModuleItemDto = exports.LessonType = exports.ModuleItemType = exports.CourseType = exports.EnrollmentType = exports.CourseLevel = void 0;
 const class_validator_1 = require("class-validator");
 const class_transformer_1 = require("class-transformer");
 const swagger_1 = require("@nestjs/swagger");
@@ -413,4 +413,15 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], AddEditorDto.prototype, "editorId", void 0);
+class DeleteCoursesDto {
+    ids;
+}
+exports.DeleteCoursesDto = DeleteCoursesDto;
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: [String], description: 'List of course IDs to delete' }),
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsString)({ each: true }),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", Array)
+], DeleteCoursesDto.prototype, "ids", void 0);
 //# sourceMappingURL=courses.dto.js.map

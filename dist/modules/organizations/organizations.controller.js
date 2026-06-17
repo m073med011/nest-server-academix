@@ -40,11 +40,11 @@ let OrganizationsController = class OrganizationsController {
     async update(id, updateOrganizationDto) {
         return this.organizationsService.update(id, updateOrganizationDto);
     }
-    async remove(id, req, permanent) {
+    async remove(deleteDto, req, permanent) {
         if (permanent === 'true') {
-            return this.organizationsService.permanentDelete(id, req.user._id);
+            return this.organizationsService.permanentDeleteMany(deleteDto.ids, req.user._id);
         }
-        return this.organizationsService.remove(id, req.user._id);
+        return this.organizationsService.removeMany(deleteDto.ids, req.user._id);
     }
     async restore(id, req) {
         return this.organizationsService.restore(id, req.user._id);
@@ -148,19 +148,18 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], OrganizationsController.prototype, "update", null);
 __decorate([
-    (0, common_1.Delete)(':id'),
+    (0, common_1.Delete)(),
     (0, swagger_1.ApiTags)('Organizations org management'),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), organization_permission_guard_1.OrganizationPermissionGuard),
-    (0, organization_permission_decorator_1.RequireOwner)(),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, swagger_1.ApiBearerAuth)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Delete organization (soft or permanent)' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Delete organizations (soft or permanent)' }),
     (0, swagger_1.ApiQuery)({ name: 'permanent', required: false, type: Boolean }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Organization deleted.' }),
-    __param(0, (0, common_1.Param)('id')),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Organizations deleted.' }),
+    __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Request)()),
     __param(2, (0, common_1.Query)('permanent')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object, String]),
+    __metadata("design:paramtypes", [organizations_dto_1.DeleteOrganizationsDto, Object, String]),
     __metadata("design:returntype", Promise)
 ], OrganizationsController.prototype, "remove", null);
 __decorate([

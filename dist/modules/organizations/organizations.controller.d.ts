@@ -1,25 +1,19 @@
 import { OrganizationsService } from './organizations.service';
-import { CreateOrganizationDto, UpdateOrganizationDto, AddMemberDto, UpdateMemberRoleDto, CreateRoleDto, UpdateRoleDto, GetMembersDto, AddCoursesDto } from './dto/organizations.dto';
+import { CreateOrganizationDto, UpdateOrganizationDto, AddMemberDto, UpdateMemberRoleDto, CreateRoleDto, UpdateRoleDto, GetMembersDto, AddCoursesDto, DeleteOrganizationsDto } from './dto/organizations.dto';
 export declare class OrganizationsController {
     private readonly organizationsService;
     constructor(organizationsService: OrganizationsService);
     create(createOrganizationDto: CreateOrganizationDto, req: any): Promise<import("./schemas/organization.schema").OrganizationDocument>;
-    findAll(): Promise<import("./schemas/organization.schema").OrganizationDocument[]>;
+    findAll(): Promise<any[]>;
     getDeleted(req: any): Promise<import("./schemas/organization.schema").OrganizationDocument[]>;
     findOne(id: string): Promise<any>;
     update(id: string, updateOrganizationDto: UpdateOrganizationDto): Promise<import("./schemas/organization.schema").OrganizationDocument>;
-    remove(id: string, req: any, permanent?: string): Promise<{
-        message: string;
-        deletedRecords: {
-            memberships: number;
-            roles: number;
-            terms: number;
-            courses: number;
-        };
-    } | {
-        message: string;
-        deletedAt: Date;
-        affectedMemberships: number;
+    remove(deleteDto: DeleteOrganizationsDto, req: any, permanent?: string): Promise<{
+        successful: string[];
+        failed: {
+            id: string;
+            reason: string;
+        }[];
     }>;
     restore(id: string, req: any): Promise<{
         message: string;

@@ -64,3 +64,6 @@ export declare class CourseFilterDto {
 export declare class AddEditorDto {
     editorId: string;
 }
+export declare class DeleteCoursesDto {
+    ids: string[];
+}

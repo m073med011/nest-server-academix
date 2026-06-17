@@ -17,7 +17,8 @@ export declare class OrganizationsService {
     private readonly usersRepository;
     constructor(organizationsRepository: OrganizationsRepository, membershipRepository: OrganizationMembershipRepository, roleRepository: OrganizationRoleRepository, termRepository: TermRepository, usersService: UsersService, coursesService: CoursesService, usersRepository: UsersRepository);
     create(createOrganizationDto: CreateOrganizationDto, ownerId: string): Promise<import("./schemas/organization.schema").OrganizationDocument>;
-    findAll(): Promise<import("./schemas/organization.schema").OrganizationDocument[]>;
+    enrichOrganizationWithCounts(orgObj: any): Promise<any>;
+    findAll(): Promise<any[]>;
     findOne(id: string): Promise<any>;
     update(id: string, updateOrganizationDto: UpdateOrganizationDto): Promise<import("./schemas/organization.schema").OrganizationDocument>;
     remove(id: string, requesterId: string): Promise<{
@@ -37,6 +38,20 @@ export declare class OrganizationsService {
             terms: number;
             courses: number;
         };
+    }>;
+    removeMany(ids: string[], requesterId: string): Promise<{
+        successful: string[];
+        failed: {
+            id: string;
+            reason: string;
+        }[];
+    }>;
+    permanentDeleteMany(ids: string[], requesterId: string): Promise<{
+        successful: string[];
+        failed: {
+            id: string;
+            reason: string;
+        }[];
     }>;
     findDeletedForUser(userId: string): Promise<import("./schemas/organization.schema").OrganizationDocument[]>;
     searchUser(email: string): Promise<import("mongoose").Document<unknown, {}, import("../users/schemas/user.schema").User, {}, {}> & Omit<import("../users/schemas/user.schema").User & {

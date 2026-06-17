@@ -29,6 +29,7 @@ import {
   UpdateRoleDto,
   GetMembersDto,
   AddCoursesDto,
+  DeleteOrganizationsDto,
 } from './dto/organizations.dto';
 import { OrganizationPermissionGuard } from '../../common/guards/organization-permission.guard';
 import {
@@ -95,23 +96,22 @@ export class OrganizationsController {
     return this.organizationsService.update(id, updateOrganizationDto);
   }
 
-  @Delete(':id')
+  @Delete()
   @ApiTags('Organizations org management')
-  @UseGuards(AuthGuard('jwt'), OrganizationPermissionGuard)
-  @RequireOwner()
+  @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Delete organization (soft or permanent)' })
+  @ApiOperation({ summary: 'Delete organizations (soft or permanent)' })
   @ApiQuery({ name: 'permanent', required: false, type: Boolean })
-  @ApiResponse({ status: 200, description: 'Organization deleted.' })
+  @ApiResponse({ status: 200, description: 'Organizations deleted.' })
   async remove(
-    @Param('id') id: string,
+    @Body() deleteDto: DeleteOrganizationsDto,
     @Request() req,
     @Query('permanent') permanent?: string,
   ) {
     if (permanent === 'true') {
-      return this.organizationsService.permanentDelete(id, req.user._id);
+      return this.organizationsService.permanentDeleteMany(deleteDto.ids, req.user._id);
     }
-    return this.organizationsService.remove(id, req.user._id);
+    return this.organizationsService.removeMany(deleteDto.ids, req.user._id);
   }
 
   @Post(':id/restore')

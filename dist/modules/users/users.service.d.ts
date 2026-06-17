@@ -2,10 +2,12 @@ import { UsersRepository } from './users.repository';
 import { UserDocument } from './schemas/user.schema';
 import { OrganizationMembershipRepository } from '../organizations/organization-membership.repository';
 import { UpdateProfileDto, ChangePasswordDto } from './dto/users.dto';
+import { OrganizationsService } from '../organizations/organizations.service';
 export declare class UsersService {
     private readonly usersRepository;
     private readonly membershipRepository;
-    constructor(usersRepository: UsersRepository, membershipRepository: OrganizationMembershipRepository);
+    private readonly organizationsService;
+    constructor(usersRepository: UsersRepository, membershipRepository: OrganizationMembershipRepository, organizationsService: OrganizationsService);
     create(user: any): Promise<UserDocument>;
     findByEmail(email: string): Promise<UserDocument | null>;
     findByEmailWithPassword(email: string): Promise<UserDocument | null>;
@@ -30,7 +32,7 @@ export declare class UsersService {
     changePassword(userId: string, changePasswordDto: ChangePasswordDto): Promise<{
         message: string;
     }>;
-    getMyOrganizations(userId: string): Promise<(import("mongoose").Document<unknown, {}, import("../organizations/schemas/organization-membership.schema").OrganizationMembership, {}, {}> & import("../organizations/schemas/organization-membership.schema").OrganizationMembership & {
+    getMyOrganizations(userId: string): Promise<(import("../organizations/schemas/organization-membership.schema").OrganizationMembership & {
         _id: import("mongoose").Types.ObjectId;
     } & {
         __v: number;

@@ -225,6 +225,44 @@
           "Organizations",
           "Organizations org management"
         ]
+      },
+      "delete": {
+        "operationId": "OrganizationsController_remove_v1",
+        "parameters": [
+          {
+            "name": "permanent",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteOrganizationsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Organizations deleted."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Delete organizations (soft or permanent)",
+        "tags": [
+          "Organizations",
+          "Organizations org management"
+        ]
       }
     },
     "/v1/organizations/deleted": {
@@ -305,42 +343,6 @@
           }
         ],
         "summary": "Update organization",
-        "tags": [
-          "Organizations",
-          "Organizations org management"
-        ]
-      },
-      "delete": {
-        "operationId": "OrganizationsController_remove_v1",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "permanent",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "boolean"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Organization deleted."
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "Delete organization (soft or permanent)",
         "tags": [
           "Organizations",
           "Organizations org management"
@@ -1081,6 +1083,43 @@
         "tags": [
           "courses"
         ]
+      },
+      "delete": {
+        "operationId": "CoursesController_remove_v1",
+        "parameters": [
+          {
+            "name": "permanent",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteCoursesDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Courses deleted."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Delete courses (soft or permanent)",
+        "tags": [
+          "courses"
+        ]
       }
     },
     "/v1/courses/user/purchased": {
@@ -1183,33 +1222,6 @@
           }
         ],
         "summary": "Update course",
-        "tags": [
-          "courses"
-        ]
-      },
-      "delete": {
-        "operationId": "CoursesController_remove_v1",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Course deleted."
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "Delete course",
         "tags": [
           "courses"
         ]
@@ -3333,6 +3345,21 @@
           }
         }
       },
+      "DeleteOrganizationsDto": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "description": "List of organization IDs to delete",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "ids"
+        ]
+      },
       "AddMemberDto": {
         "type": "object",
         "properties": {
@@ -3633,6 +3660,21 @@
             "type": "string"
           }
         }
+      },
+      "DeleteCoursesDto": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "description": "List of course IDs to delete",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "ids"
+        ]
       },
       "AddEditorDto": {
         "type": "object",

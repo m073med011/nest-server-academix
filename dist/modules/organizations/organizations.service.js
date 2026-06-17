@@ -99,17 +99,35 @@ let OrganizationsService = class OrganizationsService {
         await this.membershipRepository.create(membershipDto);
         return org;
     }
+    async enrichOrganizationWithCounts(orgObj) {
+        const levelsCount = orgObj.levels ? orgObj.levels.length : 0;
+        const termsCount = orgObj.terms ? orgObj.terms.length : 0;
+        delete orgObj.levels;
+        delete orgObj.terms;
+        const coursesCount = await this.coursesService.countByOrganization(orgObj._id.toString());
+        const ownerId = orgObj.owner?._id || orgObj.owner;
+        const studentsCount = await this.membershipRepository.count({
+            organizationId: orgObj._id,
+            status: organization_membership_schema_1.MembershipStatus.ACTIVE,
+            userId: { $ne: ownerId },
+        });
+        return {
+            ...orgObj,
+            levelsCount,
+            termsCount,
+            coursesCount,
+            studentsCount,
+        };
+    }
     async findAll() {
-        return this.organizationsRepository.findAll();
+        const orgs = await this.organizationsRepository.findAll();
+        return Promise.all(orgs.map((org) => this.enrichOrganizationWithCounts(org.toObject())));
     }
     async findOne(id) {
         const org = await this.organizationsRepository.findById(id);
         if (!org)
             throw new common_1.NotFoundException('Organization not found');
-        const orgObj = org.toObject();
-        delete orgObj.levels;
-        delete orgObj.terms;
-        return orgObj;
+        return this.enrichOrganizationWithCounts(org.toObject());
     }
     async update(id, updateOrganizationDto) {
         const org = await this.organizationsRepository.update(id, updateOrganizationDto);
@@ -122,7 +140,8 @@ let OrganizationsService = class OrganizationsService {
         if (!org) {
             throw new common_1.NotFoundException('Organization not found');
         }
-        if (org.owner.toString() !== requesterId) {
+        const orgOwnerId = org.owner._id ? org.owner._id.toString() : org.owner.toString();
+        if (orgOwnerId !== requesterId.toString()) {
             throw new common_1.ForbiddenException('Only organization owner can delete organization');
         }
         if (org.deletedAt) {
@@ -164,7 +183,8 @@ let OrganizationsService = class OrganizationsService {
         if (!org.deletedAt) {
             throw new common_1.BadRequestException('Organization is not deleted');
         }
-        if (org.owner.toString() !== requesterId) {
+        const orgOwnerId = org.owner._id ? org.owner._id.toString() : org.owner.toString();
+        if (orgOwnerId !== requesterId.toString()) {
             throw new common_1.ForbiddenException('Only organization owner can restore organization');
         }
         org.deletedAt = null;
@@ -183,7 +203,8 @@ let OrganizationsService = class OrganizationsService {
         if (!org.deletedAt) {
             throw new common_1.BadRequestException('Organization must be soft-deleted before permanent deletion');
         }
-        if (org.owner.toString() !== requesterId) {
+        const orgOwnerId = org.owner._id ? org.owner._id.toString() : org.owner.toString();
+        if (orgOwnerId !== requesterId.toString()) {
             throw new common_1.ForbiddenException('Only organization owner can permanently delete organization');
         }
         const results = {
@@ -212,6 +233,38 @@ let OrganizationsService = class OrganizationsService {
             message: 'Organization permanently deleted',
             deletedRecords: results,
         };
+    }
+    async removeMany(ids, requesterId) {
+        const results = {
+            successful: [],
+            failed: [],
+        };
+        for (const id of ids) {
+            try {
+                await this.remove(id, requesterId);
+                results.successful.push(id);
+            }
+            catch (error) {
+                results.failed.push({ id, reason: error.message });
+            }
+        }
+        return results;
+    }
+    async permanentDeleteMany(ids, requesterId) {
+        const results = {
+            successful: [],
+            failed: [],
+        };
+        for (const id of ids) {
+            try {
+                await this.permanentDelete(id, requesterId);
+                results.successful.push(id);
+            }
+            catch (error) {
+                results.failed.push({ id, reason: error.message });
+            }
+        }
+        return results;
     }
     async findDeletedForUser(userId) {
         const allDeleted = await this.organizationsRepository.findDeleted();
