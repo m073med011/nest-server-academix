@@ -209,3 +209,11 @@ export class AddCoursesDto {
   @IsNotEmpty()
   courseIds: string[];
 }
+
+export class DeleteOrganizationsDto {
+  @ApiProperty({ type: [String], description: 'List of organization IDs to delete' })
+  @IsArray()
+  @IsString({ each: true })
+  @IsNotEmpty()
+  ids: string[];
+}

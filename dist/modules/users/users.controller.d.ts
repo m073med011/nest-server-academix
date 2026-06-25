@@ -21,7 +21,7 @@ export declare class UsersController {
     changePassword(req: any, changePasswordDto: ChangePasswordDto): Promise<{
         message: string;
     }>;
-    getMyOrganizations(req: any): Promise<(import("mongoose").Document<unknown, {}, import("../organizations/schemas/organization-membership.schema").OrganizationMembership, {}, {}> & import("../organizations/schemas/organization-membership.schema").OrganizationMembership & {
+    getMyOrganizations(req: any): Promise<(import("../organizations/schemas/organization-membership.schema").OrganizationMembership & {
         _id: import("mongoose").Types.ObjectId;
     } & {
         __v: number;

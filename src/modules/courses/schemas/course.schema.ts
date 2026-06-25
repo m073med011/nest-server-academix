@@ -143,6 +143,18 @@ export class Course {
 
   @Prop({ type: Date })
   enrollmentEndDate?: Date;
+
+  @Prop({ default: false })
+  isArchived?: boolean;
+
+  @Prop({ type: Date })
+  archivedAt?: Date;
+
+  @Prop({ type: Date })
+  deletedAt?: Date;
+
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User' })
+  deletedBy?: any;
 }
 
 export const CourseSchema = SchemaFactory.createForClass(Course);

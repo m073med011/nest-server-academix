@@ -105,7 +105,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "login", null);
 __decorate([
-    (0, common_1.Post)('verify-email'),
+    (0, common_1.Post)('email-verification'),
     (0, swagger_1.ApiOperation)({ summary: 'Verify email with OTP' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Email successfully verified.' }),
     __param(0, (0, common_1.Body)()),
@@ -115,7 +115,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "verifyEmail", null);
 __decorate([
-    (0, common_1.Post)('forgot-password'),
+    (0, common_1.Post)('password-reset-request'),
     (0, swagger_1.ApiOperation)({ summary: 'Request password reset OTP' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'OTP sent successfully.' }),
     __param(0, (0, common_1.Body)()),
@@ -124,7 +124,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "forgotPassword", null);
 __decorate([
-    (0, common_1.Post)('reset-password'),
+    (0, common_1.Post)('password-reset'),
     (0, swagger_1.ApiOperation)({ summary: 'Reset password with OTP' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Password successfully reset.' }),
     __param(0, (0, common_1.Body)()),
@@ -177,7 +177,7 @@ __decorate([
 __decorate([
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, swagger_1.ApiBearerAuth)(),
-    (0, common_1.Post)('enable-2fa'),
+    (0, common_1.Post)('2fa/enable'),
     (0, swagger_1.ApiOperation)({ summary: 'Enable 2FA' }),
     __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
@@ -187,7 +187,7 @@ __decorate([
 __decorate([
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, swagger_1.ApiBearerAuth)(),
-    (0, common_1.Post)('confirm-2fa'),
+    (0, common_1.Post)('2fa/confirm'),
     (0, swagger_1.ApiOperation)({ summary: 'Confirm 2FA enablement' }),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Body)()),
@@ -198,7 +198,7 @@ __decorate([
 __decorate([
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, swagger_1.ApiBearerAuth)(),
-    (0, common_1.Post)('disable-2fa'),
+    (0, common_1.Post)('2fa/disable'),
     (0, swagger_1.ApiOperation)({ summary: 'Disable 2FA' }),
     __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
@@ -208,7 +208,7 @@ __decorate([
 __decorate([
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, swagger_1.ApiBearerAuth)(),
-    (0, common_1.Post)('complete-registration'),
+    (0, common_1.Post)('registration-completion'),
     (0, swagger_1.ApiOperation)({ summary: 'Complete registration (role selection)' }),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Body)()),

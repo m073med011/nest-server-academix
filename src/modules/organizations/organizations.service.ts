@@ -118,21 +118,41 @@ export class OrganizationsService {
     return org;
   }
 
+  async enrichOrganizationWithCounts(orgObj: any) {
+    const levelsCount = orgObj.levels ? orgObj.levels.length : 0;
+    const termsCount = orgObj.terms ? orgObj.terms.length : 0;
+    delete orgObj.levels;
+    delete orgObj.terms;
+
+    const coursesCount = await this.coursesService.countByOrganization(orgObj._id.toString());
+    const ownerId = orgObj.owner?._id || orgObj.owner;
+    const studentsCount = await this.membershipRepository.count({
+      organizationId: orgObj._id,
+      status: MembershipStatus.ACTIVE,
+      userId: { $ne: ownerId },
+    });
+
+    return {
+      ...orgObj,
+      levelsCount,
+      termsCount,
+      coursesCount,
+      studentsCount,
+    };
+  }
+
   async findAll() {
-    return this.organizationsRepository.findAll();
+    const orgs = await this.organizationsRepository.findAll();
+    return Promise.all(
+      orgs.map((org) => this.enrichOrganizationWithCounts(org.toObject()))
+    );
   }
 
   async findOne(id: string) {
     const org = await this.organizationsRepository.findById(id);
     if (!org) throw new NotFoundException('Organization not found');
 
-    const courses = (
-      await this.coursesService.findAll({
-        organizationId: id,
-      } as CourseFilterDto)
-    ).data;
-
-    return { ...org.toObject(), courses: courses };
+    return this.enrichOrganizationWithCounts(org.toObject());
   }
 
   async update(id: string, updateOrganizationDto: UpdateOrganizationDto) {
@@ -157,7 +177,8 @@ export class OrganizationsService {
     }
 
     // 2. Verify requester is owner (double-check, guard should handle this)
-    if (org.owner.toString() !== requesterId) {
+    const orgOwnerId = (org.owner as any)._id ? (org.owner as any)._id.toString() : org.owner.toString();
+    if (orgOwnerId !== requesterId.toString()) {
       throw new ForbiddenException(
         'Only organization owner can delete organization',
       );
@@ -233,7 +254,8 @@ export class OrganizationsService {
     }
 
     // Verify requester is owner
-    if (org.owner.toString() !== requesterId) {
+    const orgOwnerId = (org.owner as any)._id ? (org.owner as any)._id.toString() : org.owner.toString();
+    if (orgOwnerId !== requesterId.toString()) {
       throw new ForbiddenException(
         'Only organization owner can restore organization',
       );
@@ -271,7 +293,8 @@ export class OrganizationsService {
     }
 
     // Verify requester is owner
-    if (org.owner.toString() !== requesterId) {
+    const orgOwnerId = (org.owner as any)._id ? (org.owner as any)._id.toString() : org.owner.toString();
+    if (orgOwnerId !== requesterId.toString()) {
       throw new ForbiddenException(
         'Only organization owner can permanently delete organization',
       );
@@ -321,6 +344,48 @@ export class OrganizationsService {
       message: 'Organization permanently deleted',
       deletedRecords: results,
     };
+  }
+
+  /**
+   * Soft delete multiple organizations
+   * @param ids - Array of Organization IDs
+   * @param requesterId - User ID requesting deletion (must be owner)
+   */
+  async removeMany(ids: string[], requesterId: string) {
+    const results: { successful: string[]; failed: { id: string; reason: string }[] } = {
+      successful: [],
+      failed: [],
+    };
+    for (const id of ids) {
+      try {
+        await this.remove(id, requesterId);
+        results.successful.push(id);
+      } catch (error) {
+        results.failed.push({ id, reason: error.message });
+      }
+    }
+    return results;
+  }
+
+  /**
+   * Permanently delete multiple organizations
+   * @param ids - Array of Organization IDs
+   * @param requesterId - User ID requesting deletion (must be owner)
+   */
+  async permanentDeleteMany(ids: string[], requesterId: string) {
+    const results: { successful: string[]; failed: { id: string; reason: string }[] } = {
+      successful: [],
+      failed: [],
+    };
+    for (const id of ids) {
+      try {
+        await this.permanentDelete(id, requesterId);
+        results.successful.push(id);
+      } catch (error) {
+        results.failed.push({ id, reason: error.message });
+      }
+    }
+    return results;
   }
 
   async findDeletedForUser(userId: string) {

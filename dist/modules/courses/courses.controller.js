@@ -44,8 +44,11 @@ let CoursesController = class CoursesController {
     async update(id, updateCourseDto) {
         return this.coursesService.update(id, updateCourseDto);
     }
-    async remove(id) {
-        return this.coursesService.remove(id);
+    async remove(deleteDto, req, permanent) {
+        if (permanent === 'true') {
+            return this.coursesService.permanentDeleteMany(deleteDto.ids);
+        }
+        return this.coursesService.removeMany(deleteDto.ids, req.user._id);
     }
     async enroll(id, req) {
         return this.coursesService.enroll(id, req.user._id);
@@ -130,14 +133,17 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], CoursesController.prototype, "update", null);
 __decorate([
-    (0, common_1.Delete)(':id'),
+    (0, common_1.Delete)(),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, swagger_1.ApiBearerAuth)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Delete course' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Course deleted.' }),
-    __param(0, (0, common_1.Param)('id')),
+    (0, swagger_1.ApiOperation)({ summary: 'Delete courses (soft or permanent)' }),
+    (0, swagger_1.ApiQuery)({ name: 'permanent', required: false, type: Boolean }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Courses deleted.' }),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Request)()),
+    __param(2, (0, common_1.Query)('permanent')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [courses_dto_1.DeleteCoursesDto, Object, String]),
     __metadata("design:returntype", Promise)
 ], CoursesController.prototype, "remove", null);
 __decorate([

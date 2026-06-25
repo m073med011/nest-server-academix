@@ -2,17 +2,22 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  Inject,
+  forwardRef,
 } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { UserDocument } from './schemas/user.schema';
 import { OrganizationMembershipRepository } from '../organizations/organization-membership.repository';
 import { UpdateProfileDto, ChangePasswordDto } from './dto/users.dto';
+import { OrganizationsService } from '../organizations/organizations.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly usersRepository: UsersRepository,
     private readonly membershipRepository: OrganizationMembershipRepository,
+    @Inject(forwardRef(() => OrganizationsService))
+    private readonly organizationsService: OrganizationsService,
   ) {}
 
   async create(user: any): Promise<UserDocument> {
@@ -86,7 +91,18 @@ export class UsersService {
   }
 
   async getMyOrganizations(userId: string) {
-    return this.membershipRepository.findByUser(userId);
+    const memberships = await this.membershipRepository.findByUser(userId);
+    return Promise.all(
+      memberships.map(async (membership) => {
+        const memObj = membership.toObject();
+        if (memObj.organizationId && typeof memObj.organizationId === 'object') {
+          memObj.organizationId = await this.organizationsService.enrichOrganizationWithCounts(
+            memObj.organizationId,
+          );
+        }
+        return memObj;
+      }),
+    );
   }
 
   async deleteAccount(userId: string): Promise<{ message: string }> {

@@ -305,3 +305,11 @@ export class AddEditorDto {
   @IsString()
   editorId: string;
 }
+
+export class DeleteCoursesDto {
+  @ApiProperty({ type: [String], description: 'List of course IDs to delete' })
+  @IsArray()
+  @IsString({ each: true })
+  @IsNotEmpty()
+  ids: string[];
+}

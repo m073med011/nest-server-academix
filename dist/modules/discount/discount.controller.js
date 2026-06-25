@@ -28,14 +28,14 @@ let DiscountController = class DiscountController {
     findAll() {
         return this.discountService.findAll();
     }
+    async validateDiscount(validateDto) {
+        return this.discountService.validateDiscount(validateDto.code, validateDto.courseIds);
+    }
     findOne(id) {
         return this.discountService.findOne(id);
     }
     findByCode(code) {
         return this.discountService.findByCode(code);
-    }
-    async validateDiscount(validateDto) {
-        return this.discountService.validateDiscount(validateDto.code, validateDto.courseIds);
     }
     update(id, updateDiscountDto) {
         return this.discountService.update(id, updateDiscountDto);
@@ -65,6 +65,16 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], DiscountController.prototype, "findAll", null);
 __decorate([
+    (0, common_1.Post)('validation'),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Validate discount code and calculate discount (public endpoint)',
+    }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], DiscountController.prototype, "validateDiscount", null);
+__decorate([
     (0, common_1.Get)(':id'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, swagger_1.ApiBearerAuth)(),
@@ -84,16 +94,6 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], DiscountController.prototype, "findByCode", null);
-__decorate([
-    (0, common_1.Post)('validate'),
-    (0, swagger_1.ApiOperation)({
-        summary: 'Validate discount code and calculate discount (public endpoint)',
-    }),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
-], DiscountController.prototype, "validateDiscount", null);
 __decorate([
     (0, common_1.Patch)(':id'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

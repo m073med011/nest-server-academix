@@ -81,6 +81,10 @@ export declare class Course {
     brandColor: string;
     enrollmentStartDate?: Date;
     enrollmentEndDate?: Date;
+    isArchived?: boolean;
+    archivedAt?: Date;
+    deletedAt?: Date;
+    deletedBy?: any;
 }
 export declare const CourseSchema: MongooseSchema<Course, import("mongoose").Model<Course, any, any, any, Document<unknown, any, Course, any, {}> & Course & {
     _id: import("mongoose").Types.ObjectId;

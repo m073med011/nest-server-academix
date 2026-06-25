@@ -110,6 +110,10 @@ let Course = class Course {
     brandColor;
     enrollmentStartDate;
     enrollmentEndDate;
+    isArchived;
+    archivedAt;
+    deletedAt;
+    deletedBy;
 };
 exports.Course = Course;
 __decorate([
@@ -216,6 +220,22 @@ __decorate([
     (0, mongoose_1.Prop)({ type: Date }),
     __metadata("design:type", Date)
 ], Course.prototype, "enrollmentEndDate", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: false }),
+    __metadata("design:type", Boolean)
+], Course.prototype, "isArchived", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: Date }),
+    __metadata("design:type", Date)
+], Course.prototype, "archivedAt", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: Date }),
+    __metadata("design:type", Date)
+], Course.prototype, "deletedAt", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.Schema.Types.ObjectId, ref: 'User' }),
+    __metadata("design:type", Object)
+], Course.prototype, "deletedBy", void 0);
 exports.Course = Course = __decorate([
     (0, mongoose_1.Schema)({ timestamps: true })
 ], Course);
