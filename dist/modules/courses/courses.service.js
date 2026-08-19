@@ -41,18 +41,22 @@ let CoursesService = class CoursesService {
         const { category, level, search, sort } = filterDto;
         const filter = {
             isPublished: true,
-            $or: [
+            deletedAt: { $exists: false },
+        };
+        if (filterDto.organizationId) {
+            filter.organizationId = filterDto.organizationId;
+        }
+        else {
+            filter.$or = [
                 { isOrgPrivate: false },
                 { isOrgPrivate: { $exists: false } },
                 { organizationId: { $exists: false } },
-            ],
-        };
+            ];
+        }
         if (category)
             filter.category = category;
         if (level)
             filter.level = level;
-        if (filterDto.organizationId)
-            filter.organizationId = filterDto.organizationId;
         if (search) {
             filter.$text = { $search: search };
         }
@@ -116,12 +120,58 @@ let CoursesService = class CoursesService {
         }
         return course;
     }
-    async remove(id) {
+    async remove(id, requesterId) {
+        const course = await this.coursesRepository.findById(id);
+        if (!course) {
+            throw new common_1.NotFoundException('Course not found');
+        }
+        if (course.deletedAt) {
+            throw new common_1.BadRequestException('Course is already deleted');
+        }
+        await this.coursesRepository.update(id, {
+            deletedAt: new Date(),
+            deletedBy: requesterId,
+        });
+        return { message: 'Course deleted successfully' };
+    }
+    async permanentDelete(id) {
         const course = await this.coursesRepository.delete(id);
         if (!course) {
             throw new common_1.NotFoundException('Course not found');
         }
-        return { message: 'Course deleted successfully' };
+        return { message: 'Course permanently deleted' };
+    }
+    async removeMany(ids, requesterId) {
+        const results = {
+            successful: [],
+            failed: [],
+        };
+        for (const id of ids) {
+            try {
+                await this.remove(id, requesterId);
+                results.successful.push(id);
+            }
+            catch (error) {
+                results.failed.push({ id, reason: error.message });
+            }
+        }
+        return results;
+    }
+    async permanentDeleteMany(ids) {
+        const results = {
+            successful: [],
+            failed: [],
+        };
+        for (const id of ids) {
+            try {
+                await this.permanentDelete(id);
+                results.successful.push(id);
+            }
+            catch (error) {
+                results.failed.push({ id, reason: error.message });
+            }
+        }
+        return results;
     }
     async enroll(courseId, userId) {
         const course = await this.coursesRepository.addStudent(courseId, userId);
@@ -161,6 +211,9 @@ let CoursesService = class CoursesService {
     }
     async findByInstructor(instructorId) {
         return this.coursesRepository.findByInstructor(instructorId);
+    }
+    async countByOrganization(organizationId) {
+        return this.coursesRepository.count({ organizationId, isArchived: { $ne: true } });
     }
     countByInstructor(instructorId) {
         return this.coursesRepository.countByInstructor(instructorId);

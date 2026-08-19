@@ -77,7 +77,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "updateProfile", null);
 __decorate([
-    (0, common_1.Post)('change-password'),
+    (0, common_1.Patch)('password'),
     (0, swagger_1.ApiOperation)({ summary: 'Change password' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Password changed.' }),
     __param(0, (0, common_1.Request)()),

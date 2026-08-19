@@ -54,7 +54,7 @@ export class AuthController {
     return res.status(HttpStatus.OK).json(result);
   }
 
-  @Post('verify-email')
+  @Post('email-verification')
   @ApiOperation({ summary: 'Verify email with OTP' })
   @ApiResponse({ status: 200, description: 'Email successfully verified.' })
   async verifyEmail(
@@ -65,14 +65,14 @@ export class AuthController {
     return res.status(HttpStatus.OK).json(result);
   }
 
-  @Post('forgot-password')
+  @Post('password-reset-request')
   @ApiOperation({ summary: 'Request password reset OTP' })
   @ApiResponse({ status: 200, description: 'OTP sent successfully.' })
   async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
     return this.authService.forgotPassword(forgotPasswordDto);
   }
 
-  @Post('reset-password')
+  @Post('password-reset')
   @ApiOperation({ summary: 'Reset password with OTP' })
   @ApiResponse({ status: 200, description: 'Password successfully reset.' })
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
@@ -122,7 +122,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth()
-  @Post('enable-2fa')
+  @Post('2fa/enable')
   @ApiOperation({ summary: 'Enable 2FA' })
   async enable2FA(@Request() req) {
     return this.authService.enable2FA(req.user._id);
@@ -130,7 +130,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth()
-  @Post('confirm-2fa')
+  @Post('2fa/confirm')
   @ApiOperation({ summary: 'Confirm 2FA enablement' })
   async confirm2FA(
     @Request() req,
@@ -141,7 +141,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth()
-  @Post('disable-2fa')
+  @Post('2fa/disable')
   @ApiOperation({ summary: 'Disable 2FA' })
   async disable2FA(@Request() req) {
     return this.authService.disable2FA(req.user._id);
@@ -149,7 +149,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth()
-  @Post('complete-registration')
+  @Post('registration-completion')
   @ApiOperation({ summary: 'Complete registration (role selection)' })
   async completeRegistration(
     @Request() req,

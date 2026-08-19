@@ -20,8 +20,25 @@ export declare class CoursesService {
     }>;
     findOne(id: string): Promise<Course>;
     update(id: string, updateCourseDto: UpdateCourseDto): Promise<Course>;
-    remove(id: string): Promise<{
+    remove(id: string, requesterId: string): Promise<{
         message: string;
+    }>;
+    permanentDelete(id: string): Promise<{
+        message: string;
+    }>;
+    removeMany(ids: string[], requesterId: string): Promise<{
+        successful: string[];
+        failed: {
+            id: string;
+            reason: string;
+        }[];
+    }>;
+    permanentDeleteMany(ids: string[]): Promise<{
+        successful: string[];
+        failed: {
+            id: string;
+            reason: string;
+        }[];
     }>;
     enroll(courseId: string, userId: string): Promise<{
         message: string;
@@ -45,6 +62,7 @@ export declare class CoursesService {
         data: Course;
     }>;
     findByInstructor(instructorId: string): Promise<Course[]>;
+    countByOrganization(organizationId: string): Promise<number>;
     countByInstructor(instructorId: string): Promise<number>;
     countDistinctStudentsForInstructor(instructorId: string): Promise<number>;
     archiveByOrganization(organizationId: string): Promise<{

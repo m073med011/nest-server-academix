@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { FilterQuery } from 'mongoose';
 import { CoursesRepository } from './courses.repository';
 import { PaymentsService } from '../payments/payments.service';
@@ -49,17 +49,21 @@ export class CoursesService {
 
     const filter: FilterQuery<CourseDocument> = {
       isPublished: true,
-      $or: [
+      deletedAt: { $exists: false },
+    };
+
+    if (filterDto.organizationId) {
+      filter.organizationId = filterDto.organizationId;
+    } else {
+      filter.$or = [
         { isOrgPrivate: false },
         { isOrgPrivate: { $exists: false } },
         { organizationId: { $exists: false } },
-      ],
-    };
+      ];
+    }
 
     if (category) filter.category = category;
     if (level) filter.level = level;
-    if (filterDto.organizationId)
-      filter.organizationId = filterDto.organizationId;
     if (search) {
       filter.$text = { $search: search };
     }
@@ -132,12 +136,61 @@ export class CoursesService {
     return course;
   }
 
-  async remove(id: string) {
+  async remove(id: string, requesterId: string) {
+    const course = await this.coursesRepository.findById(id);
+    if (!course) {
+      throw new NotFoundException('Course not found');
+    }
+    if (course.deletedAt) {
+      throw new BadRequestException('Course is already deleted');
+    }
+
+    await this.coursesRepository.update(id, {
+      deletedAt: new Date(),
+      deletedBy: requesterId,
+    });
+
+    return { message: 'Course deleted successfully' };
+  }
+
+  async permanentDelete(id: string) {
     const course = await this.coursesRepository.delete(id);
     if (!course) {
       throw new NotFoundException('Course not found');
     }
-    return { message: 'Course deleted successfully' };
+    return { message: 'Course permanently deleted' };
+  }
+
+  async removeMany(ids: string[], requesterId: string) {
+    const results: { successful: string[]; failed: { id: string; reason: string }[] } = {
+      successful: [],
+      failed: [],
+    };
+    for (const id of ids) {
+      try {
+        await this.remove(id, requesterId);
+        results.successful.push(id);
+      } catch (error) {
+        results.failed.push({ id, reason: error.message });
+      }
+    }
+    return results;
+  }
+
+  async permanentDeleteMany(ids: string[]) {
+    const results: { successful: string[]; failed: { id: string; reason: string }[] } = {
+      successful: [],
+      failed: [],
+    };
+    for (const id of ids) {
+      try {
+        await this.permanentDelete(id);
+        results.successful.push(id);
+      } catch (error) {
+        results.failed.push({ id, reason: error.message });
+      }
+    }
+    return results;
   }
 
   async enroll(courseId: string, userId: string) {
@@ -187,6 +240,10 @@ export class CoursesService {
 
   async findByInstructor(instructorId: string) {
     return this.coursesRepository.findByInstructor(instructorId);
+  }
+
+  async countByOrganization(organizationId: string) {
+    return this.coursesRepository.count({ organizationId, isArchived: { $ne: true } });
   }
 
   countByInstructor(instructorId: string) {

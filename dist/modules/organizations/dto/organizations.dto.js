@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AddCoursesDto = exports.UpdateRoleDto = exports.CreateRoleDto = exports.UpdateMemberRoleDto = exports.AddMemberDto = exports.SearchUserDto = exports.UpdateOrganizationDto = exports.CreateOrganizationDto = exports.GetMembersDto = exports.PaginationDto = void 0;
+exports.DeleteOrganizationsDto = exports.AddCoursesDto = exports.UpdateRoleDto = exports.CreateRoleDto = exports.UpdateMemberRoleDto = exports.AddMemberDto = exports.SearchUserDto = exports.UpdateOrganizationDto = exports.CreateOrganizationDto = exports.GetMembersDto = exports.PaginationDto = void 0;
 const class_validator_1 = require("class-validator");
 const swagger_1 = require("@nestjs/swagger");
 const class_transformer_1 = require("class-transformer");
@@ -261,4 +261,15 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", Array)
 ], AddCoursesDto.prototype, "courseIds", void 0);
+class DeleteOrganizationsDto {
+    ids;
+}
+exports.DeleteOrganizationsDto = DeleteOrganizationsDto;
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: [String], description: 'List of organization IDs to delete' }),
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsString)({ each: true }),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", Array)
+], DeleteOrganizationsDto.prototype, "ids", void 0);
 //# sourceMappingURL=organizations.dto.js.map

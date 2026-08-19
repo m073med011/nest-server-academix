@@ -4,8 +4,6 @@ export declare class DiscountController {
     constructor(discountService: DiscountService);
     create(createDiscountDto: any): Promise<import("./schemas/discount.schema").DiscountDocument>;
     findAll(): Promise<import("./schemas/discount.schema").DiscountDocument[]>;
-    findOne(id: string): Promise<import("./schemas/discount.schema").DiscountDocument | null>;
-    findByCode(code: string): Promise<import("./schemas/discount.schema").DiscountDocument | null>;
     validateDiscount(validateDto: {
         code: string;
         courseIds: string[];
@@ -16,6 +14,8 @@ export declare class DiscountController {
         finalAmount: number;
         message?: string;
     }>;
+    findOne(id: string): Promise<import("./schemas/discount.schema").DiscountDocument | null>;
+    findByCode(code: string): Promise<import("./schemas/discount.schema").DiscountDocument | null>;
     update(id: string, updateDiscountDto: any): Promise<import("./schemas/discount.schema").DiscountDocument | null>;
     remove(id: string): Promise<import("./schemas/discount.schema").DiscountDocument | null>;
 }

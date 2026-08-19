@@ -1,5 +1,5 @@
 import { CoursesService } from './courses.service';
-import { CreateCourseDto, UpdateCourseDto, CourseFilterDto, AddEditorDto } from './dto/courses.dto';
+import { CreateCourseDto, UpdateCourseDto, CourseFilterDto, AddEditorDto, DeleteCoursesDto } from './dto/courses.dto';
 export declare class CoursesController {
     private readonly coursesService;
     constructor(coursesService: CoursesService);
@@ -23,8 +23,12 @@ export declare class CoursesController {
     getByInstructor(instructorId: string): Promise<import("./schemas/course.schema").Course[]>;
     findOne(id: string): Promise<import("./schemas/course.schema").Course>;
     update(id: string, updateCourseDto: UpdateCourseDto): Promise<import("./schemas/course.schema").Course>;
-    remove(id: string): Promise<{
-        message: string;
+    remove(deleteDto: DeleteCoursesDto, req: any, permanent?: string): Promise<{
+        successful: string[];
+        failed: {
+            id: string;
+            reason: string;
+        }[];
     }>;
     enroll(id: string, req: any): Promise<{
         message: string;

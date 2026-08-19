@@ -26,6 +26,7 @@ import {
   UpdateCourseDto,
   CourseFilterDto,
   AddEditorDto,
+  DeleteCoursesDto,
 } from './dto/courses.dto';
 import { Response } from 'express';
 
@@ -100,13 +101,21 @@ export class CoursesController {
     return this.coursesService.update(id, updateCourseDto);
   }
 
-  @Delete(':id')
+  @Delete()
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Delete course' })
-  @ApiResponse({ status: 200, description: 'Course deleted.' })
-  async remove(@Param('id') id: string) {
-    return this.coursesService.remove(id);
+  @ApiOperation({ summary: 'Delete courses (soft or permanent)' })
+  @ApiQuery({ name: 'permanent', required: false, type: Boolean })
+  @ApiResponse({ status: 200, description: 'Courses deleted.' })
+  async remove(
+    @Body() deleteDto: DeleteCoursesDto,
+    @Request() req,
+    @Query('permanent') permanent?: string,
+  ) {
+    if (permanent === 'true') {
+      return this.coursesService.permanentDeleteMany(deleteDto.ids);
+    }
+    return this.coursesService.removeMany(deleteDto.ids, req.user._id);
   }
 
   @Post(':id/enroll')
